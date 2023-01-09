@@ -16,6 +16,5 @@ public class AutoModeSelector {
     SmartDashboard.putData(modeChooser);
   }
 
-  public void updateAutoModeSelector() {
-  }
+  public void updateAutoModeSelector() {}
 }

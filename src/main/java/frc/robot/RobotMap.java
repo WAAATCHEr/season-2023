@@ -1,7 +1,6 @@
 package frc.robot;
 
 import com.ctre.phoenix.motorcontrol.NeutralMode;
-
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
@@ -15,12 +14,15 @@ public class RobotMap {
     public static final int PIGEON_ID = 1;
     public static final boolean INVERT_GYRO = false; // Always ensure Gyro is CCW+ CW-
 
-    public static final COTSFalconSwerveConstants MODULE_TYPE = // TODO: This must be tuned to specific robot
+    public static final COTSFalconSwerveConstants
+        MODULE_TYPE = // TODO: This must be tuned to specific robot
         COTSFalconSwerveConstants.SDSMK3(COTSFalconSwerveConstants.DriveGearRatios.SDSMK3_STANDARD);
 
     /* Drivetrain Constants */
-    public static final double TRACK_WIDTH = Units.inchesToMeters(21.73); // TODO: This must be tuned to specific robot
-    public static final double WHEEL_BASE = Units.inchesToMeters(21.73); // TODO: This must be tuned to specific robot
+    public static final double TRACK_WIDTH =
+        Units.inchesToMeters(21.73); // TODO: This must be tuned to specific robot
+    public static final double WHEEL_BASE =
+        Units.inchesToMeters(21.73); // TODO: This must be tuned to specific robot
     public static final double WHEEL_CIRCUMFERENCE = MODULE_TYPE.wheelCircumference;
 
     /*
@@ -28,11 +30,12 @@ public class RobotMap {
      * No need to ever change this unless you are not doing a traditional
      * rectangular/square 4 module swerve
      */
-    public static final SwerveDriveKinematics KINEMATICS = new SwerveDriveKinematics(
-        new Translation2d(WHEEL_BASE / 2.0, TRACK_WIDTH / 2.0),
-        new Translation2d(WHEEL_BASE / 2.0, -TRACK_WIDTH / 2.0),
-        new Translation2d(-WHEEL_BASE / 2.0, TRACK_WIDTH / 2.0),
-        new Translation2d(-WHEEL_BASE / 2.0, -TRACK_WIDTH / 2.0));
+    public static final SwerveDriveKinematics KINEMATICS =
+        new SwerveDriveKinematics(
+            new Translation2d(WHEEL_BASE / 2.0, TRACK_WIDTH / 2.0),
+            new Translation2d(WHEEL_BASE / 2.0, -TRACK_WIDTH / 2.0),
+            new Translation2d(-WHEEL_BASE / 2.0, TRACK_WIDTH / 2.0),
+            new Translation2d(-WHEEL_BASE / 2.0, -TRACK_WIDTH / 2.0));
 
     /* Module Gear Ratios */
     public static final double DRIVE_GEAR_RATIO = MODULE_TYPE.driveGearRatio;
@@ -88,7 +91,8 @@ public class RobotMap {
     /** Meters per Second */
     public static final double MAX_VELOCITY = 3.5; // TODO: This must be tuned to specific robot
     /** Radians per Second */
-    public static final double MAX_ANGULAR_VELOCITY = 10.0; // TODO: This must be tuned to specific robot
+    public static final double MAX_ANGULAR_VELOCITY =
+        10.0; // TODO: This must be tuned to specific robot
 
     /* Neutral Modes */
     public static final NeutralMode ROTATOR_NEUTRAL_MODE = NeutralMode.Coast;
@@ -101,8 +105,8 @@ public class RobotMap {
       public static final int ROTATOR_ID = 2;
       public static final int ENCODER_ID = 1;
       public static final Rotation2d OFFSET = Rotation2d.fromDegrees(0.0);
-      public static final SwerveModuleConstants CONSTANTS = new SwerveModuleConstants(DRIVE_ID, ROTATOR_ID,
-          ENCODER_ID, OFFSET);
+      public static final SwerveModuleConstants CONSTANTS =
+          new SwerveModuleConstants(DRIVE_ID, ROTATOR_ID, ENCODER_ID, OFFSET);
     }
 
     /* Front Right Module - Module 1 */
@@ -111,8 +115,8 @@ public class RobotMap {
       public static final int ROTATOR_ID = 4;
       public static final int ENCODER_ID = 2;
       public static final Rotation2d OFFSET = Rotation2d.fromDegrees(0.0);
-      public static final SwerveModuleConstants CONSTANTS = new SwerveModuleConstants(DRIVE_ID, ROTATOR_ID,
-          ENCODER_ID, OFFSET);
+      public static final SwerveModuleConstants CONSTANTS =
+          new SwerveModuleConstants(DRIVE_ID, ROTATOR_ID, ENCODER_ID, OFFSET);
     }
 
     /* Back Left Module - Module 2 */
@@ -121,8 +125,8 @@ public class RobotMap {
       public static final int ROTATOR_ID = 6;
       public static final int ENCODER_ID = 3;
       public static final Rotation2d OFFSET = Rotation2d.fromDegrees(0.0);
-      public static final SwerveModuleConstants CONSTANTS = new SwerveModuleConstants(DRIVE_ID, ROTATOR_ID,
-          ENCODER_ID, OFFSET);
+      public static final SwerveModuleConstants CONSTANTS =
+          new SwerveModuleConstants(DRIVE_ID, ROTATOR_ID, ENCODER_ID, OFFSET);
     }
 
     /* Back Right Module - Module 3 */
@@ -131,8 +135,8 @@ public class RobotMap {
       public static final int ROTATOR_ID = 8;
       public static final int ENCODER_ID = 4;
       public static final Rotation2d OFFSET = Rotation2d.fromDegrees(0.0);
-      public static final SwerveModuleConstants CONSTANTS = new SwerveModuleConstants(DRIVE_ID, ROTATOR_ID,
-          ENCODER_ID, OFFSET);
+      public static final SwerveModuleConstants CONSTANTS =
+          new SwerveModuleConstants(DRIVE_ID, ROTATOR_ID, ENCODER_ID, OFFSET);
     }
   }
 
