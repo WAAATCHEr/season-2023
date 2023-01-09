@@ -1,8 +1,9 @@
 package frc.robot.layout;
 
-import java.util.function.DoubleSupplier;
-
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import frc.robot.RobotMap;
+import frc.robot.subsystems.Swerve;
 import frc.robot.util.controllers.ButtonMap.Axis;
 import frc.robot.util.controllers.ButtonMap.Button;
 import frc.robot.util.controllers.GameController;
@@ -14,16 +15,15 @@ public class TwoJoyStickDriverMap extends DriverMap {
   }
 
   @Override
-  public DoubleSupplier[] getSuppliers() {
-    var y = controller.getAxis(Axis.AXIS_LEFT_X);
-    var x = controller.getAxis(Axis.AXIS_LEFT_Y);
-    var rot = controller.getAxis(Axis.AXIS_RIGHT_X);
+  public ChassisSpeeds getChassisSpeeds() {
+    var y = controller.getAxis(Axis.AXIS_LEFT_X) * RobotMap.DriveMap.MAX_VELOCITY * 0.1;
+    var x = controller.getAxis(Axis.AXIS_LEFT_Y) * RobotMap.DriveMap.MAX_VELOCITY * 0.1;
+    var rot = controller.getAxis(Axis.AXIS_RIGHT_X)
+        * RobotMap.DriveMap.MAX_ANGULAR_VELOCITY
+        * 0.1;
 
-    return new DoubleSupplier[] {
-      () -> x, 
-      () -> y, 
-      () -> rot
-    };
+    var swerve = Swerve.getInstance();
+    return ChassisSpeeds.fromFieldRelativeSpeeds(-x, -y, -rot, swerve.getYaw());
   }
 
   @Override

@@ -1,9 +1,8 @@
 package frc.robot.util.controllers;
 
 import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.util.MathUtils;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import frc.robot.util.MathUtils;
 
 public class GameController extends Joystick {
   private final double DEADZONE = 0.1;
@@ -37,7 +36,7 @@ public class GameController extends Joystick {
     return this.getPOV();
   }
 
-  public class DpadTriggerButton extends Trigger {
+  public class DpadTriggerButton {
     private int buttonAngle;
     private GameController controller;
 

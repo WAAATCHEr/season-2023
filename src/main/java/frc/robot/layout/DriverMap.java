@@ -1,12 +1,10 @@
 package frc.robot.layout;
 
-import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.subsystems.Swerve;
 import frc.robot.util.controllers.CommandMap;
 import frc.robot.util.controllers.GameController;
-import java.util.HashMap;
-import java.util.function.DoubleSupplier;
 
 public abstract class DriverMap extends CommandMap {
 
@@ -14,7 +12,7 @@ public abstract class DriverMap extends CommandMap {
     super(controller);
   }
 
-  abstract DoubleSupplier[] getSuppliers();
+  abstract ChassisSpeeds getChassisSpeeds();
 
   abstract JoystickButton getPathPlanningTestButton();
 
@@ -22,8 +20,6 @@ public abstract class DriverMap extends CommandMap {
   public void registerCommands() {
     var swerve = Swerve.getInstance();
 
-    swerve.setDefaultCommand(swerve.driveCommand(getSuppliers()));
-
-    var commands = new HashMap<String, Command>();
+    swerve.setDefaultCommand(swerve.driveCommand(this::getChassisSpeeds));
   }
 }

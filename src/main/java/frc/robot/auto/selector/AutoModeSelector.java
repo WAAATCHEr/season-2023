@@ -12,10 +12,10 @@ public class AutoModeSelector {
     modeChooser = new SendableChooser<>();
     // ModeChooser.addOption(name, enum);
     modeChooser.setDefaultOption("DO NOTHING", AutoModeList.DO_NOTHING);
-    modeChooser.addOption("LIFT AND LOWER ELEVATOR", AutoModeList.LIFT_AND_LOWER_ELEVATOR);
 
     SmartDashboard.putData(modeChooser);
   }
 
-  public void updateAutoModeSelector() {}
+  public void updateAutoModeSelector() {
+  }
 }
