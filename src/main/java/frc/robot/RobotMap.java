@@ -1,9 +1,13 @@
 package frc.robot;
 
-import com.swervedrivespecialties.swervelib.Mk3SwerveModuleHelper;
-import com.swervedrivespecialties.swervelib.Mk4SwerveModuleHelper;
-import com.swervedrivespecialties.swervelib.ModuleConfiguration;
-import com.swervedrivespecialties.swervelib.SdsModuleConfigurations;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
+
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
+import edu.wpi.first.math.util.Units;
+import frc.robot.util.COTSFalconSwerveConstants;
+import frc.robot.util.SwerveModuleConstants;
 
 public class RobotMap {
   public static class ElevatorMap {
@@ -13,106 +17,123 @@ public class RobotMap {
     public static final int limitSwitch = 0;
   }
 
-  public static class DriveMap {
+  public static final class DriveMap {
+    public static final int PIGEON_ID = 1;
+    public static final boolean INVERT_GYRO = false; // Always ensure Gyro is CCW+ CW-
 
-    public static final double DRIVE_MOTOR_FREE_SPEED = 6380;
+    public static final COTSFalconSwerveConstants chosenModule =  //TODO: This must be tuned to specific robot
+        COTSFalconSwerveConstants.SDSMK3(COTSFalconSwerveConstants.driveGearRatios.SDSMK3_Standard);
 
-    public static class Module {
-      public Module(int driveId, int steerId, int encoderId, double steerOffsetDegrees) {
-        this.driveId = driveId;
-        this.steerId = steerId;
-        this.encoderId = encoderId;
-        this.steerOffsetDegrees = steerOffsetDegrees;
-      }
+    /* Drivetrain Constants */
+    public static final double trackWidth = Units.inchesToMeters(21.73); //TODO: This must be tuned to specific robot
+    public static final double wheelBase = Units.inchesToMeters(21.73); //TODO: This must be tuned to specific robot
+    public static final double wheelCircumference = chosenModule.wheelCircumference;
 
-      private int driveId;
+    /* Swerve Kinematics 
+      * No need to ever change this unless you are not doing a traditional rectangular/square 4 module swerve */
+      public static final SwerveDriveKinematics swerveKinematics = new SwerveDriveKinematics(
+        new Translation2d(wheelBase / 2.0, trackWidth / 2.0),
+        new Translation2d(wheelBase / 2.0, -trackWidth / 2.0),
+        new Translation2d(-wheelBase / 2.0, trackWidth / 2.0),
+        new Translation2d(-wheelBase / 2.0, -trackWidth / 2.0));
 
-      public int getDriveId() {
-        return driveId;
-      }
+    /* Module Gear Ratios */
+    public static final double driveGearRatio = chosenModule.driveGearRatio;
+    public static final double angleGearRatio = chosenModule.angleGearRatio;
 
-      private int steerId;
+    /* Motor Inverts */
+    public static final boolean angleMotorInvert = chosenModule.angleMotorInvert;
+    public static final boolean driveMotorInvert = chosenModule.driveMotorInvert;
 
-      public int getSteerId() {
-        return steerId;
-      }
+    /* Angle Encoder Invert */
+    public static final boolean canCoderInvert = chosenModule.canCoderInvert;
 
-      private int encoderId;
+    /* Swerve Current Limiting */
+    public static final int angleContinuousCurrentLimit = 25;
+    public static final int anglePeakCurrentLimit = 40;
+    public static final double anglePeakCurrentDuration = 0.1;
+    public static final boolean angleEnableCurrentLimit = true;
 
-      public int getEncoderId() {
-        return encoderId;
-      }
+    public static final int driveContinuousCurrentLimit = 35;
+    public static final int drivePeakCurrentLimit = 60;
+    public static final double drivePeakCurrentDuration = 0.1;
+    public static final boolean driveEnableCurrentLimit = true;
 
-      private double steerOffsetDegrees;
+    /* These values are used by the drive falcon to ramp in open loop and closed loop driving.
+      * We found a small open loop ramp (0.25) helps with tread wear, tipping, etc */
+    public static final double openLoopRamp = 0.25;
+    public static final double closedLoopRamp = 0.0;
 
-      public double getSteerOffset() {
-        return -Math.toRadians(steerOffsetDegrees);
-      }
+    /* Angle Motor PID Values */
+    public static final double angleKP = chosenModule.angleKP;
+    public static final double angleKI = chosenModule.angleKI;
+    public static final double angleKD = chosenModule.angleKD;
+    public static final double angleKF = chosenModule.angleKF;
+
+    /* Drive Motor PID Values */
+    public static final double driveKP = 0.05; //TODO: This must be tuned to specific robot
+    public static final double driveKI = 0.0;
+    public static final double driveKD = 0.0;
+    public static final double driveKF = 0.0;
+
+    /* Drive Motor Characterization Values 
+      * Divide SYSID values by 12 to convert from volts to percent output for CTRE */
+    public static final double driveKS = (0.32 / 12); //TODO: This must be tuned to specific robot
+    public static final double driveKV = (1.51 / 12);
+    public static final double driveKA = (0.27 / 12);
+
+    /* Swerve Profiling Values */
+    /** Meters per Second */
+    public static final double maxSpeed = 3.5; //TODO: This must be tuned to specific robot
+    /** Radians per Second */
+    public static final double maxAngularVelocity = 10.0; //TODO: This must be tuned to specific robot
+
+    /* Neutral Modes */
+    public static final NeutralMode angleNeutralMode = NeutralMode.Coast;
+    public static final NeutralMode driveNeutralMode = NeutralMode.Brake;
+
+    /* Module Specific Constants */
+    /* Front Left Module - Module 0 */
+    public static final class Mod0 { //TODO: This must be tuned to specific robot
+        public static final int driveMotorID = 1;
+        public static final int angleMotorID = 2;
+        public static final int canCoderID = 1;
+        public static final Rotation2d angleOffset = Rotation2d.fromDegrees(0.0);
+        public static final SwerveModuleConstants constants = 
+            new SwerveModuleConstants(driveMotorID, angleMotorID, canCoderID, angleOffset);
+    }
+
+    /* Front Right Module - Module 1 */
+    public static final class Mod1 { //TODO: This must be tuned to specific robot
+        public static final int driveMotorID = 3;
+        public static final int angleMotorID = 4;
+        public static final int canCoderID = 2;
+        public static final Rotation2d angleOffset = Rotation2d.fromDegrees(0.0);
+        public static final SwerveModuleConstants constants = 
+            new SwerveModuleConstants(driveMotorID, angleMotorID, canCoderID, angleOffset);
+    }
+    
+    /* Back Left Module - Module 2 */
+    public static final class Mod2 { //TODO: This must be tuned to specific robot
+        public static final int driveMotorID = 5;
+        public static final int angleMotorID = 6;
+        public static final int canCoderID = 3;
+        public static final Rotation2d angleOffset = Rotation2d.fromDegrees(0.0);
+        public static final SwerveModuleConstants constants = 
+            new SwerveModuleConstants(driveMotorID, angleMotorID, canCoderID, angleOffset);
+    }
+
+    /* Back Right Module - Module 3 */
+    public static final class Mod3 { //TODO: This must be tuned to specific robot
+        public static final int driveMotorID = 7;
+        public static final int angleMotorID = 8;
+        public static final int canCoderID = 4;
+        public static final Rotation2d angleOffset = Rotation2d.fromDegrees(0.0);
+        public static final SwerveModuleConstants constants = 
+            new SwerveModuleConstants(driveMotorID, angleMotorID, canCoderID, angleOffset);
     }
   }
-  //   public enum Version {
-  //     MK3,
-  //     MK4
-  //   }
 
-  //   public static final Version VERSION = Version.MK4;
-
-  //   public static final ModuleConfiguration MK3_MODULE_CONFIGURATION =
-  //       SdsModuleConfigurations.MK3_STANDARD;
-  //   public static final ModuleConfiguration MK4_MODULE_CONFIGURATION =
-  //       SdsModuleConfigurations.MK4_L1; //8.14:1
-
-  //   public static ModuleConfiguration getModuleConfiguration() {
-  //     return VERSION == Version.MK3 ? MK3_MODULE_CONFIGURATION : MK4_MODULE_CONFIGURATION;
-  //   }
-
-  //   public static final Mk3SwerveModuleHelper.GearRatio MK3_GEAR_RATIO =
-  //       Mk3SwerveModuleHelper.GearRatio.STANDARD;
-  //   public static final Mk4SwerveModuleHelper.GearRatio MK4_GEAR_RATIO =
-  //       Mk4SwerveModuleHelper.GearRatio.L1;
-
-  //   public static final double TRACKWIDTH_METERS = 0.617; // FIXME Measure and set trackwidth
-  //   /**
-  //    * The front-to-back distance between the drivetrain wheels.
-  //    *
-  //    * <p>Should be measured from center to center.
-  //    */
-  //   public static final double WHEELBASE_METERS = 0.617; // FIXME Measure and set wheelbase
-
-  //   public static final Module FRONT_LEFT_MODULE = new Module(7, 8, 18, 270);
-
-  //   public static final Module FRONT_RIGHT_MODULE = new Module(1, 2, 17, 260);
-
-  //   public static final Module BACK_LEF_MODULE = new Module(5, 6, 16, 270);
-
-  //   public static final Module BACK_RIGHT_MODULE = new Module(3, 4, 19, 265);
-  // }
-
-  public enum version {
-    MK3,
-    Mk4
-  }
-
-  public static final class ModuleMap {
-    public static final double ANGLE_GEAR_RATIO = 0.0;
-    public static final double DRIVE_GEAR_RATIO = 0.0;
-    public static final double TRACKWIDTH_METRES = 0.0;
-    public static final double MOD_ = 0.0;
-  }
-
-  private static final class ModMk3 {
-    public static final double ANGLE_GEAR_RATIO = 0.0;
-    public static final double DRIVE_GEAR_RATIO = 8.16;
-    // public static final double = ;
-  }
-
-  private static final class ModMk4 {
-    public static final double ANGLE_GEAR_RATIO = 0.0; //FIXME
-    public static final double DRIVE_GEAR_RATIO = 8.14;
-
-  }
-
-  public static final int PIGEON_ID = 9;
 
   public static class TankDriveMap {
     public static final int leftFrontMaster = 0;
@@ -138,5 +159,6 @@ public class RobotMap {
   public static class ControllerMap {
     public static final int DRIVER_JOYSTICK = 0;
     public static final int OPERATOR_JOYSTICK = 1;
+    public static final double STICK_DEADBAND = 0.1;
   }
 }

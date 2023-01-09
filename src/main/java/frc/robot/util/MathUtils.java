@@ -1,4 +1,4 @@
-package frc.lib.math;
+package frc.robot.util;
 
 public class MathUtils {
   /**

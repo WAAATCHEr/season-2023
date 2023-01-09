@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
  * project.
  */
 public class Robot extends TimedRobot {
+  public static CTREConfigs ctreConfigs;
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -17,6 +18,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotInit() {
+    ctreConfigs = new CTREConfigs();
     // TODO put auto chooser here. make sure to use the one from
     // robot/auto/selector/AutoModeSelector.java
 
