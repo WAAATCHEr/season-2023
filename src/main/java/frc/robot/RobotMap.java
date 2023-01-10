@@ -2,7 +2,10 @@ package frc.robot;
 
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.util.Units;
 import frc.robot.util.COTSFalconSwerveConstants;
@@ -145,8 +148,21 @@ public class RobotMap {
     public static final String COMPUTER_VISION = "camscanner";
     public static final String DRIVER_CAMERA = "drivercam";
     public static final double CAMERA_HEIGHT_METRES = 0.5;
+    public static final double CAMERA_DEPTH_METRES = 0.5;
+    public static final double CAMERA_WIDTH_METRES = 0.5;
     public static final double TARGET_HEIGHT_METRES = 3.0;
     public static final double CAMERA_PITCH_RADIANS = 0.0;
+    public static final Transform3d ROBOT_TO_CAM = new Transform3d(
+        new Translation3d(CAMERA_WIDTH_METRES, CAMERA_HEIGHT_METRES, CAMERA_DEPTH_METRES), //X, Y, Z
+        new Rotation3d(
+            0, 0,
+            0));
+
+  }
+
+  public static class FieldMap {
+    public static final double FIELD_LENGTH = Units.feetToMeters(54);
+    public static final double FIELD_WIDTH = Units.inchesToMeters(27);
   }
 
   public static class ControllerMap {
