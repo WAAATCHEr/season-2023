@@ -154,4 +154,8 @@ public class RobotMap {
     public static final int OPERATOR_JOYSTICK = 1;
     public static final double STICK_DEADBAND = 0.1;
   }
+  public static class PistonMap{
+    public static final int FOWARD_CHANNEL = 0;
+    public static final int REVERSE_CHANNEL = 0;
+  }
 }
