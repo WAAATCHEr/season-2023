@@ -8,6 +8,8 @@ import com.ctre.phoenix.sensors.WPI_Pigeon2;
 import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.PathPlannerTrajectory;
 import com.pathplanner.lib.commands.PPSwerveControllerCommand;
+
+import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -17,6 +19,8 @@ import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.trajectory.Trajectory;
+import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -29,6 +33,7 @@ import frc.robot.util.SwerveModule;
 import frc.robot.subsystems.Vision;
 import java.util.HashMap;
 import java.util.function.Supplier;
+
 
 
 public class Swerve extends SubsystemBase {
@@ -45,6 +50,10 @@ public class Swerve extends SubsystemBase {
 
   //Camera
   private Vision vision;
+  private final Field2d fieldSim = new Field2d();
+
+  //Swerve Pose Estimator
+  private SwerveDrivePoseEstimator poseEstimator;
 
   private Swerve() {
     gyro = new WPI_Pigeon2(DriveMap.PIGEON_ID);
@@ -153,10 +162,25 @@ public class Swerve extends SubsystemBase {
             traj, this::getPose, xPID, yPID, thetaPID, speeds -> drive(speeds, false), this));
   }
 
+  public void updateCameraOdometry() {
+    poseEstimator.update(gyro.getRotation2d(), getModulePositions());
+    Pair<Pose2d, Double> result = vision.getEstimatedGlobalPose(poseEstimator.getEstimatedPosition());
+    var camPose = result.getFirst();
+    var camPoseObsTime = result.getSecond();
+    if (camPose != null) {
+      poseEstimator.addVisionMeasurement(camPose, camPoseObsTime);
+    }
+  }
+
+  public Pose2d getCameraPosition() { //In here because poseEstimator is a swerveDrivePoseEstimator
+    return poseEstimator.getEstimatedPosition();
+  }
+
   @Override
   public void periodic() {
     odometry.update(getYaw(), getModulePositions());
-
+    updateCameraOdometry();
+    
     for (SwerveModule mod : modules) {
       SmartDashboard.putNumber(
           "Mod " + mod.moduleNumber + " Cancoder", mod.getCanCoder().getDegrees());
