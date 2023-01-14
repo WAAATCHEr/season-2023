@@ -16,6 +16,7 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -25,8 +26,10 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RobotMap.DriveMap;
 import frc.robot.util.SwerveModule;
+import frc.robot.subsystems.Vision;
 import java.util.HashMap;
 import java.util.function.Supplier;
+
 
 public class Swerve extends SubsystemBase {
   private static Swerve instance;
@@ -36,14 +39,19 @@ public class Swerve extends SubsystemBase {
     return instance;
   }
 
-  public SwerveDriveOdometry odometry;
-  public SwerveModule[] modules;
-  public WPI_Pigeon2 gyro;
+  private SwerveDriveOdometry odometry;
+  private SwerveModule[] modules;
+  private WPI_Pigeon2 gyro;
+
+  //Camera
+  private Vision vision;
 
   private Swerve() {
     gyro = new WPI_Pigeon2(DriveMap.PIGEON_ID);
     gyro.configFactoryDefault();
     zeroGyro();
+
+    vision = new Vision();
 
     modules =
         new SwerveModule[] {
@@ -69,6 +77,7 @@ public class Swerve extends SubsystemBase {
     return new RepeatCommand(new RunCommand(() -> this.drive(chassisSpeeds.get(), true)));
   }
 
+  
   /* Used by SwerveControllerCommand in Auto */
   public void setModuleStates(SwerveModuleState[] desiredStates) {
     SwerveDriveKinematics.desaturateWheelSpeeds(desiredStates, DriveMap.MAX_VELOCITY);
