@@ -28,6 +28,9 @@ public class RobotMap {
         Units.inchesToMeters(21.73); // TODO: This must be tuned to specific robot
     public static final double WHEEL_CIRCUMFERENCE = MODULE_TYPE.wheelCircumference;
 
+    /* PixyCam Constants */
+    public static final double PIXYCAM_ROTATION_IN_DEGREES = 0.001; //TODO: Tune constant
+    public static final double PIXYCAM_RESOLUTION = 1296;
     /*
      * Swerve Kinematics
      * No need to ever change this unless you are not doing a traditional

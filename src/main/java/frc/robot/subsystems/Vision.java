@@ -46,7 +46,7 @@ public class Vision extends SubsystemBase {
   // AprilTagFieldLayout
   AprilTagFieldLayout atfl;
 
-  public Vision() {
+  private Vision() {
 
     // SETTING UP APRILTAGS
 

@@ -37,16 +37,27 @@ public class PixyCam extends SubsystemBase {
      */
     double[] avg = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 
-  private PixyCam() {
-    pixy = Pixy2.createInstance(new SPILink());
-    pixy.init();
-    pixyCCC = pixy.getCCC();
-    pixyVideo = pixy.getVideo();
+    private Block biggestObject = null;
 
-    // 0- off, 1- on
-    // First param is headlamps (white), second is RGB LED
-    pixy.setLamp((byte) 0, (byte) 1);
-  }
+    private PixyCam() {
+        pixy = Pixy2.createInstance(new SPILink());
+        pixy.init();
+        pixyCCC = pixy.getCCC();
+        pixyVideo = pixy.getVideo();
+
+        // 0- off, 1- on
+        // First param is headlamps (white), second is RGB LED
+        pixy.setLamp((byte) 0, (byte) 1);
+    }
+  
+    public Block getBiggestObject() {
+        return biggestObject;
+    }
+
+    public Block setBiggestObject(Block b) {
+        biggestObject = b;
+        return biggestObject;
+    }
 
     /**
      * Gets blocks of type [Constants.Signature]
@@ -85,4 +96,5 @@ public class PixyCam extends SubsystemBase {
     }
 
     
+
 }

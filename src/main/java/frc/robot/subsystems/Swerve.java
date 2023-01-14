@@ -23,13 +23,16 @@ import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RepeatCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.RobotMap;
 import frc.robot.RobotMap.DriveMap;
 import frc.robot.util.SwerveModule;
+import pixy2api.Pixy2CCC.Block;
 import frc.robot.subsystems.Vision;
 import java.util.HashMap;
 import java.util.function.Supplier;
@@ -40,7 +43,8 @@ public class Swerve extends SubsystemBase {
   private static Swerve instance;
 
   public static Swerve getInstance() {
-    if (instance == null) instance = new Swerve();
+    if (instance == null)
+      instance = new Swerve();
     return instance;
   }
 
@@ -50,7 +54,7 @@ public class Swerve extends SubsystemBase {
 
   //Camera
   private Vision vision;
-  private final Field2d fieldSim = new Field2d();
+  private PixyCam pixyCam;
 
   //Swerve Pose Estimator
   private SwerveDrivePoseEstimator poseEstimator;
@@ -60,15 +64,15 @@ public class Swerve extends SubsystemBase {
     gyro.configFactoryDefault();
     zeroGyro();
 
-    vision = new Vision();
+    vision = Vision.getInstance();
+    pixyCam = PixyCam.getInstance();
 
-    modules =
-        new SwerveModule[] {
-          new SwerveModule(0, DriveMap.FrontLeft.CONSTANTS),
-          new SwerveModule(1, DriveMap.FrontRight.CONSTANTS),
-          new SwerveModule(2, DriveMap.BackLeft.CONSTANTS),
-          new SwerveModule(3, DriveMap.BackRight.CONSTANTS)
-        };
+    modules = new SwerveModule[] {
+        new SwerveModule(0, DriveMap.FrontLeft.CONSTANTS),
+        new SwerveModule(1, DriveMap.FrontRight.CONSTANTS),
+        new SwerveModule(2, DriveMap.BackLeft.CONSTANTS),
+        new SwerveModule(3, DriveMap.BackRight.CONSTANTS)
+    };
 
     odometry = new SwerveDriveOdometry(DriveMap.KINEMATICS, getYaw(), getModulePositions());
   }
@@ -86,7 +90,41 @@ public class Swerve extends SubsystemBase {
     return new RepeatCommand(new RunCommand(() -> this.drive(chassisSpeeds.get(), true), this));
   }
 
-  
+  public Command AlignWithGameObject() {
+    return new FunctionalCommand(
+        null,
+        () -> {
+          var cones = pixyCam.getBlocksOfType(1);
+          var cubes = pixyCam.getBlocksOfType(2);
+          var biggestCone = pixyCam.getLargestBlock(cones);
+          var biggestCube = pixyCam.getLargestBlock(cubes);
+          if ((biggestCone.getWidth() * biggestCone.getHeight()) >= (biggestCube.getWidth() * biggestCube.getHeight())) {
+            pixyCam.setBiggestObject(biggestCone);
+          } else {
+            pixyCam.setBiggestObject(biggestCube);
+          }
+          ChassisSpeeds newSpeed = 
+              new ChassisSpeeds(0.0,
+                                0.0,
+                                RobotMap.DriveMap.PIXYCAM_ROTATION_IN_DEGREES * (pixyCam.getBiggestObject().getX() - RobotMap.DriveMap.PIXYCAM_RESOLUTION/2 ));
+          drive(newSpeed, true);
+        },
+        interrupted -> {
+          ChassisSpeeds endSpeed = new ChassisSpeeds(0.0, 0.0, 0.0);
+          drive(endSpeed, false);
+        },
+        () -> {
+          if (Math.abs(pixyCam.getBiggestObject().getX() - RobotMap.DriveMap.PIXYCAM_RESOLUTION / 2) <= 10) {
+            return true;
+          }
+          return false;
+        },
+        this,PixyCam.getInstance()
+
+  );
+
+  }
+
   /* Used by SwerveControllerCommand in Auto */
   public void setModuleStates(SwerveModuleState[] desiredStates) {
     SwerveDriveKinematics.desaturateWheelSpeeds(desiredStates, DriveMap.MAX_VELOCITY);
@@ -180,16 +218,14 @@ public class Swerve extends SubsystemBase {
   public void periodic() {
     odometry.update(getYaw(), getModulePositions());
     updateCameraOdometry();
-    
+
     for (SwerveModule mod : modules) {
       SmartDashboard.putNumber(
           "Mod " + mod.moduleNumber + " Cancoder", mod.getCanCoder().getDegrees());
-          /* 
       SmartDashboard.putNumber(
           "Mod " + mod.moduleNumber + " Integrated", mod.getPosition().angle.getDegrees());
       SmartDashboard.putNumber(
           "Mod " + mod.moduleNumber + " Velocity", mod.getState().speedMetersPerSecond);
-          */
     }
   }
 }
