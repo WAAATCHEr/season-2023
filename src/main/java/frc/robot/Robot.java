@@ -26,7 +26,6 @@ public class Robot extends TimedRobot {
     // ExampleElevator.getInstance();
 
     OI.getInstance();
-    // SwerveDrive.getInstance().zeroGyroscope()
   }
 
   /**
