@@ -77,7 +77,7 @@ public class RobotMap {
     public static final double ROTATOR_KF = MODULE_TYPE.angleKF;
 
     /* Drive Motor PID Values */
-    public static final double DRIVE_KP = 0.05; // TODO: This must be tuned to specific robot
+    public static final double DRIVE_KP = 1; // TODO: This must be tuned to specific robot
     public static final double DRIVE_KI = 0.0;
     public static final double DRIVE_KD = 0.0;
     public static final double DRIVE_KF = 0.0;
@@ -92,7 +92,7 @@ public class RobotMap {
 
     /* Swerve Profiling Values */
     /** Meters per Second */
-    public static final double MAX_VELOCITY = 3.5; // TODO: This must be tuned to specific robot
+    public static final double MAX_VELOCITY = 4.5; // TODO: This must be tuned to specific robot
     /** Radians per Second */
     public static final double MAX_ANGULAR_VELOCITY =
         10.0; // TODO: This must be tuned to specific robot

@@ -33,8 +33,6 @@ public class OI {
   }
 
   private OI() {
-    // driver = new GameController(RobotMap.ControllerMap.DRIVER_JOYSTICK, new
-    // Logitech());
     driver =
         new GameController(
             RobotMap.ControllerMap.DRIVER_JOYSTICK,
