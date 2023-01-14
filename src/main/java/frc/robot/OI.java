@@ -33,12 +33,10 @@ public class OI {
   }
 
   private OI() {
-    // driver = new GameController(RobotMap.ControllerMap.DRIVER_JOYSTICK, new
-    // Logitech());
     driver =
         new GameController(
             RobotMap.ControllerMap.DRIVER_JOYSTICK,
-            new Logitech(Version.REVERSED_TRIGGER_AND_STICK));
+            new Logitech(Version.REGULAR));
     // operator = new GameController(RobotMap.ControllerMap.OPERATOR_JOYSTICK, new
     // Logitech());
   }
