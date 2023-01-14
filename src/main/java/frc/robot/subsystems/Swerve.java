@@ -74,7 +74,7 @@ public class Swerve extends SubsystemBase {
   }
 
   public Command driveCommand(Supplier<ChassisSpeeds> chassisSpeeds) {
-    return new RepeatCommand(new RunCommand(() -> this.drive(chassisSpeeds.get(), true)));
+    return new RepeatCommand(new RunCommand(() -> this.drive(chassisSpeeds.get(), true), this));
   }
 
   
@@ -160,10 +160,12 @@ public class Swerve extends SubsystemBase {
     for (SwerveModule mod : modules) {
       SmartDashboard.putNumber(
           "Mod " + mod.moduleNumber + " Cancoder", mod.getCanCoder().getDegrees());
+          /* 
       SmartDashboard.putNumber(
           "Mod " + mod.moduleNumber + " Integrated", mod.getPosition().angle.getDegrees());
       SmartDashboard.putNumber(
           "Mod " + mod.moduleNumber + " Velocity", mod.getState().speedMetersPerSecond);
+          */
     }
   }
 }
