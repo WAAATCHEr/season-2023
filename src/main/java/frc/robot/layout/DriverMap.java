@@ -25,8 +25,10 @@ public abstract class DriverMap extends CommandMap {
   public void registerCommands() {
     var swerve = Swerve.getInstance();
 
-    swerve.setDefaultCommand(swerve.driveCommand(this::getChassisSpeeds));    
+    swerve.setDefaultCommand(swerve.driveCommand(this::getChassisSpeeds));
 
+    //pixyCam.setDefaultCommand(pixyCam.printCommand());
     
+    getPixyCamDistanceButton().onTrue(swerve.AlignWithGameObject());
   }
 }

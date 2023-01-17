@@ -3,6 +3,10 @@ package frc.robot.subsystems;
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
+
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.RepeatCommand;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import pixy2api.Pixy2;
 import pixy2api.Pixy2CCC;
@@ -47,7 +51,7 @@ public class PixyCam extends SubsystemBase {
 
         // 0- off, 1- on
         // First param is headlamps (white), second is RGB LED
-        pixy.setLamp((byte) 0, (byte) 1);
+        // pixy.setLamp((byte) 0, (byte) 1);
     }
   
     public Block getBiggestObject() {
@@ -93,6 +97,10 @@ public class PixyCam extends SubsystemBase {
         }
         
         return biggest;
+    }
+
+    public Command printCommand(){
+        return new RepeatCommand( new RunCommand(() -> System.out.println(this.getBlocksOfType(2).toString()), this));
     }
 
     

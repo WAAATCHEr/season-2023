@@ -21,7 +21,7 @@ public class TwoJoyStickDriverMap extends DriverMap {
     var rot = controller.getAxis(Axis.AXIS_RIGHT_X) * RobotMap.DriveMap.MAX_ANGULAR_VELOCITY * 0.1;
 
     var swerve = Swerve.getInstance();
-    return ChassisSpeeds.fromFieldRelativeSpeeds(-x, -y, -rot, swerve.getYaw());
+    return ChassisSpeeds.fromFieldRelativeSpeeds(-y, -x, -rot, swerve.getYaw());
   }
 
   @Override
