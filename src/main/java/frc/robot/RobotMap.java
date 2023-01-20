@@ -31,6 +31,9 @@ public class RobotMap {
     /* PixyCam Constants */
     public static final double PIXYCAM_ROTATION_IN_DEGREES = 0.002 * 0.2; //TODO: Tune constant
     public static final double PIXYCAM_RESOLUTION = 1296;
+    public static final double PIXYCAM_PID_POSITION_TOLERANCE = PIXYCAM_RESOLUTION / 10;
+    public static final double PIXYCAM_PID_VELOCITY_TOLERANCE = 25;
+
     /*
      * Swerve Kinematics
      * No need to ever change this unless you are not doing a traditional
