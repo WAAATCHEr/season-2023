@@ -19,6 +19,7 @@ import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.trajectory.Trajectory;
+import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -40,6 +41,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.function.Supplier;
 
+
+
 public class Swerve extends SubsystemBase {
   private static Swerve instance;
 
@@ -53,11 +56,12 @@ public class Swerve extends SubsystemBase {
   private SwerveModule[] modules;
   private WPI_Pigeon2 gyro;
 
-  // Camera
+  //Camera
   private Vision vision;
   private PixyCam pixyCam;
+  PIDController speedController = new PIDController(0.0001, 0, 0);
 
-  // Swerve Pose Estimator
+  //Swerve Pose Estimator
   private SwerveDrivePoseEstimator poseEstimator;
 
   private Swerve() {
@@ -67,7 +71,7 @@ public class Swerve extends SubsystemBase {
 
     vision = Vision.getInstance();
     pixyCam = PixyCam.getInstance();
-
+    
     modules = new SwerveModule[] {
         new SwerveModule(0, DriveMap.FrontLeft.CONSTANTS),
         new SwerveModule(1, DriveMap.FrontRight.CONSTANTS),
@@ -95,79 +99,105 @@ public class Swerve extends SubsystemBase {
   private List<Boolean> lastTenFrames = new ArrayList<>();
 
   public Command AlignWithGameObject() {
-    final PIDController speedController = new PIDController(0.1, 0.0, 0);
-    speedController.setTolerance(RobotMap.DriveMap.PIXYCAM_PID_POSITION_TOLERANCE,
-        RobotMap.DriveMap.PIXYCAM_PID_VELOCITY_TOLERANCE);
+    PIDController speedController2 = new PIDController(0.0001, 0, 0);
+    speedController2.setTolerance(RobotMap.DriveMap.PIXYCAM_PID_POSITION_TOLERANCE, RobotMap.DriveMap.PIXYCAM_PID_VELOCITY_TOLERANCE);
     return new FunctionalCommand(
         () -> System.out.println("Initialized"),
         () -> {
           var cones = pixyCam.getBlocksOfType(2);
           var cubes = pixyCam.getBlocksOfType(1);
           Block biggestCone = null, biggestCube = null;
+          
 
-          if (!cones.isEmpty()) {
+          if(!cones.isEmpty()) {
             biggestCone = pixyCam.getLargestBlock(cones);
             pixyCam.setBiggestObject(biggestCone);
           }
 
-          if (!cubes.isEmpty()) {
+          if(!cubes.isEmpty()) {
             biggestCube = pixyCam.getLargestBlock(cubes);
             pixyCam.setBiggestObject(biggestCube);
           }
-
-          if (!cubes.isEmpty() && !cones.isEmpty()) {
-            if ((biggestCone.getWidth() * biggestCone.getHeight()) >= (biggestCube.getWidth()
-                * biggestCube.getHeight())) {
+          
+          if(!cubes.isEmpty() && !cones.isEmpty()) {
+            if ((biggestCone.getWidth() * biggestCone.getHeight()) >= (biggestCube.getWidth() * biggestCube.getHeight())) {
               pixyCam.setBiggestObject(biggestCone);
             } else {
               pixyCam.setBiggestObject(biggestCube);
             }
           }
-          if (cubes.isEmpty() && cones.isEmpty())
-            return;
+          if(cubes.isEmpty() && cones.isEmpty()) return;
 
-          ChassisSpeeds newSpeed = new ChassisSpeeds(0.0,
-              0.0,
-              speedController.calculate(pixyCam.getBiggestObject().getX(), RobotMap.DriveMap.PIXYCAM_RESOLUTION / 2));
+          //SmartDashboard.putData("PixyCam PID Controller", speedController);
+          //SmartDashboard.putNumber("error", speedController.getPositionError());
+          
+          ChassisSpeeds newSpeed = 
+              new ChassisSpeeds(0.0,
+                                0.0,
+                                speedController2.calculate(pixyCam.getBiggestObject().getX(), RobotMap.DriveMap.PIXYCAM_RESOLUTION/2));
+
           drive(newSpeed, false);
         },
         interrupted -> {
-          System.out.println("Interrupted");
+          System.out.println("End");
+          System.out.println(interrupted);
           ChassisSpeeds endSpeed = new ChassisSpeeds(0.0, 0.0, 0.0);
           drive(endSpeed, false);
         },
         () -> {
-          if (speedController.atSetpoint()) {
+          if(speedController2.atSetpoint()){
+            System.out.println("At Setpoint");
             return true;
           }
-
           boolean anythingDetected = !pixyCam.getBlocksOfType(1).isEmpty() || !pixyCam.getBlocksOfType(2).isEmpty();
           lastTenFrames.add(anythingDetected);
-          if (lastTenFrames.size() > 10)
-            lastTenFrames.remove(0);
-
+          if(lastTenFrames.size() > 10) lastTenFrames.remove(0);
+         
           boolean noBlocks = true;
-          for (boolean detected : lastTenFrames) {
-            if (detected)
-              noBlocks = false;
+          for(boolean detected: lastTenFrames) {
+            if(detected) noBlocks = false;
           }
-          if (noBlocks)
-            return true;
-          /*
-           * if (Math.abs((pixyCam.getBiggestObject().getX()+pixyCam.getBiggestObject().
-           * getWidth()/2) - RobotMap.DriveMap.PIXYCAM_RESOLUTION / 2) <= 10) {
-           * System.out.println("FINISHED! in middle.");
-           * return true;
-           * }
-           */
+          if(noBlocks) return true;
+
+          
           return false;
         },
         this, pixyCam
 
-    );
+  );
 
   }
+  public void camData(){
+    speedController.setTolerance(RobotMap.DriveMap.PIXYCAM_PID_POSITION_TOLERANCE, RobotMap.DriveMap.PIXYCAM_PID_VELOCITY_TOLERANCE);
+    var cones = pixyCam.getBlocksOfType(2);
+    var cubes = pixyCam.getBlocksOfType(1);
+    Block biggestCone = null, biggestCube = null;
 
+    if(!cones.isEmpty()) {
+      biggestCone = pixyCam.getLargestBlock(cones);
+      pixyCam.setBiggestObject(biggestCone);
+    }
+
+    if(!cubes.isEmpty()) {
+      biggestCube = pixyCam.getLargestBlock(cubes);
+      pixyCam.setBiggestObject(biggestCube);
+    }
+    
+    if(!cubes.isEmpty() && !cones.isEmpty()) {
+      if ((biggestCone.getWidth() * biggestCone.getHeight()) >= (biggestCube.getWidth() * biggestCube.getHeight())) {
+        pixyCam.setBiggestObject(biggestCone);
+      } else {
+        pixyCam.setBiggestObject(biggestCube);
+      }
+    }
+    if(cubes.isEmpty() && cones.isEmpty()) return;
+    var angularSpeed = speedController.calculate(pixyCam.getBiggestObject().getX(), RobotMap.DriveMap.PIXYCAM_RESOLUTION/2);
+    SmartDashboard.putNumber("Angular speed", angularSpeed);
+    SmartDashboard.putData("PixyCam PID Controller", speedController);
+    SmartDashboard.putNumber("error", speedController.getPositionError());
+    SmartDashboard.putNumber("PixyCam X Coord", pixyCam.getBiggestObject().getX());
+
+  }
   /* Used by SwerveControllerCommand in Auto */
   public void setModuleStates(SwerveModuleState[] desiredStates) {
     SwerveDriveKinematics.desaturateWheelSpeeds(desiredStates, DriveMap.MAX_VELOCITY);
@@ -253,14 +283,14 @@ public class Swerve extends SubsystemBase {
     }
   }
 
-  public Pose2d getCameraPosition() { // In here because poseEstimator is a swerveDrivePoseEstimator
+  public Pose2d getCameraPosition() { //In here because poseEstimator is a swerveDrivePoseEstimator
     return poseEstimator.getEstimatedPosition();
   }
 
   @Override
   public void periodic() {
     odometry.update(getYaw(), getModulePositions());
-    // updateCameraOdometry();
+    //updateCameraOdometry();
 
     for (SwerveModule mod : modules) {
       SmartDashboard.putNumber(
@@ -270,5 +300,6 @@ public class Swerve extends SubsystemBase {
       SmartDashboard.putNumber(
           "Mod " + mod.moduleNumber + " Velocity", mod.getState().speedMetersPerSecond);
     }
+    //camData();
   }
 }

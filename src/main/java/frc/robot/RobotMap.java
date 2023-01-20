@@ -30,9 +30,9 @@ public class RobotMap {
 
     /* PixyCam Constants */
     public static final double PIXYCAM_ROTATION_IN_DEGREES = 0.002 * 0.2; //TODO: Tune constant
-    public static final double PIXYCAM_RESOLUTION = 1296;
-    public static final double PIXYCAM_PID_POSITION_TOLERANCE = PIXYCAM_RESOLUTION / 10;
-    public static final double PIXYCAM_PID_VELOCITY_TOLERANCE = 25;
+    public static final double PIXYCAM_RESOLUTION = 320;
+    public static final double PIXYCAM_PID_POSITION_TOLERANCE = 2;
+    public static final double PIXYCAM_PID_VELOCITY_TOLERANCE = 50;
 
     /*
      * Swerve Kinematics
@@ -123,7 +123,7 @@ public class RobotMap {
       public static final int DRIVE_ID = 1;
       public static final int ROTATOR_ID = 2;
       public static final int ENCODER_ID = 10;
-      public static final Rotation2d OFFSET = Rotation2d.fromDegrees(72.0 + 45.0 + 90);
+      public static final Rotation2d OFFSET = Rotation2d.fromDegrees(144 + 90);
       public static final SwerveModuleConstants CONSTANTS =
           new SwerveModuleConstants(DRIVE_ID, ROTATOR_ID, ENCODER_ID, OFFSET);
     }
