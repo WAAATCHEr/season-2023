@@ -69,8 +69,8 @@ public class Swerve extends SubsystemBase {
     gyro.configFactoryDefault();
     zeroGyro();
 
-    vision = Vision.getInstance();
-    pixyCam = PixyCam.getInstance();
+    // vision = Vision.getInstance();
+    // pixyCam = PixyCam.getInstance();
     
     modules = new SwerveModule[] {
         new SwerveModule(0, DriveMap.FrontLeft.CONSTANTS),
@@ -86,6 +86,8 @@ public class Swerve extends SubsystemBase {
   public void drive(ChassisSpeeds speeds, boolean isOpenLoop) {
     SwerveModuleState[] swerveModuleStates = DriveMap.KINEMATICS.toSwerveModuleStates(speeds);
     SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, DriveMap.MAX_VELOCITY);
+
+    
 
     for (SwerveModule mod : modules) {
       mod.setDesiredState(swerveModuleStates[mod.moduleNumber], isOpenLoop);
@@ -246,14 +248,16 @@ public class Swerve extends SubsystemBase {
     return followTrajectoryCommand(path, new HashMap<>(), isFirstPath);
   }
 
-  public SequentialCommandGroup followTrajectoryCommand(
-      String path, HashMap<String, Command> eventMap, boolean isFirstPath) {
-    PathPlannerTrajectory traj = PathPlanner.loadPath(path, 1, 1);
+  public SequentialCommandGroup followTrajectoryCommand(String path, HashMap<String, Command> eventMap, boolean isFirstPath) {
+    System.out.println(path);
+    // return new SequentialCommandGroup();
+    PathPlannerTrajectory traj = PathPlanner.loadPath(path, 0.5, 0.1);
+    // // System.out.println(traj.)P
 
     // Create PIDControllers for each movement (and set default values)
-    PIDController xPID = new PIDController(0.1, 0.0, 0.0);
-    PIDController yPID = new PIDController(0.1, 0.0, 0.0);
-    PIDController thetaPID = new PIDController(0.1, 0.0, 0.0);
+    PIDController xPID = new PIDController(5.0, 0.0, 0.0);
+    PIDController yPID = new PIDController(5.0, 0.0, 0.0);
+    PIDController thetaPID = new PIDController(1.0, 0.0, 0.0);
 
     // Create PID tuning widgets in Glass (not for use in competition)
     SmartDashboard.putData("x-input PID Controller", xPID);
@@ -268,9 +272,10 @@ public class Swerve extends SubsystemBase {
                 odometry.resetPosition(
                     getYaw(), getModulePositions(), traj.getInitialHolonomicPose());
               }
+              System.out.println("we be reseting");
             }),
         new PPSwerveControllerCommand(
-            traj, this::getPose, xPID, yPID, thetaPID, speeds -> drive(speeds, false), this));
+            traj, this::getPose, xPID, yPID, thetaPID, speeds -> drive(speeds, true), this));//KEEP IT OPEN LOOP
   }
 
   public void updateCameraOdometry() {

@@ -1,6 +1,8 @@
 package frc.robot.layout;
 
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj.Filesystem;
+import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.subsystems.Swerve;
@@ -27,8 +29,10 @@ public abstract class DriverMap extends CommandMap {
 
     swerve.setDefaultCommand(swerve.driveCommand(this::getChassisSpeeds));
 
+    getPathPlanningTestButton().onTrue(swerve.followTrajectoryCommand("One Metre", true));
+
     //pixyCam.setDefaultCommand(pixyCam.printCommand());
     
-    getPixyCamDistanceButton().onTrue(swerve.AlignWithGameObject());
+    // getPixyCamDistanceButton().onTrue(swerve.AlignWithGameObject());
   }
 }
