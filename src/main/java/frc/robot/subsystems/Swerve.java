@@ -57,7 +57,7 @@ public class Swerve extends SubsystemBase {
   private WPI_Pigeon2 gyro;
 
   //Camera
-  private Vision vision;
+  // Vision vision;
   private PixyCam pixyCam;
   PIDController speedController = new PIDController(0.0001, 0, 0);
 
@@ -69,7 +69,7 @@ public class Swerve extends SubsystemBase {
     gyro.configFactoryDefault();
     zeroGyro();
 
-    vision = Vision.getInstance();
+    //vision = Vision.getInstance();
     pixyCam = PixyCam.getInstance();
     
     modules = new SwerveModule[] {
@@ -102,8 +102,8 @@ public class Swerve extends SubsystemBase {
     PIDController speedController2 = new PIDController(0.0001, 0, 0);
     speedController2.setTolerance(RobotMap.DriveMap.PIXYCAM_PID_POSITION_TOLERANCE, RobotMap.DriveMap.PIXYCAM_PID_VELOCITY_TOLERANCE);
     return new FunctionalCommand(
-        () -> System.out.println("Initialized"),
         () -> {
+          pixyCam.setObjectIndex(-1);
           var cones = pixyCam.getBlocksOfType(2);
           var cubes = pixyCam.getBlocksOfType(1);
           Block biggestCone = null, biggestCube = null;
@@ -127,7 +127,15 @@ public class Swerve extends SubsystemBase {
             }
           }
           if(cubes.isEmpty() && cones.isEmpty()) return;
-
+          pixyCam.setObjectIndex(pixyCam.getBiggestObject().getIndex());
+        },
+        () -> {
+          
+          if(pixyCam.getObjectIndex() != -1){
+            pixyCam.setBiggestObject(pixyCam.getBlockByIndex(pixyCam.getObjectIndex()));
+          } else {
+            return;
+          }
           //SmartDashboard.putData("PixyCam PID Controller", speedController);
           //SmartDashboard.putNumber("error", speedController.getPositionError());
           
@@ -145,9 +153,12 @@ public class Swerve extends SubsystemBase {
           drive(endSpeed, false);
         },
         () -> {
+          if(pixyCam.getObjectIndex() == -1){
+            return true;
+          }
           if(speedController2.atSetpoint()){
             System.out.println("At Setpoint");
-            return true;
+            //return true;
           }
           boolean anythingDetected = !pixyCam.getBlocksOfType(1).isEmpty() || !pixyCam.getBlocksOfType(2).isEmpty();
           lastTenFrames.add(anythingDetected);
@@ -273,6 +284,7 @@ public class Swerve extends SubsystemBase {
             traj, this::getPose, xPID, yPID, thetaPID, speeds -> drive(speeds, false), this));
   }
 
+  /*
   public void updateCameraOdometry() {
     poseEstimator.update(gyro.getRotation2d(), getModulePositions());
     Pair<Pose2d, Double> result = vision.getEstimatedGlobalPose(poseEstimator.getEstimatedPosition());
@@ -281,7 +293,7 @@ public class Swerve extends SubsystemBase {
     if (camPose != null) {
       poseEstimator.addVisionMeasurement(camPose, camPoseObsTime);
     }
-  }
+  } */
 
   public Pose2d getCameraPosition() { //In here because poseEstimator is a swerveDrivePoseEstimator
     return poseEstimator.getEstimatedPosition();

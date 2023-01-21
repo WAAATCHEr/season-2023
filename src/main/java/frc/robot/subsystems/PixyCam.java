@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RepeatCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.RobotMap;
 import pixy2api.Pixy2;
 import pixy2api.Pixy2CCC;
 import pixy2api.Pixy2Video;
@@ -42,6 +43,7 @@ public class PixyCam extends SubsystemBase {
     double[] avg = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 
     private Block biggestObject = null;
+    private int objectIndex = -1;
 
     private PixyCam() {
         pixy = Pixy2.createInstance(new SPILink());
@@ -58,9 +60,18 @@ public class PixyCam extends SubsystemBase {
         return biggestObject;
     }
 
-    public Block setBiggestObject(Block b) {
+    public void setBiggestObject(Block b) {
         biggestObject = b;
-        return biggestObject;
+        // return biggestObject;
+    }
+
+    public int getObjectIndex(){
+        return objectIndex;
+    }
+
+    public void setObjectIndex(int oI){
+        objectIndex = oI;
+        // return objectIndex;
     }
 
     /**
@@ -75,6 +86,14 @@ public class PixyCam extends SubsystemBase {
         }
 
         return output;
+    }
+
+    public Block getBlockByIndex(int index) {
+        var blocks = getBlocksOfType(biggestObject.getSignature());
+        for(Block b: blocks) {
+            if(b.getIndex() == index) return b;
+        }
+        return pixyCCC.getBlocks().get(0);
     }
 
     @Override
