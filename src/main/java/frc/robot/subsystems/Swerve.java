@@ -293,7 +293,10 @@ public class Swerve extends SubsystemBase {
   public void updateCameraOdometry() {
     poseEstimator.update(gyro.getRotation2d(), getModulePositions());
     Pair<Pose2d, Double> result = vision.getEstimatedGlobalPose(poseEstimator.getEstimatedPosition());
-    System.out.println(result.getFirst());
+    
+    SmartDashboard.putNumber("Relative Pose X", result.getFirst().getX());
+    SmartDashboard.putNumber("Relative Pose Y", result.getFirst().getY());
+
     var camPose = result.getFirst();
     var camPoseObsTime = result.getSecond();
     if (camPose != null) {
