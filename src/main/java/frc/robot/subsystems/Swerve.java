@@ -57,7 +57,7 @@ public class Swerve extends SubsystemBase {
   private WPI_Pigeon2 gyro;
 
   //Camera
-  // Vision vision;
+  Vision vision;
   private PixyCam pixyCam;
   PIDController speedController = new PIDController(0.0001, 0, 0);
 
@@ -69,7 +69,7 @@ public class Swerve extends SubsystemBase {
     gyro.configFactoryDefault();
     zeroGyro();
 
-    //vision = Vision.getInstance();
+    vision = Vision.getInstance();
     pixyCam = PixyCam.getInstance();
     
     modules = new SwerveModule[] {
@@ -158,7 +158,7 @@ public class Swerve extends SubsystemBase {
           }
           if(speedController2.atSetpoint()){
             System.out.println("At Setpoint");
-            //return true;
+            return true;
           }
           boolean anythingDetected = !pixyCam.getBlocksOfType(1).isEmpty() || !pixyCam.getBlocksOfType(2).isEmpty();
           lastTenFrames.add(anythingDetected);
@@ -284,16 +284,18 @@ public class Swerve extends SubsystemBase {
             traj, this::getPose, xPID, yPID, thetaPID, speeds -> drive(speeds, false), this));
   }
 
-  /*
+  
   public void updateCameraOdometry() {
     poseEstimator.update(gyro.getRotation2d(), getModulePositions());
     Pair<Pose2d, Double> result = vision.getEstimatedGlobalPose(poseEstimator.getEstimatedPosition());
+    System.out.println(result.getFirst());
     var camPose = result.getFirst();
     var camPoseObsTime = result.getSecond();
     if (camPose != null) {
       poseEstimator.addVisionMeasurement(camPose, camPoseObsTime);
     }
-  } */
+
+  } 
 
   public Pose2d getCameraPosition() { //In here because poseEstimator is a swerveDrivePoseEstimator
     return poseEstimator.getEstimatedPosition();
@@ -302,7 +304,7 @@ public class Swerve extends SubsystemBase {
   @Override
   public void periodic() {
     odometry.update(getYaw(), getModulePositions());
-    //updateCameraOdometry();
+    updateCameraOdometry();
 
     for (SwerveModule mod : modules) {
       SmartDashboard.putNumber(

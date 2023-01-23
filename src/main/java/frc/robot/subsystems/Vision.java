@@ -35,7 +35,7 @@ public class Vision extends SubsystemBase {
   }
 
   // Camera
-  private PhotonCamera vision;
+  private PhotonCamera vision, vision2;
 
   // Robot Pose Estimator
   private RobotPoseEstimator robotPoseEstimator;
@@ -53,7 +53,7 @@ public class Vision extends SubsystemBase {
     // Tags 4 and 5 is at Double Substations
     // Tags 1, 2, and 3 is red alliance
     // Tags, 6, 7, and 8 is blue alliance
-    Path aprilTags = Filesystem.getDeployDirectory().toPath().resolve("AprilTags.json");
+    Path aprilTags = Filesystem.getDeployDirectory().toPath().resolve("AprilTags/AprilTags.json");
     try {
       atfl = new AprilTagFieldLayout(aprilTags);
     } catch (IOException e) {
@@ -78,17 +78,26 @@ public class Vision extends SubsystemBase {
      * Choose the Pose which is the average of all the poses from each tag.
      */
     // SETTING UP CAMERAS
-    vision = new PhotonCamera(COMPUTER_VISION);
+    vision = new PhotonCamera(CAMERA_ONE);
+    vision2 = new PhotonCamera(CAMERA_TWO);
 
     var camList = new ArrayList<Pair<PhotonCamera, Transform3d>>();
     camList.add(new Pair<PhotonCamera, Transform3d>(vision, RobotMap.CameraMap.ROBOT_TO_CAM));
+    camList.add(new Pair<PhotonCamera, Transform3d>(vision2, RobotMap.CameraMap.ROBOT_TO_CAM_TWO));
     robotPoseEstimator = new RobotPoseEstimator(atfl, PoseStrategy.AVERAGE_BEST_TARGETS, camList); // TODO Test
                                                                                                    // different poses
   }
 
   private void updateResult() {
     if (vision.getLatestResult().hasTargets())
-      latestTarget = vision.getLatestResult().getBestTarget();
+      latestTarget =
+      
+      
+      
+      
+      
+      
+       vision.getLatestResult().getBestTarget();
   }
 
   /*
@@ -118,6 +127,7 @@ public class Vision extends SubsystemBase {
   @Override
   public void periodic() {
     updateResult();
+  
   }
 
   /**
