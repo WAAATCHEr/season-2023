@@ -69,7 +69,7 @@ public class Swerve extends SubsystemBase {
     gyro.configFactoryDefault();
     zeroGyro();
 
-    // vision = Vision.getInstance();
+    vision = Vision.getInstance();
     // pixyCam = PixyCam.getInstance();
     
     modules = new SwerveModule[] {
@@ -293,15 +293,16 @@ public class Swerve extends SubsystemBase {
   public void updateCameraOdometry() {
     poseEstimator.update(gyro.getRotation2d(), getModulePositions());
     Pair<Pose2d, Double> result = vision.getEstimatedGlobalPose(poseEstimator.getEstimatedPosition());
-    
-    SmartDashboard.putNumber("Relative Pose X", result.getFirst().getX());
-    SmartDashboard.putNumber("Relative Pose Y", result.getFirst().getY());
 
+    /* 
     var camPose = result.getFirst();
     var camPoseObsTime = result.getSecond();
     if (camPose != null) {
       poseEstimator.addVisionMeasurement(camPose, camPoseObsTime);
-    }
+      
+      // SmartDashboard.putNumber("Relative Pose X", result.getFirst().getX());
+      // SmartDashboard.putNumber("Relative Pose Y", result.getFirst().getY());
+    } */
 
   } 
 
@@ -313,7 +314,6 @@ public class Swerve extends SubsystemBase {
   public void periodic() {
     odometry.update(getYaw(), getModulePositions());
     updateCameraOdometry();
-
     for (SwerveModule mod : modules) {
       SmartDashboard.putNumber(
           "Mod " + mod.moduleNumber + " Cancoder", mod.getCanCoder().getDegrees());
