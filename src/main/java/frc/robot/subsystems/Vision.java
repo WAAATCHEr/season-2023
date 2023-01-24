@@ -17,13 +17,15 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RobotMap;
+
+import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonUtils;
 import org.photonvision.targeting.PhotonTrackedTarget;
-import org.photonvision.RobotPoseEstimator;
-import org.photonvision.RobotPoseEstimator.PoseStrategy;
 import edu.wpi.first.apriltag.AprilTag;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
+import org.photonvision.PhotonPoseEstimator;
+import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 
 public class Vision extends SubsystemBase {
 
@@ -39,8 +41,14 @@ public class Vision extends SubsystemBase {
   private PhotonCamera vision, vision2;
 
   // Robot Pose Estimator
-  private RobotPoseEstimator robotPoseEstimator;
+  private PhotonPoseEstimator robotPoseEstimator, robotPoseEstimator2;
 
+  public enum CameraNumber {
+    FIRST_CAM,
+    SECOND_CAM;
+  }
+
+  CameraNumber cameraNumber;
   // Target information
   private PhotonTrackedTarget latestTarget;
 
@@ -48,7 +56,6 @@ public class Vision extends SubsystemBase {
   AprilTagFieldLayout atfl;
 
   private Vision() {
-
     // SETTING UP APRILTAGS
 
     // Tags 4 and 5 is at Double Substations
@@ -79,26 +86,30 @@ public class Vision extends SubsystemBase {
      * Choose the Pose which is the average of all the poses from each tag.
      */
     // SETTING UP CAMERAS
-    //vision = new PhotonCamera(CAMERA_ONE);
+    // vision = new PhotonCamera(CAMERA_ONE);
     vision2 = new PhotonCamera(CAMERA_TWO);
 
-    var camList = new ArrayList<Pair<PhotonCamera, Transform3d>>();
-    // camList.add(new Pair<PhotonCamera, Transform3d>(vision, RobotMap.CameraMap.ROBOT_TO_CAM));
-    camList.add(new Pair<PhotonCamera, Transform3d>(vision2, RobotMap.CameraMap.ROBOT_TO_CAM_TWO));
-    robotPoseEstimator = new RobotPoseEstimator(atfl, PoseStrategy.LOWEST_AMBIGUITY, camList); // TODO Test
-                                                                                                   // different poses
+    // robotPoseEstimator = new PhotonPoseEstimator(atfl,
+    // PoseStrategy.LOWEST_AMBIGUITY, vision, RobotMap.CameraMap.ROBOT_TO_CAM);
+    robotPoseEstimator2 = new PhotonPoseEstimator(atfl, PoseStrategy.LOWEST_AMBIGUITY, vision2,
+        RobotMap.CameraMap.ROBOT_TO_CAM_TWO); //                                              
+                                                                                                                                            
   }
 
   private void updateResult() {
     if (vision.getLatestResult().hasTargets())
-      latestTarget =
-      
-      
-      
-      
-      
-      
-       vision.getLatestResult().getBestTarget();
+      latestTarget = vision.getLatestResult().getBestTarget();
+  }
+
+  public PhotonPoseEstimator getPoseEstimator(CameraNumber camNum) {
+    switch (camNum) {
+      case FIRST_CAM:
+        return robotPoseEstimator;
+      case SECOND_CAM:
+        return robotPoseEstimator2;
+      default:
+        return robotPoseEstimator;
+    }
   }
 
   /*
@@ -127,7 +138,7 @@ public class Vision extends SubsystemBase {
 
   @Override
   public void periodic() {
-    //updateResult();
+    // updateResult();
   }
 
   /**
@@ -137,20 +148,10 @@ public class Vision extends SubsystemBase {
    *         of the observation. Assumes a planar field and the robot is always
    *         firmly on the ground
    */
-  public Pair<Pose2d, Double> getEstimatedGlobalPose(Pose2d prevEstimatedRobotPose) {
-    robotPoseEstimator.setReferencePose(prevEstimatedRobotPose);
-
-    double currentTime = Timer.getFPGATimestamp();
-    Optional<Pair<Pose3d, Double>> result = robotPoseEstimator.update();
-    
-
-    if (result.isPresent()) {
-      return new Pair<Pose2d, Double>(
-          result.get().getFirst().toPose2d(), currentTime - result.get().getSecond());
-    } else {
-      return new Pair<Pose2d, Double>(null, 0.0);
-    }
+  public Optional<EstimatedRobotPose> getEstimatedRobotPose(Pose2d prevEstimatedRobotPose,
+      PhotonPoseEstimator poseEstimator) {
+    poseEstimator.setReferencePose(prevEstimatedRobotPose);
+    return poseEstimator.update();
   }
-
 
 }
