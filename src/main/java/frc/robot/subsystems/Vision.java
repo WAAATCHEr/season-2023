@@ -14,6 +14,7 @@ import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RobotMap;
 import org.photonvision.PhotonCamera;
@@ -78,13 +79,13 @@ public class Vision extends SubsystemBase {
      * Choose the Pose which is the average of all the poses from each tag.
      */
     // SETTING UP CAMERAS
-    vision = new PhotonCamera(CAMERA_ONE);
+    //vision = new PhotonCamera(CAMERA_ONE);
     vision2 = new PhotonCamera(CAMERA_TWO);
 
     var camList = new ArrayList<Pair<PhotonCamera, Transform3d>>();
-    camList.add(new Pair<PhotonCamera, Transform3d>(vision, RobotMap.CameraMap.ROBOT_TO_CAM));
+    // camList.add(new Pair<PhotonCamera, Transform3d>(vision, RobotMap.CameraMap.ROBOT_TO_CAM));
     camList.add(new Pair<PhotonCamera, Transform3d>(vision2, RobotMap.CameraMap.ROBOT_TO_CAM_TWO));
-    robotPoseEstimator = new RobotPoseEstimator(atfl, PoseStrategy.AVERAGE_BEST_TARGETS, camList); // TODO Test
+    robotPoseEstimator = new RobotPoseEstimator(atfl, PoseStrategy.LOWEST_AMBIGUITY, camList); // TODO Test
                                                                                                    // different poses
   }
 
@@ -126,8 +127,7 @@ public class Vision extends SubsystemBase {
 
   @Override
   public void periodic() {
-    updateResult();
-  
+    //updateResult();
   }
 
   /**
@@ -142,6 +142,8 @@ public class Vision extends SubsystemBase {
 
     double currentTime = Timer.getFPGATimestamp();
     Optional<Pair<Pose3d, Double>> result = robotPoseEstimator.update();
+    
+
     if (result.isPresent()) {
       return new Pair<Pose2d, Double>(
           result.get().getFirst().toPose2d(), currentTime - result.get().getSecond());
