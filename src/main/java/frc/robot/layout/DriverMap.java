@@ -23,11 +23,15 @@ public abstract class DriverMap extends CommandMap {
 
   abstract JoystickButton getPixyCamDistanceButton();
 
+  abstract JoystickButton getAlingmentButton();
+
   @Override
   public void registerCommands() {
     var swerve = Swerve.getInstance();
 
     swerve.setDefaultCommand(swerve.driveCommand(this::getChassisSpeeds));
+
+    getAlingmentButton().onTrue(swerve.ChargingStationCommand());
 
     getPathPlanningTestButton().onTrue(swerve.followTrajectoryCommand("One Metre", true));
 

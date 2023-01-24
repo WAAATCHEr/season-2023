@@ -324,4 +324,57 @@ public class Swerve extends SubsystemBase {
     }
     //camData();
   }
+  public SequentialCommandGroup ChargingStationCommand(){
+    final ChassisSpeeds initialChassisSpeeds = new ChassisSpeeds(0.05, 0, 0); 
+    final ChassisSpeeds finalChassisSpeeds = new ChassisSpeeds(-0.5, 0, 0); 
+    final Rotation2d initialPosition = modules[0].getCanCoder();
+
+    return new SequentialCommandGroup(
+      new FunctionalCommand(
+      () -> {
+
+      },
+      () -> { 
+        this.drive(initialChassisSpeeds, true);
+      },
+      interrupted -> {
+
+      },
+      () -> {
+        if(gyro.getPitch() == 0){
+          return true;
+        }
+        else{
+          return false;
+        }
+      },
+      this
+    ),
+
+    new FunctionalCommand(
+      () -> {
+
+      },
+      () -> {
+        this.drive(finalChassisSpeeds, true);
+      },
+      interrupted -> {
+
+      }, 
+      () -> {
+        if(modules[0].getCanCoder() == initialPosition)
+        {
+          return true;
+        }
+        else{
+          return false;
+        }
+      },
+      this
+    )
+    );
+
+
+  }
+
 }

@@ -34,6 +34,11 @@ public class TwoJoyStickDriverMap extends DriverMap {
     return controller.getButton(Button.BUTTON_B);
   }
 
+  @Override 
+  public JoystickButton getAlingmentButton() {
+    return controller.getButton(Button.BUTTON_Y);
+  }
+
   @Override
   public void registerCommands() {
     super.registerCommands();
