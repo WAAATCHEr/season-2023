@@ -33,12 +33,13 @@ public abstract class DriverMap extends CommandMap {
     var swerve = Swerve.getInstance();
     HashMap<String, Command> oneMeterEventMap = new HashMap<String, Command>();
     oneMeterEventMap.put("I mean it's alright like", new PrintCommand("I'm here"));
+    oneMeterEventMap.put("finishedPath", new PrintCommand("This works"));
     
     swerve.setDefaultCommand(swerve.driveCommand(this::getChassisSpeeds));
 
     getAlingmentButton().onTrue(swerve.ChargingStationCommand());
 
-    getPathPlanningTestButton().onTrue(swerve.followTrajectoryCommand("One Metre", oneMeterEventMap, true));
+    getPathPlanningTestButton().onTrue(swerve.followTrajectoryCommand("Charging Station", oneMeterEventMap, true));
 
     // pixyCam.setDefaultCommand(pixyCam.printCommand());
 
