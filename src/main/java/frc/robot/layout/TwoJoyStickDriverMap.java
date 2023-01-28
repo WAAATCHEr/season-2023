@@ -40,6 +40,10 @@ public class TwoJoyStickDriverMap extends DriverMap {
   }
 
   @Override
+  public JoystickButton getAprilTagAlignmentButton() {
+    return controller.getButton(Button.BUTTON_A);
+  }
+  @Override
   public void registerCommands() {
     super.registerCommands();
   }

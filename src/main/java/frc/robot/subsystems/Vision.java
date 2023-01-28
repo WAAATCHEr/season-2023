@@ -38,7 +38,7 @@ public class Vision extends SubsystemBase {
   }
 
   // Camera
-  private PhotonCamera vision, vision2;
+  private PhotonCamera cam, cam2;
 
   // Robot Pose Estimator
   private PhotonPoseEstimator robotPoseEstimator, robotPoseEstimator2;
@@ -87,18 +87,18 @@ public class Vision extends SubsystemBase {
      */
     // SETTING UP CAMERAS
     // vision = new PhotonCamera(CAMERA_ONE);
-    vision2 = new PhotonCamera(CAMERA_TWO);
+    cam2 = new PhotonCamera(CAMERA_TWO);
 
     // robotPoseEstimator = new PhotonPoseEstimator(atfl,
     // PoseStrategy.LOWEST_AMBIGUITY, vision, RobotMap.CameraMap.ROBOT_TO_CAM);
-    robotPoseEstimator2 = new PhotonPoseEstimator(atfl, PoseStrategy.LOWEST_AMBIGUITY, vision2,
+    robotPoseEstimator2 = new PhotonPoseEstimator(atfl, PoseStrategy.LOWEST_AMBIGUITY, cam2,
         RobotMap.CameraMap.ROBOT_TO_CAM_TWO); //                                              
                                                                                                                                             
   }
 
-  private void updateResult() {
-    if (vision.getLatestResult().hasTargets())
-      latestTarget = vision.getLatestResult().getBestTarget();
+  public void updateResult() {
+    if (cam2.getLatestResult().hasTargets())
+      latestTarget = cam2.getLatestResult().getBestTarget();
   }
 
   public PhotonPoseEstimator getPoseEstimator(CameraNumber camNum) {
@@ -118,8 +118,8 @@ public class Vision extends SubsystemBase {
    * the drivetrain to be directly in line with the face of the
    * april tag (only have it look in the direction of the april tag)
    */
-  public double getAngle() {
-    return latestTarget.getYaw();
+  public PhotonTrackedTarget getLatestTarget() {
+    return latestTarget;
   }
 
   public double getRange() {

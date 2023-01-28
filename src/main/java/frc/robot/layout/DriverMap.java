@@ -28,6 +28,8 @@ public abstract class DriverMap extends CommandMap {
 
   abstract JoystickButton getAlingmentButton();
 
+  abstract JoystickButton getAprilTagAlignmentButton();
+
   @Override
   public void registerCommands() {
     var swerve = Swerve.getInstance();
@@ -39,6 +41,8 @@ public abstract class DriverMap extends CommandMap {
     getAlingmentButton().onTrue(swerve.ChargingStationCommand());
 
     getPathPlanningTestButton().onTrue(swerve.followTrajectoryCommand("One Metre", oneMeterEventMap, true));
+
+    getAprilTagAlignmentButton().onTrue(swerve.AlignWithAprilTag());
 
     // pixyCam.setDefaultCommand(pixyCam.printCommand());
 
