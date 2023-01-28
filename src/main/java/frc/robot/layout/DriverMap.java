@@ -1,7 +1,10 @@
 package frc.robot.layout;
 
+import java.util.HashMap;
+
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.Filesystem;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
@@ -28,15 +31,17 @@ public abstract class DriverMap extends CommandMap {
   @Override
   public void registerCommands() {
     var swerve = Swerve.getInstance();
-
+    HashMap<String, Command> oneMeterEventMap = new HashMap<String, Command>();
+    oneMeterEventMap.put("I mean it's alright like", new PrintCommand("I'm here"));
+    
     swerve.setDefaultCommand(swerve.driveCommand(this::getChassisSpeeds));
 
     getAlingmentButton().onTrue(swerve.ChargingStationCommand());
 
-    getPathPlanningTestButton().onTrue(swerve.followTrajectoryCommand("One Metre", true));
+    getPathPlanningTestButton().onTrue(swerve.followTrajectoryCommand("One Metre", oneMeterEventMap, true));
 
-    //pixyCam.setDefaultCommand(pixyCam.printCommand());
-    
+    // pixyCam.setDefaultCommand(pixyCam.printCommand());
+
     // getPixyCamDistanceButton().onTrue(swerve.AlignWithGameObject());
   }
 }
