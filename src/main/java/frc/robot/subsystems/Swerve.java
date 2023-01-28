@@ -12,15 +12,20 @@ import com.pathplanner.lib.commands.PPSwerveControllerCommand;
 
 import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.trajectory.Trajectory;
+import edu.wpi.first.math.trajectory.TrajectoryConfig;
+import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
@@ -48,6 +53,7 @@ import java.util.Optional;
 import java.util.function.Supplier;
 
 import org.photonvision.EstimatedRobotPose;
+import org.photonvision.targeting.PhotonTrackedTarget;
 
 public class Swerve extends SubsystemBase {
   private static Swerve instance;
@@ -151,7 +157,7 @@ public class Swerve extends SubsystemBase {
               0.0,
               speedController2.calculate(pixyCam.getBiggestObject().getX(), RobotMap.DriveMap.PIXYCAM_RESOLUTION / 2));
 
-          drive(newSpeed, false);
+          drive(newSpeed, true);
         },
         interrupted -> {
           System.out.println("End");
@@ -188,6 +194,41 @@ public class Swerve extends SubsystemBase {
 
   }
 
+  // public Command AlignWithAprilTag() {
+  //   //Create a new config
+  //   TrajectoryConfig config = new TrajectoryConfig(
+  //     RobotMap.DriveMap.MAX_VELOCITY,
+  //     RobotMap.DriveMap.MAX_ACCELERATION).setKinematics(RobotMap.DriveMap.KINEMATICS);
+
+  //   PIDController xPID = new PIDController(0.1, 0, 0);
+  //   PIDController yPID = new PIDController(0.1, 0, 0);
+  //   ProfiledPIDController thetaPID = new ProfiledPIDController(0.1, 0, 0, null);
+
+    
+  //  PhotonTrackedTarget target = vision.getLatestTarget();
+    
+  //  Pose2d updatedPose = transform3dToPose2d(target.getBestCameraToTarget());
+
+  //   Trajectory traj = TrajectoryGenerator.generateTrajectory(odometry.getPoseMeters(),
+  //       null, updatedPose, config);
+  //   return new SwerveControllerCommand(
+  //       traj, this::getPose, RobotMap.DriveMap.KINEMATICS, xPID, yPID, thetaPID, this::setModuleStates, this);
+  // }
+  
+  public Pose2d transform3dToPose2d(Transform3d targetPosition) {
+    
+    Translation2d targetTranslation = new Translation2d(targetPosition.getTranslation().getX(),
+        targetPosition.getTranslation().getY());
+
+    Rotation2d targetRotation = new Rotation2d(targetPosition.getRotation().getAngle());
+
+    Pose2d targetPose = new Pose2d(odometry.getPoseMeters().getX() + targetTranslation.getX(),
+        odometry.getPoseMeters().getY() + targetTranslation.getY(),
+        new Rotation2d(
+            odometry.getPoseMeters().getRotation().getRadians() + targetRotation.getRadians()));
+    return targetPose;
+  }
+  
   public void camData() {
     speedController.setTolerance(RobotMap.DriveMap.PIXYCAM_PID_POSITION_TOLERANCE,
         RobotMap.DriveMap.PIXYCAM_PID_VELOCITY_TOLERANCE);
@@ -353,10 +394,12 @@ public class Swerve extends SubsystemBase {
   //   return poseEstimator.getEstimatedPosition();
   // }
 
+
   @Override
   public void periodic() {
     odometry.update(getYaw(), getModulePositions());
-    //updateCameraOdometry();
+    // updateCameraOdometry();
+    // vision.updateResult();
     for (SwerveModule mod : modules) {
       SmartDashboard.putNumber(
           "Mod " + mod.moduleNumber + " Cancoder", mod.getCanCoder().getDegrees());

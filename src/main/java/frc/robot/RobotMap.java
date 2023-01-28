@@ -31,6 +31,10 @@ public class RobotMap {
     public static final double PIXYCAM_PID_POSITION_TOLERANCE = 2;
     public static final double PIXYCAM_PID_VELOCITY_TOLERANCE = 50;
 
+    /* PhotonVision Constants */
+    public static final double PHOTON_PID_POSITION_TOLERANCE = 2;
+    public static final double PHOTON_PID_VELOCITY_TOLERANCE = 10;
+
     /*
      * Swerve Kinematics
      * No need to ever change this unless you are not doing a traditional
@@ -97,6 +101,9 @@ public class RobotMap {
     public static final double MAX_VELOCITY = 5.4864; // TODO: This must be tuned to specific robot
     /** Radians per Second */
     public static final double MAX_ANGULAR_VELOCITY = 10.0; // TODO: This must be tuned to specific robot
+
+    /* Meteres per second squared */
+    public static final double MAX_ACCELERATION = 3; //TODO: TUNE THIS
 
     /* Neutral Modes */
     public static final NeutralMode ROTATOR_NEUTRAL_MODE = NeutralMode.Coast;
