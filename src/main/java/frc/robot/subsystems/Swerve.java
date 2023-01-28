@@ -7,6 +7,7 @@ package frc.robot.subsystems;
 import com.ctre.phoenix.sensors.WPI_Pigeon2;
 import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.PathPlannerTrajectory;
+import com.pathplanner.lib.commands.FollowPathWithEvents;
 import com.pathplanner.lib.commands.PPSwerveControllerCommand;
 
 import edu.wpi.first.math.Pair;
@@ -30,6 +31,7 @@ import edu.wpi.first.wpilibj2.command.RepeatCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import frc.robot.RobotMap;
 import frc.robot.RobotMap.DriveMap;
 import frc.robot.util.SwerveModule;
@@ -40,6 +42,7 @@ import frc.robot.subsystems.Vision.CameraNumber;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.function.Supplier;
 
@@ -263,15 +266,19 @@ public class Swerve extends SubsystemBase {
         : Rotation2d.fromDegrees(gyro.getYaw());
   }
 
-  public SequentialCommandGroup followTrajectoryCommand(String path, boolean isFirstPath) {
-    return followTrajectoryCommand(path, new HashMap<>(), isFirstPath);
+  public Command followTrajectoryCommand(String path, HashMap<String, Command> eventMap,
+      boolean isFirstPath) {
+    PathPlannerTrajectory traj = PathPlanner.loadPath(path, 0.5, 0.1);
+    return new FollowPathWithEvents(
+        followTrajectoryCommand(traj, isFirstPath),
+        traj.getMarkers(),
+        eventMap);
   }
 
-  public SequentialCommandGroup followTrajectoryCommand(String path, HashMap<String, Command> eventMap,
+  private SequentialCommandGroup followTrajectoryCommand(PathPlannerTrajectory traj,
       boolean isFirstPath) {
-    System.out.println(path);
     // return new SequentialCommandGroup();
-    PathPlannerTrajectory traj = PathPlanner.loadPath(path, 0.5, 0.1);
+
     // // System.out.println(traj.)P
 
     // Create PIDControllers for each movement (and set default values)
@@ -296,6 +303,24 @@ public class Swerve extends SubsystemBase {
             }),
         new PPSwerveControllerCommand(
             traj, this::getPose, xPID, yPID, thetaPID, speeds -> drive(speeds, true), this));// KEEP IT OPEN LOOP
+  }
+
+  public SequentialCommandGroup followTrajectoryCommand(String path, boolean isFirstPath) {
+    PathPlannerTrajectory traj = PathPlanner.loadPath(path, 0.5, 0.1);
+    PIDController xPID = new PIDController(5.0, 0.0, 0.0);
+    PIDController yPID = new PIDController(5.0, 0.0, 0.0);
+    PIDController thetaPID = new PIDController(1.0, 0.0, 0.0);
+
+    return new SequentialCommandGroup(
+        new InstantCommand(
+            () -> {
+              // Reset odometry for the first path you rubn during auto
+              if (isFirstPath) {
+                odometry.resetPosition(
+                    getYaw(), getModulePositions(), traj.getInitialHolonomicPose());
+              }
+            }),
+        new PPSwerveControllerCommand(traj, this::getPose, xPID, yPID, thetaPID, speeds -> drive(speeds, true), this));
   }
 
   public void updateCameraOdometry() {
@@ -337,56 +362,50 @@ public class Swerve extends SubsystemBase {
     }
     // camData();
   }
-  public SequentialCommandGroup ChargingStationCommand(){
-    final ChassisSpeeds initialChassisSpeeds = new ChassisSpeeds(0.05, 0, 0); 
-    final ChassisSpeeds finalChassisSpeeds = new ChassisSpeeds(-0.5, 0, 0); 
+
+  public SequentialCommandGroup ChargingStationCommand() {
+    final ChassisSpeeds initialChassisSpeeds = new ChassisSpeeds(0.05, 0, 0);
+    final ChassisSpeeds finalChassisSpeeds = new ChassisSpeeds(-0.5, 0, 0);
     final Rotation2d initialPosition = modules[0].getCanCoder();
 
     return new SequentialCommandGroup(
-      new FunctionalCommand(
-      () -> {
+        new FunctionalCommand(
+            () -> {
 
-      },
-      () -> { 
-        this.drive(initialChassisSpeeds, true);
-      },
-      interrupted -> {
+            },
+            () -> {
+              this.drive(initialChassisSpeeds, true);
+            },
+            interrupted -> {
 
-      },
-      () -> {
-        if(gyro.getPitch() == 0){
-          return true;
-        }
-        else{
-          return false;
-        }
-      },
-      this
-    ),
+            },
+            () -> {
+              if (gyro.getPitch() == 0) {
+                return true;
+              } else {
+                return false;
+              }
+            },
+            this),
 
-    new FunctionalCommand(
-      () -> {
+        new FunctionalCommand(
+            () -> {
 
-      },
-      () -> {
-        this.drive(finalChassisSpeeds, true);
-      },
-      interrupted -> {
+            },
+            () -> {
+              this.drive(finalChassisSpeeds, true);
+            },
+            interrupted -> {
 
-      }, 
-      () -> {
-        if(modules[0].getCanCoder() == initialPosition)
-        {
-          return true;
-        }
-        else{
-          return false;
-        }
-      },
-      this
-    )
-    );
-
+            },
+            () -> {
+              if (modules[0].getCanCoder() == initialPosition) {
+                return true;
+              } else {
+                return false;
+              }
+            },
+            this));
 
   }
 
