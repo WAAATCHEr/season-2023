@@ -51,6 +51,7 @@ public class Vision extends SubsystemBase {
   CameraNumber cameraNumber;
   // Target information
   private PhotonTrackedTarget latestTarget;
+  private Transform3d latestTransform;
 
   // AprilTagFieldLayout
   AprilTagFieldLayout atfl;
@@ -98,7 +99,8 @@ public class Vision extends SubsystemBase {
 
   public void updateResult() {
     if (cam2.getLatestResult().hasTargets())
-      latestTarget = cam2.getLatestResult().getBestTarget();
+    latestTarget = cam2.getLatestResult().getBestTarget();
+    latestTransform = latestTarget.getBestCameraToTarget();
   }
 
   public PhotonPoseEstimator getPoseEstimator(CameraNumber camNum) {
@@ -120,6 +122,10 @@ public class Vision extends SubsystemBase {
    */
   public PhotonTrackedTarget getLatestTarget() {
     return latestTarget;
+  }
+
+  public Transform3d getLatestPose() {
+    return latestTransform;
   }
 
   public double getRange() {

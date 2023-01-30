@@ -1,5 +1,7 @@
 package pixy2api.links;
 
+import com.fasterxml.jackson.annotation.JsonCreator.Mode;
+
 import edu.wpi.first.wpilibj.SPI;
 import pixy2api.Pixy2.Checksum;
 
@@ -64,9 +66,10 @@ public class SPILink implements Link {
 		}
 		spi = new SPI(port);
 		spi.setClockRate(PIXY_SPI_CLOCKRATE);
-		spi.setMSBFirst();
-		spi.setSampleDataOnTrailingEdge();
-		spi.setClockActiveLow();
+		// spi.setMSBFirst(); Depracated : Does not work, will be removed.
+		// spi.setSampleDataOnTrailingEdge(); Depracated : Use setMode() instead
+		// spi.setClockActiveLow(); Depracated : Use setMode() instead
+		spi.setMode(SPI.Mode.kMode1);
 		spi.setChipSelectActiveLow();
 		return 0;
 	}

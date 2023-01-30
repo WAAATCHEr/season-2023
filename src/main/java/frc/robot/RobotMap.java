@@ -34,6 +34,7 @@ public class RobotMap {
     /* PhotonVision Constants */
     public static final double PHOTON_PID_POSITION_TOLERANCE = 2;
     public static final double PHOTON_PID_VELOCITY_TOLERANCE = 10;
+    public static final double APRILTAG_Y_OFFSET =  - 1.5;
 
     /*
      * Swerve Kinematics
