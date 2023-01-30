@@ -98,9 +98,19 @@ public class Vision extends SubsystemBase {
   }
 
   public void updateResult() {
-    if (cam2.getLatestResult().hasTargets())
-    latestTarget = cam2.getLatestResult().getBestTarget();
-    latestTransform = latestTarget.getBestCameraToTarget();
+    if (cam2.getLatestResult().hasTargets()){
+      latestTarget = cam2.getLatestResult().getBestTarget();
+      latestTransform = latestTarget.getBestCameraToTarget();
+    }
+  }
+
+  public boolean updateResult(int i){
+    if (cam2.getLatestResult().hasTargets()){
+      latestTarget = cam2.getLatestResult().getBestTarget();
+      latestTransform = latestTarget.getBestCameraToTarget();
+      return true;
+    }
+    return false;
   }
 
   public PhotonPoseEstimator getPoseEstimator(CameraNumber camNum) {
