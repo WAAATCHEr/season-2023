@@ -39,7 +39,7 @@ public abstract class DriverMap extends CommandMap {
     
     swerve.setDefaultCommand(swerve.driveCommand(this::getChassisSpeeds));
 
-    getAlingmentButton().onTrue(swerve.ChargingStationCommand());
+    getAlingmentButton().onTrue(swerve.chargingStationCommand());
 
     getPathPlanningTestButton().onTrue(swerve.followTrajectoryCommand("Charging Station", oneMeterEventMap, true));
 
