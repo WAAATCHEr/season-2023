@@ -39,6 +39,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import frc.robot.RobotMap;
+import frc.robot.RobotMap.ChargingStationMap;
 import frc.robot.RobotMap.DriveMap;
 import frc.robot.util.SwerveModule;
 import pixy2api.Pixy2CCC.Block;
@@ -69,7 +70,7 @@ public class Swerve extends SubsystemBase {
   private WPI_Pigeon2 gyro;
 
   // Camera
-  Vision vision;
+ // Vision vision;
   private PixyCam pixyCam;
   PIDController speedController = new PIDController(0.0001, 0, 0);
 
@@ -81,7 +82,7 @@ public class Swerve extends SubsystemBase {
     gyro.configFactoryDefault();
     zeroGyro();
 
-    vision = Vision.getInstance();
+    //vision = Vision.getInstance();
     // pixyCam = PixyCam.getInstance();
 
     modules = new SwerveModule[] {
@@ -193,71 +194,71 @@ public class Swerve extends SubsystemBase {
     );
 
   }
+// /
+//   public Command alignWithAprilTag() {
+//     //Create a new config
+//     TrajectoryConfig config = new TrajectoryConfig(
+//       RobotMap.DriveMap.MAX_VELOCITY,
+//       RobotMap.DriveMap.MAX_ACCELERATION).setKinematics(RobotMap.DriveMap.KINEMATICS);
 
-  public Command alignWithAprilTag() {
-    //Create a new config
-    TrajectoryConfig config = new TrajectoryConfig(
-      RobotMap.DriveMap.MAX_VELOCITY,
-      RobotMap.DriveMap.MAX_ACCELERATION).setKinematics(RobotMap.DriveMap.KINEMATICS);
+//     PIDController xPID = new PIDController(0.1, 0, 0); //TODO: tune PID values
+//     PIDController yPID = new PIDController(0.1, 0, 0); //TODO: tune PID values
+//     ProfiledPIDController thetaPID = new ProfiledPIDController(0.1, 0, 0, null); //TODO: tune PID values
 
-    PIDController xPID = new PIDController(0.1, 0, 0); //TODO: tune PID values
-    PIDController yPID = new PIDController(0.1, 0, 0); //TODO: tune PID values
-    ProfiledPIDController thetaPID = new ProfiledPIDController(0.1, 0, 0, null); //TODO: tune PID values
-
-    return new SwerveControllerCommand(
-      TrajectoryGenerator.generateTrajectory(odometry.getPoseMeters(),
-            null, transform3dToPose2d(vision.getLatestPose()),
-            config),
-            this::getPose, RobotMap.DriveMap.KINEMATICS, xPID, yPID, thetaPID, this::setModuleStates, this);
-   }
+//     return new SwerveControllerCommand(
+//       TrajectoryGenerator.generateTrajectory(odometry.getPoseMeters(),
+//             null, transform3dToPose2d(vision.getLatestPose()),
+//             config),
+//             this::getPose, RobotMap.DriveMap.KINEMATICS, xPID, yPID, thetaPID, this::setModuleStates, this);
+//    }
   
-  public Pose2d transform3dToPose2d(Transform3d targetPosition) {
+//   public Pose2d transform3dToPose2d(Transform3d targetPosition) {
     
-    Translation2d targetTranslation = new Translation2d(targetPosition.getTranslation().getX(),
-        targetPosition.getTranslation().getY());
-    Rotation2d targetRotation = new Rotation2d(targetPosition.getRotation().getAngle());
-    Pose2d targetPose = new Pose2d(odometry.getPoseMeters().getX() + targetTranslation.getX(),
-        odometry.getPoseMeters().getY() + targetTranslation.getY() + RobotMap.DriveMap.APRILTAG_Y_OFFSET,
-        new Rotation2d(
-            odometry.getPoseMeters().getRotation().getRadians() + targetRotation.getRadians()));
+//     Translation2d targetTranslation = new Translation2d(targetPosition.getTranslation().getX(),
+//         targetPosition.getTranslation().getY());
+//     Rotation2d targetRotation = new Rotation2d(targetPosition.getRotation().getAngle());
+//     Pose2d targetPose = new Pose2d(odometry.getPoseMeters().getX() + targetTranslation.getX(),
+//         odometry.getPoseMeters().getY() + targetTranslation.getY() + RobotMap.DriveMap.APRILTAG_Y_OFFSET,
+//         new Rotation2d(
+//             odometry.getPoseMeters().getRotation().getRadians() + targetRotation.getRadians()));
             
-    return targetPose;
-  }
+//     return targetPose;
+//   }
   
-  public void camData() {
-    speedController.setTolerance(RobotMap.DriveMap.PIXYCAM_PID_POSITION_TOLERANCE,
-        RobotMap.DriveMap.PIXYCAM_PID_VELOCITY_TOLERANCE);
-    var cones = pixyCam.getBlocksOfType(2);
-    var cubes = pixyCam.getBlocksOfType(1);
-    Block biggestCone = null, biggestCube = null;
+//   public void camData() {
+//     speedController.setTolerance(RobotMap.DriveMap.PIXYCAM_PID_POSITION_TOLERANCE,
+//         RobotMap.DriveMap.PIXYCAM_PID_VELOCITY_TOLERANCE);
+//     var cones = pixyCam.getBlocksOfType(2);
+//     var cubes = pixyCam.getBlocksOfType(1);
+//     Block biggestCone = null, biggestCube = null;
 
-    if (!cones.isEmpty()) {
-      biggestCone = pixyCam.getLargestBlock(cones);
-      pixyCam.setBiggestObject(biggestCone);
-    }
+//     if (!cones.isEmpty()) {
+//       biggestCone = pixyCam.getLargestBlock(cones);
+//       pixyCam.setBiggestObject(biggestCone);
+//     }
 
-    if (!cubes.isEmpty()) {
-      biggestCube = pixyCam.getLargestBlock(cubes);
-      pixyCam.setBiggestObject(biggestCube);
-    }
+//     if (!cubes.isEmpty()) {
+//       biggestCube = pixyCam.getLargestBlock(cubes);
+//       pixyCam.setBiggestObject(biggestCube);
+//     }
 
-    if (!cubes.isEmpty() && !cones.isEmpty()) {
-      if ((biggestCone.getWidth() * biggestCone.getHeight()) >= (biggestCube.getWidth() * biggestCube.getHeight())) {
-        pixyCam.setBiggestObject(biggestCone);
-      } else {
-        pixyCam.setBiggestObject(biggestCube);
-      }
-    }
-    if (cubes.isEmpty() && cones.isEmpty())
-      return;
-    var angularSpeed = speedController.calculate(pixyCam.getBiggestObject().getX(),
-        RobotMap.DriveMap.PIXYCAM_RESOLUTION / 2);
-    SmartDashboard.putNumber("Angular speed", angularSpeed);
-    SmartDashboard.putData("PixyCam PID Controller", speedController);
-    SmartDashboard.putNumber("error", speedController.getPositionError());
-    SmartDashboard.putNumber("PixyCam X Coord", pixyCam.getBiggestObject().getX());
+//     if (!cubes.isEmpty() && !cones.isEmpty()) {
+//       if ((biggestCone.getWidth() * biggestCone.getHeight()) >= (biggestCube.getWidth() * biggestCube.getHeight())) {
+//         pixyCam.setBiggestObject(biggestCone);
+//       } else {
+//         pixyCam.setBiggestObject(biggestCube);
+//       }
+//     }
+//     if (cubes.isEmpty() && cones.isEmpty())
+//       return;
+//     var angularSpeed = speedController.calculate(pixyCam.getBiggestObject().getX(),
+//         RobotMap.DriveMap.PIXYCAM_RESOLUTION / 2);
+//     SmartDashboard.putNumber("Angular speed", angularSpeed);
+//     SmartDashboard.putData("PixyCam PID Controller", speedController);
+//     SmartDashboard.putNumber("error", speedController.getPositionError());
+//     SmartDashboard.putNumber("PixyCam X Coord", pixyCam.getBiggestObject().getX());
 
-  }
+//   }
 
   /* Used by SwerveControllerCommand in Auto */
   public void setModuleStates(SwerveModuleState[] desiredStates) {
@@ -361,37 +362,37 @@ public class Swerve extends SubsystemBase {
         );
   }
 
-  public void updateCameraOdometry() {
-    poseEstimator.update(getYaw(), getModulePositions());
+  // public void updateCameraOdometry() {
+  //   poseEstimator.update(getYaw(), getModulePositions());
 
-    Optional<EstimatedRobotPose> result = vision.getEstimatedRobotPose(poseEstimator.getEstimatedPosition(),
-        vision.getPoseEstimator(CameraNumber.FIRST_CAM));
-    Optional<EstimatedRobotPose> result2 = vision.getEstimatedRobotPose(poseEstimator.getEstimatedPosition(),
-        vision.getPoseEstimator(CameraNumber.SECOND_CAM));
+  //   Optional<EstimatedRobotPose> result = vision.getEstimatedRobotPose(poseEstimator.getEstimatedPosition(),
+  //       vision.getPoseEstimator(CameraNumber.FIRST_CAM));
+  //   Optional<EstimatedRobotPose> result2 = vision.getEstimatedRobotPose(poseEstimator.getEstimatedPosition(),
+  //       vision.getPoseEstimator(CameraNumber.SECOND_CAM));
 
-    vision.getPoseEstimator(CameraNumber.FIRST_CAM).getClass().getDeclaredMethods();
+  //   vision.getPoseEstimator(CameraNumber.FIRST_CAM).getClass().getDeclaredMethods();
 
-    if (result.isPresent()) {
-      EstimatedRobotPose camPose = result.get();
-      poseEstimator.addVisionMeasurement(camPose.estimatedPose.toPose2d(), camPose.timestampSeconds);
-    }
+  //   if (result.isPresent()) {
+  //     EstimatedRobotPose camPose = result.get();
+  //     poseEstimator.addVisionMeasurement(camPose.estimatedPose.toPose2d(), camPose.timestampSeconds);
+  //   }
 
-    if (result2.isPresent()) {
-      EstimatedRobotPose camPose = result2.get();
-      poseEstimator.addVisionMeasurement(camPose.estimatedPose.toPose2d(), camPose.timestampSeconds);
-    }
-  }
+  //   if (result2.isPresent()) {
+  //     EstimatedRobotPose camPose = result2.get();
+  //     poseEstimator.addVisionMeasurement(camPose.estimatedPose.toPose2d(), camPose.timestampSeconds);
+  //   }
+  // }
 
-  public Pose2d getCameraPosition() { // In here because poseEstimator is a swerveDrivePoseEstimator
-    return poseEstimator.getEstimatedPosition();
-  }
+  // public Pose2d getCameraPosition() { // In here because poseEstimator is a swerveDrivePoseEstimator
+  //   return poseEstimator.getEstimatedPosition();
+  // }
 
 
   @Override
   public void periodic() {
     odometry.update(getYaw(), getModulePositions());
-    updateCameraOdometry();
-    vision.updateResult();
+   // updateCameraOdometry();
+   // vision.updateResult();
     for (SwerveModule mod : modules) {
       SmartDashboard.putNumber(
           "Mod " + mod.moduleNumber + " Cancoder", mod.getCanCoder().getDegrees());
@@ -408,36 +409,54 @@ public class Swerve extends SubsystemBase {
   }
 
   public SequentialCommandGroup ChargingStationCommand() {
-    final ChassisSpeeds initialChassisSpeeds = new ChassisSpeeds(0.55, 0, 0);
-    final ChassisSpeeds finalChassisSpeeds = new ChassisSpeeds(-0.5, 0, 0);
-    final Rotation2d initialPosition = modules[0].getCanCoder();
+    // final ChassisSpeeds initialChassisSpeeds = new ChassisSpeeds(0.55, 0, 0);
+    // final ChassisSpeeds finalChassisSpeeds = new ChassisSpeeds(-0.5, 0, 0);
+    // final Rotation2d initialPosition = modules[0].getCanCoder();
+    PIDController pid = new PIDController(ChargingStationMap.kP, ChargingStationMap.kI, ChargingStationMap.kD);
 
     return new SequentialCommandGroup(
+
+      // new InstantCommand(
+      //   () -> {
+          
+      //   })
+       
+      
         new FunctionalCommand(
             () -> {
             System.out.println("I'm balancing now");
             },
             () -> {
-              this.drive(initialChassisSpeeds, true);
+              // this.drive(initialChassisSpeeds, true);
+             // if(!(gyro.getPitch()>-1 && gyro.getPitch()<1))
+             // {
+             //   this.drive(new ChassisSpeeds(pid.calculate(gyro.getPitch(), 0.0), 0, 0), true);
+             // }
+             // else{
+                this.drive(new ChassisSpeeds(pid.calculate(gyro.getRoll(), 0.0), 0, 0), true);
+              //}
+              SmartDashboard.putNumber("Pitch", gyro.getPitch());
             },
             interrupted -> {
 
             },
             () -> {
-              if(Math.abs(gyro.getPitch())>Math.abs(gyro.getRoll())){
-                if (gyro.getPitch() >= -2.5 && gyro.getPitch() <= 2.5) {
-                  return true;
-                } else {
-                 return false;
-                }
-              }
-              else{
-                if (gyro.getRoll() >= -2.5 && gyro.getRoll() <= 2.5) {
-                  return true;
-                } else {
-                 return false;
-                }
-              }
+              // if(Math.abs(gyro.getPitch())>Math.abs(gyro.getRoll())){
+              //   if (gyro.getPitch() >= -2.5 && gyro.getPitch() <= 2.5) {
+              //     return true;
+              //   } else {
+              //    return false;
+              //   }
+              // }
+              // else{
+              //   if (gyro.getRoll() >= -2.5 && gyro.getRoll() <= 2.5) {
+              //     return true;
+              //   } else {
+              //    return false;
+              //   }
+              // }
+              
+              return false;
             },
             this)
 
