@@ -18,9 +18,9 @@ public class Logitech implements ButtonMap {
   public HashMap<Button, Integer> buttonMap() {
     var map = new HashMap<Button, Integer>();
 
-    map.put(Button.BUTTON_X, 1);
-    map.put(Button.BUTTON_A, 2);
-    map.put(Button.BUTTON_B, 3);
+    map.put(Button.BUTTON_A, 1);
+    map.put(Button.BUTTON_B, 2);
+    map.put(Button.BUTTON_X, 3);
     map.put(Button.BUTTON_Y, 4);
     map.put(Button.BUTTON_LEFT_JOYSTICK, 11);
     map.put(Button.BUTTON_RIGHT_JOYSTICK, 12);

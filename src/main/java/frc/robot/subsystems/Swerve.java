@@ -33,6 +33,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.RepeatCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
@@ -111,7 +112,7 @@ public class Swerve extends SubsystemBase {
 
   private List<Boolean> lastTenFrames = new ArrayList<>();
 
-  public Command AlignWithGameObject() {
+  public Command alignWithGameObject() {
     PIDController speedController2 = new PIDController(0.0001, 0, 0);
     speedController2.setTolerance(RobotMap.DriveMap.PIXYCAM_PID_POSITION_TOLERANCE,
         RobotMap.DriveMap.PIXYCAM_PID_VELOCITY_TOLERANCE);
@@ -196,20 +197,55 @@ public class Swerve extends SubsystemBase {
   }
 
   public Command alignWithAprilTag() {
-    //Create a new config
-    TrajectoryConfig config = new TrajectoryConfig(
-      RobotMap.DriveMap.MAX_VELOCITY,
-      RobotMap.DriveMap.MAX_ACCELERATION).setKinematics(RobotMap.DriveMap.KINEMATICS);
 
-    PIDController xPID = new PIDController(0.1, 0, 0); //TODO: tune PID values
-    PIDController yPID = new PIDController(0.1, 0, 0); //TODO: tune PID values
-    ProfiledPIDController thetaPID = new ProfiledPIDController(0.1, 0, 0, null); //TODO: tune PID values
+    PIDController xPID = new PIDController(RobotMap.DriveMap.DRIVE_KP, RobotMap.DriveMap.DRIVE_KI,
+        RobotMap.DriveMap.DRIVE_KD); 
+    xPID.setTolerance(RobotMap.DriveMap.XPID_POSITION_TOLERANCE, RobotMap.DriveMap.XPID_VELOCITY_TOLERANCE);
+    PIDController yPID = new PIDController(RobotMap.DriveMap.DRIVE_KP, RobotMap.DriveMap.DRIVE_KI,
+        RobotMap.DriveMap.DRIVE_KD); 
+    yPID.setTolerance(RobotMap.DriveMap.YPID_POSITION_TOLERANCE, RobotMap.DriveMap.YPID_VELOCITY_TOLERANCE);
+    PIDController thetaPID = new PIDController(RobotMap.DriveMap.DRIVE_KP, RobotMap.DriveMap.DRIVE_KI,
+        RobotMap.DriveMap.DRIVE_KD); 
+    thetaPID.setTolerance(RobotMap.DriveMap.THETAPID_POSITION_TOLERANCE, RobotMap.DriveMap.THETAPID_VELOCITY_TOLERANCE);
+    
+    
+    return new FunctionalCommand(
+        () -> {
+        },
+        () -> {
+          double isInverted;
+          Pose2d offset = transform3dToPose2d(vision.getLatestPose());
+          if (odometry.getPoseMeters().getY() >= offset.getY()) {
+            isInverted = .75;
+          }
+        else{
+            isInverted = -.75;
+          
+        }
+          ChassisSpeeds newSpeed = new ChassisSpeeds(
+            xPID.calculate(offset.getX(), odometry.getPoseMeters().getX()),
+            yPID.calculate(offset.getY() + isInverted, odometry.getPoseMeters().getY()),
+              thetaPID.calculate(offset.getRotation().getDegrees(),
+                  odometry.getPoseMeters().getRotation().getDegrees()));
+          drive(newSpeed, true);
+        },
+        interrupted -> {
+          ChassisSpeeds endSpeed = new ChassisSpeeds(0.0, 0.0, 0.0);
+          drive(endSpeed, true);
+        },
+        () -> {
+          if (xPID.atSetpoint() && yPID.atSetpoint() && thetaPID.atSetpoint()) {
+            return true;
+          }
 
-    return new SwerveControllerCommand(
-      TrajectoryGenerator.generateTrajectory(odometry.getPoseMeters(),
-            null, transform3dToPose2d(vision.getLatestPose()),
-            config),
-            this::getPose, RobotMap.DriveMap.KINEMATICS, xPID, yPID, thetaPID, this::setModuleStates, this);
+          if (vision.getLatestPose() == null) {
+            System.out.println("No target detected");
+            return true;
+          }
+          return false;
+        }
+    );
+    
    }
   
   public Pose2d transform3dToPose2d(Transform3d targetPosition) {
@@ -406,17 +442,10 @@ public class Swerve extends SubsystemBase {
   public void updateCameraOdometry() {
     poseEstimator.update(getYaw(), getModulePositions());
 
-    Optional<EstimatedRobotPose> result = vision.getEstimatedRobotPose(poseEstimator.getEstimatedPosition(),
-        vision.getPoseEstimator(CameraNumber.FIRST_CAM));
+    // Optional<EstimatedRobotPose> result = vision.getEstimatedRobotPose(poseEstimator.getEstimatedPosition(),
+        // vision.getPoseEstimator(CameraNumber.FIRST_CAM));
     Optional<EstimatedRobotPose> result2 = vision.getEstimatedRobotPose(poseEstimator.getEstimatedPosition(),
         vision.getPoseEstimator(CameraNumber.SECOND_CAM));
-
-    vision.getPoseEstimator(CameraNumber.FIRST_CAM).getClass().getDeclaredMethods();
-
-    if (result.isPresent()) {
-      EstimatedRobotPose camPose = result.get();
-      poseEstimator.addVisionMeasurement(camPose.estimatedPose.toPose2d(), camPose.timestampSeconds);
-    }
 
     if (result2.isPresent()) {
       EstimatedRobotPose camPose = result2.get();

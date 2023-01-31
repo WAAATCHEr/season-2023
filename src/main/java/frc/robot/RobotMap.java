@@ -34,7 +34,13 @@ public class RobotMap {
     /* PhotonVision Constants */
     public static final double PHOTON_PID_POSITION_TOLERANCE = 2;
     public static final double PHOTON_PID_VELOCITY_TOLERANCE = 10;
-    public static final double APRILTAG_Y_OFFSET =  - 1.5;
+    public static final double APRILTAG_Y_OFFSET = -1.5;
+    public static final double XPID_POSITION_TOLERANCE = 0.05;
+    public static final double XPID_VELOCITY_TOLERANCE = 1;
+    public static final double YPID_POSITION_TOLERANCE = 0.05;
+    public static final double YPID_VELOCITY_TOLERANCE = 1;
+    public static final double THETAPID_POSITION_TOLERANCE = 5;
+    public static final double THETAPID_VELOCITY_TOLERANCE = 20;
 
     /*
      * Swerve Kinematics
@@ -113,40 +119,40 @@ public class RobotMap {
     /* Module Specific Constants */
     /* Front Left Module - Module 0 */
     public static final class FrontLeft { // TODO: This must be tuned to specific robot
-      public static final int DRIVE_ID = 1;
-      public static final int ROTATOR_ID = 2;
-      public static final int ENCODER_ID = 17;
-      public static final Rotation2d OFFSET = Rotation2d.fromDegrees(213);
+      public static final int DRIVE_ID = 5;
+      public static final int ROTATOR_ID = 6;
+      public static final int ENCODER_ID = 11;
+      public static final Rotation2d OFFSET = Rotation2d.fromDegrees(223.6);
       public static final SwerveModuleConstants CONSTANTS = new SwerveModuleConstants(DRIVE_ID, ROTATOR_ID, ENCODER_ID,
           OFFSET);
     }
 
     /* Front Right Module - Module 1 */
     public static final class FrontRight { // TODO: This must be tuned to specific robot
-      public static final int DRIVE_ID = 7;
-      public static final int ROTATOR_ID = 8;
-      public static final int ENCODER_ID = 18;
-      public static final Rotation2d OFFSET = Rotation2d.fromDegrees(279);
+      public static final int DRIVE_ID = 3;
+      public static final int ROTATOR_ID = 4;
+      public static final int ENCODER_ID = 13;
+      public static final Rotation2d OFFSET = Rotation2d.fromDegrees(346);
       public static final SwerveModuleConstants CONSTANTS = new SwerveModuleConstants(DRIVE_ID, ROTATOR_ID, ENCODER_ID,
           OFFSET);
     }
 
     /* Back Left Module - Module 2 */
     public static final class BackLeft { // TODO: This must be tuned to specific robot
-      public static final int DRIVE_ID = 5;
-      public static final int ROTATOR_ID = 6;
-      public static final int ENCODER_ID = 16;
-      public static final Rotation2d OFFSET = Rotation2d.fromDegrees(244);
+      public static final int DRIVE_ID = 7;
+      public static final int ROTATOR_ID = 8;
+      public static final int ENCODER_ID = 12;
+      public static final Rotation2d OFFSET = Rotation2d.fromDegrees(330);
       public static final SwerveModuleConstants CONSTANTS = new SwerveModuleConstants(DRIVE_ID, ROTATOR_ID, ENCODER_ID,
           OFFSET);
     }
 
     /* Back Right Module - Module 3 */
     public static final class BackRight { // TODO: This must be tuned to specific robot
-      public static final int DRIVE_ID = 3;
-      public static final int ROTATOR_ID = 4;
-      public static final int ENCODER_ID = 19;
-      public static final Rotation2d OFFSET = Rotation2d.fromDegrees(15);
+      public static final int DRIVE_ID = 1;
+      public static final int ROTATOR_ID = 2;
+      public static final int ENCODER_ID = 10;
+      public static final Rotation2d OFFSET = Rotation2d.fromDegrees(69);
       public static final SwerveModuleConstants CONSTANTS = new SwerveModuleConstants(DRIVE_ID, ROTATOR_ID, ENCODER_ID,
           OFFSET);
     }
