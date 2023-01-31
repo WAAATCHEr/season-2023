@@ -40,6 +40,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import frc.robot.RobotMap;
+import frc.robot.RobotMap.ChargingStationMap;
 import frc.robot.RobotMap.DriveMap;
 import frc.robot.util.SwerveModule;
 import pixy2api.Pixy2CCC.Block;
@@ -344,10 +345,35 @@ public class Swerve extends SubsystemBase {
               System.out.println("we be reseting");
             }),
         new PPSwerveControllerCommand(
-            traj, this::getPose, xPID, yPID, thetaPID, speeds -> drive(speeds, true), this),
+            traj, this::getPose, xPID, yPID, thetaPID, speeds -> drive(speeds, true), this)
             
-        ChargingStationCommand()    
+        // ChargingStationCommand()   //TODO: Remove once you put this command in auto
             );// KEEP IT OPEN LOOP
+  }
+
+  public Command chargingStationCommand() {
+    // final ChassisSpeeds initialChassisSpeeds = new ChassisSpeeds(0.55, 0, 0);
+    // final ChassisSpeeds finalChassisSpeeds = new ChassisSpeeds(-0.5, 0, 0);
+    // final Rotation2d initialPosition = modules[0].getCanCoder();
+    PIDController pid = new PIDController(ChargingStationMap.kP, ChargingStationMap.kI, ChargingStationMap.kD);
+
+    return new FunctionalCommand(
+            () -> {
+              System.out.println("I'm balancing now");
+            },
+            () -> {
+              this.drive(new ChassisSpeeds(pid.calculate(gyro.getRoll(), 0.0), 0, 0), true);
+              //}
+              SmartDashboard.putNumber("Pitch", gyro.getPitch());
+            },
+            interrupted -> {
+
+            },
+            () -> {
+              return false;
+            },
+            this);
+
   }
 
   public SequentialCommandGroup followTrajectoryCommand(String path, boolean isFirstPath) {
@@ -387,12 +413,12 @@ public class Swerve extends SubsystemBase {
     return poseEstimator.getEstimatedPosition();
   }
 
-
+  
   @Override
   public void periodic() {
     odometry.update(getYaw(), getModulePositions());
-    updateCameraOdometry();
-    vision.updateResult();
+   updateCameraOdometry();
+   vision.updateResult();
     for (SwerveModule mod : modules) {
       SmartDashboard.putNumber(
           "Mod " + mod.moduleNumber + " Cancoder", mod.getCanCoder().getDegrees());
@@ -406,62 +432,6 @@ public class Swerve extends SubsystemBase {
     // System.out.println("Pitch: " + gyro.getPitch()+"\n ");
     // System.out.println("Roll: " + gyro.getRoll()+"\n ");
     //System.out.println("Yaw: " + gyro.getYaw()+"\n ");
-  }
-
-  public SequentialCommandGroup ChargingStationCommand() {
-    final ChassisSpeeds initialChassisSpeeds = new ChassisSpeeds(0.55, 0, 0);
-    final ChassisSpeeds finalChassisSpeeds = new ChassisSpeeds(-0.5, 0, 0);
-    final Rotation2d initialPosition = modules[0].getCanCoder();
-
-    return new SequentialCommandGroup(
-        new FunctionalCommand(
-            () -> {
-            System.out.println("I'm balancing now");
-            },
-            () -> {
-              this.drive(initialChassisSpeeds, true);
-            },
-            interrupted -> {
-
-            },
-            () -> {
-              if(Math.abs(gyro.getPitch())>Math.abs(gyro.getRoll())){
-                if (gyro.getPitch() >= -2.5 && gyro.getPitch() <= 2.5) {
-                  return true;
-                } else {
-                 return false;
-                }
-              }
-              else{
-                if (gyro.getRoll() >= -2.5 && gyro.getRoll() <= 2.5) {
-                  return true;
-                } else {
-                 return false;
-                }
-              }
-            },
-            this)
-
-        // new FunctionalCommand(
-        //     () -> {
-        //       System.out.println("I'm done balancing now");
-        //     },
-        //     () -> {
-        //       this.drive(finalChassisSpeeds, true);
-        //     },
-        //     interrupted -> {
-
-        //     },
-        //     () -> {
-        //       if (modules[0].getCanCoder() == initialPosition) {
-        //         return true;
-        //       } else {
-        //         return false;
-        //       }
-        //     },
-        //     this)
-        );
-
   }
 
 }

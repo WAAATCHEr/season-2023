@@ -186,4 +186,11 @@ public class RobotMap {
     public static final int OPERATOR_JOYSTICK = 1;
     public static final double STICK_DEADBAND = 0.1;
   }
+
+  public static class ChargingStationMap
+  {
+    public static final double kP = 0.1;
+    public static final double kI = 0.0;
+    public static final double kD = 0.0005;
+  }
 }
