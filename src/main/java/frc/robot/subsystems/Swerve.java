@@ -306,7 +306,7 @@ public class Swerve extends SubsystemBase {
 
   public Command followTrajectoryCommand(String path, HashMap<String, Command> eventMap,
       boolean isFirstPath) {
-    PathPlannerTrajectory traj = PathPlanner.loadPath(path, 0.5, 0.1);
+    PathPlannerTrajectory traj = PathPlanner.loadPath(path, 2, 1);
     return new FollowPathWithEvents(
         followTrajectoryCommand(traj, isFirstPath),
         traj.getMarkers(),
@@ -348,23 +348,39 @@ public class Swerve extends SubsystemBase {
     // final ChassisSpeeds finalChassisSpeeds = new ChassisSpeeds(-0.5, 0, 0);
     // final Rotation2d initialPosition = modules[0].getCanCoder();
     PIDController pid = new PIDController(ChargingStationMap.kP, ChargingStationMap.kI, ChargingStationMap.kD);
+    
+      return new FunctionalCommand(
+        () -> {
+          System.out.println("I'm balancing now");
+        },
+        () -> {
+          if(pid.calculate(gyro.getRoll()+gyro.getPitch())>ChargingStationMap.MAX_VELOCITY)
+          {
+            this.drive(new ChassisSpeeds(ChargingStationMap.MAX_VELOCITY, .0, 0), true);
+          }
+          else
+          {
+            this.drive(new ChassisSpeeds(pid.calculate(gyro.getRoll()+gyro.getPitch(), 0.0), 0, 0), true);
+          }
+           
+        },
+        interrupted -> {
 
-    return new FunctionalCommand(
-            () -> {
-              System.out.println("I'm balancing now");
-            },
-            () -> {
-              this.drive(new ChassisSpeeds(pid.calculate(gyro.getRoll(), 0.0), 0, 0), true);
-              //}
-              SmartDashboard.putNumber("Pitch", gyro.getPitch());
-            },
-            interrupted -> {
-
-            },
-            () -> {
-              return false;
-            },
-            this);
+        },
+        () -> {
+          if(pid.calculate(gyro.getRoll(), 0.0) == 0.0)
+          {
+            return true;
+          }
+          else
+          {
+            return false;
+          }
+        
+        },
+        this);
+    
+    
 
   }
 
@@ -416,7 +432,7 @@ public class Swerve extends SubsystemBase {
   @Override
   public void periodic() {
     odometry.update(getYaw(), getModulePositions());
-   updateCameraOdometry();
+   //updateCameraOdometry();
    vision.updateResult();
     for (SwerveModule mod : modules) {
       SmartDashboard.putNumber(
@@ -431,6 +447,14 @@ public class Swerve extends SubsystemBase {
     // System.out.println("Pitch: " + gyro.getPitch()+"\n ");
     // System.out.println("Roll: " + gyro.getRoll()+"\n ");
     //System.out.println("Yaw: " + gyro.getYaw()+"\n ");
+  }
+
+  public SequentialCommandGroup chargingStationPPAndBalance(HashMap<String, Command> eventMap)
+  {
+    return new SequentialCommandGroup(
+          followTrajectoryCommand("Charging Station", eventMap, true),
+          chargingStationCommand()
+        );
   }
 
 }
