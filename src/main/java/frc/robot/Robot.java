@@ -1,7 +1,10 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.auto.selector.AutoModeSelector;
 import frc.robot.util.CTREConfigs;
 
 /**
@@ -12,6 +15,7 @@ import frc.robot.util.CTREConfigs;
  */
 public class Robot extends TimedRobot {
   public static CTREConfigs ctreConfigs;
+  public static AutoModeSelector autoModeSelector;
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -20,6 +24,9 @@ public class Robot extends TimedRobot {
   @Override
   public void robotInit() {
     ctreConfigs = new CTREConfigs();
+    autoModeSelector.getInstance();
+    SmartDashboard.putData("Autos", autoModeSelector.getChooser());
+    SmartDashboard.putNumber("Auto Wait Time", 0);
     // TODO put auto chooser here. make sure to use the one from
     // robot/auto/selector/AutoModeSelector.java
 
@@ -51,7 +58,14 @@ public class Robot extends TimedRobot {
    * chooser code above as well.
    */
   @Override
-  public void autonomousInit() {}
+  public void autonomousInit() {
+    Command autonomousCommand = autoModeSelector.getChooser().getSelected();
+    if (autonomousCommand != null) {
+      Command timeOutAuto = autonomousCommand.withTimeout(SmartDashboard.getNumber("Auto Wait Time", 0));
+      timeOutAuto.schedule();
+    }
+
+  }
 
   /** This function is called periodically during autonomous. */
   @Override
