@@ -197,26 +197,54 @@ public class Swerve extends SubsystemBase {
   }
 
   public Command alignWithAprilTag() {
-    //Create a new config
-    TrajectoryConfig config = new TrajectoryConfig(
-      RobotMap.DriveMap.MAX_VELOCITY,
-      RobotMap.DriveMap.MAX_ACCELERATION).setKinematics(RobotMap.DriveMap.KINEMATICS);
 
-    PIDController xPID = new PIDController(0.1, 0, 0); //TODO: tune PID values
-    PIDController yPID = new PIDController(0.1, 0, 0); //TODO: tune PID values
-    ProfiledPIDController thetaPID = new ProfiledPIDController(0.1, 0, 0, null); //TODO: tune PID values
+    PIDController xPID = new PIDController(RobotMap.DriveMap.DRIVE_KP, RobotMap.DriveMap.DRIVE_KI,
+        RobotMap.DriveMap.DRIVE_KD); 
+    xPID.setTolerance(RobotMap.DriveMap.XPID_POSITION_TOLERANCE, RobotMap.DriveMap.XPID_VELOCITY_TOLERANCE);
+    PIDController yPID = new PIDController(RobotMap.DriveMap.DRIVE_KP, RobotMap.DriveMap.DRIVE_KI,
+        RobotMap.DriveMap.DRIVE_KD); 
+    yPID.setTolerance(RobotMap.DriveMap.YPID_POSITION_TOLERANCE, RobotMap.DriveMap.YPID_VELOCITY_TOLERANCE);
+    PIDController thetaPID = new PIDController(RobotMap.DriveMap.DRIVE_KP, RobotMap.DriveMap.DRIVE_KI,
+        RobotMap.DriveMap.DRIVE_KD); 
+    thetaPID.setTolerance(RobotMap.DriveMap.THETAPID_POSITION_TOLERANCE, RobotMap.DriveMap.THETAPID_VELOCITY_TOLERANCE);
     
     
-    if(vision.updateResult(1)){
-      return new SwerveControllerCommand(
-      
-      TrajectoryGenerator.generateTrajectory(odometry.getPoseMeters(),
-            null, transform3dToPose2d(vision.getLatestPose()),
-            config),
-            this::getPose, RobotMap.DriveMap.KINEMATICS, xPID, yPID, thetaPID, this::setModuleStates, this);
-    } else {
-      return new InstantCommand( () -> System.out.println("ABCDEFGHIJKLMNOPQRSTUVWXYZ"));
-    }
+    return new FunctionalCommand(
+        () -> {
+        },
+        () -> {
+          double isInverted;
+          Pose2d offset = transform3dToPose2d(vision.getLatestPose());
+          if (odometry.getPoseMeters().getY() >= offset.getY()) {
+            isInverted = .75;
+          }
+        else{
+            isInverted = -.75;
+          
+        }
+          ChassisSpeeds newSpeed = new ChassisSpeeds(
+            xPID.calculate(offset.getX(), odometry.getPoseMeters().getX()),
+            yPID.calculate(offset.getY() + isInverted, odometry.getPoseMeters().getY()),
+              thetaPID.calculate(offset.getRotation().getDegrees(),
+                  odometry.getPoseMeters().getRotation().getDegrees()));
+          drive(newSpeed, true);
+        },
+        interrupted -> {
+          ChassisSpeeds endSpeed = new ChassisSpeeds(0.0, 0.0, 0.0);
+          drive(endSpeed, true);
+        },
+        () -> {
+          if (xPID.atSetpoint() && yPID.atSetpoint() && thetaPID.atSetpoint()) {
+            return true;
+          }
+
+          if (vision.getLatestPose() == null) {
+            System.out.println("No target detected");
+            return true;
+          }
+          return false;
+        }
+    );
     
    }
   
