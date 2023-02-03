@@ -24,7 +24,7 @@ public class Robot extends TimedRobot {
   @Override
   public void robotInit() {
     ctreConfigs = new CTREConfigs();
-    autoModeSelector.getInstance();
+    autoModeSelector = AutoModeSelector.getInstance();
     SmartDashboard.putData("Autos", autoModeSelector.getChooser());
     SmartDashboard.putNumber("Auto Wait Time", 0);
     // TODO put auto chooser here. make sure to use the one from

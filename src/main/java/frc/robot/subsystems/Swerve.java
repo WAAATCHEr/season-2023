@@ -216,13 +216,17 @@ public class Swerve extends SubsystemBase {
           vision.updateResult();
           Pose2d offset = transform3dToPose2d(vision.getLatestPose());
           double isInverted = (offset.getY() < 0) ? 0.75 : -0.75;
-
+          /* 
           ChassisSpeeds newSpeed = new ChassisSpeeds(
             xPID.calculate(poseEstimator.getEstimatedPosition().getX(), offset.getX()+ poseEstimator.getEstimatedPosition().getX()),
             yPID.calculate(poseEstimator.getEstimatedPosition().getY(), offset.getY()+ poseEstimator.getEstimatedPosition().getY()),
               thetaPID.calculate(poseEstimator.getEstimatedPosition().getRotation().getDegrees(),
-              offset.getRotation().getDegrees() + poseEstimator.getEstimatedPosition().getRotation().getDegrees()));
+              offset.getRotation().getDegrees() + poseEstimator.getEstimatedPosition().getRotation().getDegrees()));*/
+          System.out.println(xPID.calculate(poseEstimator.getEstimatedPosition().getX(), offset.getX()+ poseEstimator.getEstimatedPosition().getX()));
+          ChassisSpeeds newSpeed = new ChassisSpeeds(
+                xPID.calculate(poseEstimator.getEstimatedPosition().getX(), offset.getX()+ poseEstimator.getEstimatedPosition().getX()),0, 0);
           drive(newSpeed, true);
+          
         },
         interrupted -> {
           ChassisSpeeds endSpeed = new ChassisSpeeds(0.0, 0.0, 0.0);

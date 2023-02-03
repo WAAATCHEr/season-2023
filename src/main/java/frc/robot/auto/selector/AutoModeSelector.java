@@ -5,9 +5,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 
 public class AutoModeSelector{
-  private AutoModeSelector instance;
+  private static AutoModeSelector instance;
 
-  public AutoModeSelector getInstance() {
+  public static AutoModeSelector getInstance() {
     if (instance == null) {
       instance = new AutoModeSelector();
     }
