@@ -15,7 +15,6 @@ import frc.robot.util.CTREConfigs;
  */
 public class Robot extends TimedRobot {
   public static CTREConfigs ctreConfigs;
-  public static AutoModeSelector autoModeSelector;
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -24,7 +23,7 @@ public class Robot extends TimedRobot {
   @Override
   public void robotInit() {
     ctreConfigs = new CTREConfigs();
-    autoModeSelector = AutoModeSelector.getInstance();
+    var autoModeSelector = AutoModeSelector.getInstance();
     SmartDashboard.putData("Autos", autoModeSelector.getChooser());
     SmartDashboard.putNumber("Auto Wait Time", 0);
     // TODO put auto chooser here. make sure to use the one from
@@ -59,7 +58,8 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousInit() {
-    Command autonomousCommand = autoModeSelector.getChooser().getSelected();
+    CommandScheduler.getInstance().cancelAll();
+    Command autonomousCommand = AutoModeSelector.getInstance().getChooser().getSelected();
     if (autonomousCommand != null) {
       Command timeOutAuto = autonomousCommand.withTimeout(SmartDashboard.getNumber("Auto Wait Time", 0));
       timeOutAuto.schedule();
