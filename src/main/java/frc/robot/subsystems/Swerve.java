@@ -197,71 +197,54 @@ public class Swerve extends SubsystemBase {
   }
 
   public Command alignWithAprilTag() {
+    TrajectoryConfig config = new TrajectoryConfig(
+        RobotMap.DriveMap.MAX_VELOCITY,
+        RobotMap.DriveMap.MAX_ACCELERATION).setKinematics(RobotMap.DriveMap.KINEMATICS);
 
     PIDController xPID = new PIDController(RobotMap.DriveMap.DRIVE_KP, RobotMap.DriveMap.DRIVE_KI,
-        RobotMap.DriveMap.DRIVE_KD); 
+        RobotMap.DriveMap.DRIVE_KD);
     xPID.setTolerance(RobotMap.DriveMap.XPID_POSITION_TOLERANCE, RobotMap.DriveMap.XPID_VELOCITY_TOLERANCE);
     PIDController yPID = new PIDController(RobotMap.DriveMap.DRIVE_KP, RobotMap.DriveMap.DRIVE_KI,
-        RobotMap.DriveMap.DRIVE_KD); 
+        RobotMap.DriveMap.DRIVE_KD);
     yPID.setTolerance(RobotMap.DriveMap.YPID_POSITION_TOLERANCE, RobotMap.DriveMap.YPID_VELOCITY_TOLERANCE);
-    PIDController thetaPID = new PIDController(DriveMap.ROTATOR_KP, DriveMap.ROTATOR_KI,
-        DriveMap.ROTATOR_KD); 
+    ProfiledPIDController thetaPID = new ProfiledPIDController(DriveMap.ROTATOR_KP, DriveMap.ROTATOR_KI,
+        DriveMap.ROTATOR_KD, null);
     thetaPID.setTolerance(DriveMap.THETAPID_POSITION_TOLERANCE, DriveMap.THETAPID_VELOCITY_TOLERANCE);
-    
-    
-    return new FunctionalCommand(
-        () -> {
-        },
-        () -> {
-          double isInverted;
-          Pose2d offset = transform3dToPose2d(vision.getLatestPose());
-          if (odometry.getPoseMeters().getY() >= offset.getY()) {
-            isInverted = .75;
-          }
-        else{
-            isInverted = -.75;
-          
-        }
-          ChassisSpeeds newSpeed = new ChassisSpeeds(
-              xPID.calculate(poseEstimator.getEstimatedPosition().getX(), offset.getX()+ poseEstimator.getEstimatedPosition().getX()),
-              yPID.calculate(poseEstimator.getEstimatedPosition().getY(), offset.getY()+ poseEstimator.getEstimatedPosition().getY()),
-                0.1*thetaPID.calculate(poseEstimator.getEstimatedPosition().getRotation().getDegrees()));
-          drive(newSpeed, true);
-        },
-        interrupted -> {
-          ChassisSpeeds endSpeed = new ChassisSpeeds(0.0, 0.0, 0.0);
-          drive(endSpeed, true);
-        },
-        () -> {
-          if (xPID.atSetpoint() && yPID.atSetpoint() && thetaPID.atSetpoint()) {
-            return true;
-          }
-          
-          for(PhotonTrackedTarget target : vision.getLastTargetsList()){
-            System.out.println(target);
-            if(!(target == null)){
-              return false;
-            }
-          }
-          return true;
-        }
-    );
-    
-   }
-  
-  public Pose2d transform3dToPose2d(Transform3d targetPosition) {
-    
-    Translation2d targetTranslation = new Translation2d(targetPosition.getTranslation().getX(),
-        targetPosition.getTranslation().getY());
-    Rotation2d targetRotation = new Rotation2d(targetPosition.getRotation().getAngle());
-    Pose2d targetPose = new Pose2d(targetTranslation.getX(),
-        targetTranslation.getY(),
-        new Rotation2d(
-            targetRotation.getRadians()));
-            
-    return targetPose;
-    
+
+    return new SwerveControllerCommand(
+
+        TrajectoryGenerator.generateTrajectory(poseEstimator.getEstimatedPosition(),
+            List.of(new Translation2d(transformOffsetToEndpath(transform3dToPose2d(vision.getLatestPose())).getX() / 2,
+                transformOffsetToEndpath(transform3dToPose2d(vision.getLatestPose())).getY() / 2)),
+            transformOffsetToEndpath(transform3dToPose2d(vision.getLatestPose())),
+            config),
+        this::getPose, RobotMap.DriveMap.KINEMATICS, xPID, yPID, thetaPID, this::setModuleStates, this);
+
   }
+    public Pose2d transform3dToPose2d(Transform3d targetPosition) {
+
+      Translation2d targetTranslation = new Translation2d(targetPosition.getTranslation().getX(),
+          targetPosition.getTranslation().getY());
+      Rotation2d targetRotation = new Rotation2d(targetPosition.getRotation().getAngle());
+      Pose2d targetPose = new Pose2d(targetTranslation.getX(),
+          targetTranslation.getY(),
+          new Rotation2d(
+              targetRotation.getRadians()));
+
+      return targetPose;
+
+    }
+  
+    public Pose2d transformOffsetToEndpath(Pose2d offset) {
+      double isInverted = (offset.getX() < 0) ? 0.75 : -0.75;
+      Pose2d currentPose = poseEstimator.getEstimatedPosition();
+      return new Pose2d(
+        currentPose.getX() +  offset.getX() + isInverted,
+        currentPose.getY() + offset.getY(),
+        new Rotation2d(
+          currentPose.getRotation().getRadians() + offset.getRotation().getRadians())
+      );
+    }
   
   public void camData() {
     speedController.setTolerance(RobotMap.DriveMap.PIXYCAM_PID_POSITION_TOLERANCE,
