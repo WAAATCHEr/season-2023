@@ -51,6 +51,7 @@ public class Vision extends SubsystemBase {
   CameraNumber cameraNumber;
   // Target information
   private PhotonTrackedTarget latestTarget;
+  private ArrayList<PhotonTrackedTarget> lastTargetsList = new ArrayList<PhotonTrackedTarget>();
   private Transform3d latestTransform;
 
   // AprilTagFieldLayout
@@ -98,9 +99,16 @@ public class Vision extends SubsystemBase {
   }
 
   public void updateResult() {
+    if(lastTargetsList.size() == 20){
+      lastTargetsList.remove(0);
+    }
     if (cam2.getLatestResult().hasTargets()){
       latestTarget = cam2.getLatestResult().getBestTarget();
       latestTransform = latestTarget.getBestCameraToTarget();
+      lastTargetsList.add(latestTarget);
+    }
+    else{
+      lastTargetsList.add(null);
     }
   }
 
@@ -136,6 +144,10 @@ public class Vision extends SubsystemBase {
 
   public Transform3d getLatestPose() {
     return latestTransform;
+  }
+
+  public ArrayList<PhotonTrackedTarget> getLastTargetsList(){
+    return lastTargetsList;
   }
 
   public double getRange() {
