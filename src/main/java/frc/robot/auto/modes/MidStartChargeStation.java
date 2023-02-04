@@ -15,8 +15,6 @@ public class MidStartChargeStation extends SequentialCommandGroup {
 
     public MidStartChargeStation() {
         swerve = Swerve.getInstance();
-        oneMeterEventMap.put("I mean it's alright like", new PrintCommand("I'm here"));
-        oneMeterEventMap.put("finishedPath", new PrintCommand("This works"));
         addCommands(
             swerve.chargingStationPPAndBalance(oneMeterEventMap)
         );

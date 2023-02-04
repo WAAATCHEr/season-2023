@@ -343,7 +343,7 @@ public class Swerve extends SubsystemBase {
 
   public Command followTrajectoryCommand(String path, HashMap<String, Command> eventMap,
       boolean isFirstPath) {
-    PathPlannerTrajectory traj = PathPlanner.loadPath(path, 2, 1);
+    PathPlannerTrajectory traj = PathPlanner.loadPath(path, 1, 1);
     return new FollowPathWithEvents(
         followTrajectoryCommand(traj, isFirstPath),
         traj.getMarkers(),
@@ -386,6 +386,8 @@ public class Swerve extends SubsystemBase {
     // final Rotation2d initialPosition = modules[0].getCanCoder();
     PIDController pid = new PIDController(ChargingStationMap.kP, ChargingStationMap.kI, ChargingStationMap.kD);
     pid.setTolerance(0.5);
+
+    
     
       return new FunctionalCommand(
         () -> {
@@ -463,9 +465,9 @@ public class Swerve extends SubsystemBase {
   
   @Override
   public void periodic() {
-  odometry.update(getYaw(), getModulePositions());
-   updateCameraOdometry();
-   vision.updateResult();
+    odometry.update(getYaw(), getModulePositions());
+  //  updateCameraOdometry();
+  //  vision.updateResult();
     for (SwerveModule mod : modules) {
       SmartDashboard.putNumber(
           "Mod " + mod.moduleNumber + " Cancoder", mod.getCanCoder().getDegrees());
@@ -474,17 +476,23 @@ public class Swerve extends SubsystemBase {
       SmartDashboard.putNumber(
           "Mod " + mod.moduleNumber + " Velocity", mod.getState().speedMetersPerSecond);
     }
+    SmartDashboard.putNumber("pose X", getPose().getX());
+    SmartDashboard.putNumber("Pose Y",getPose().getY());
+    SmartDashboard.putNumber("module 0 position" , getModulePositions()[0].distanceMeters);
+    SmartDashboard.putNumber("module 1 position" , getModulePositions()[1].distanceMeters);
+    SmartDashboard.putNumber("module 2 position" , getModulePositions()[2].distanceMeters);
+    SmartDashboard.putNumber("module 3 position" , getModulePositions()[3].distanceMeters);
     
-  //   // camData();
-  //   // System.out.println("Pitch: " + gyro.getPitch()+"\n ");
-  //   // System.out.println("Roll: " + gyro.getRoll()+"\n ");
-  //   //System.out.println("Yaw: " + gyro.getYaw()+"\n ");
+    camData();
+    // System.out.println("Pitch: " + gyro.getPitch()+"\n ");
+    // System.out.println("Roll: " + gyro.getRoll()+"\n ");
+    //System.out.println("Yaw: " + gyro.getYaw()+"\n ");
    }
 
   public SequentialCommandGroup chargingStationPPAndBalance(HashMap<String, Command> eventMap)
   {
     return new SequentialCommandGroup(
-          followTrajectoryCommand("Charging Station", eventMap, true),
+          followTrajectoryCommand("Directional Testing", eventMap, true),
           chargingStationCommand()
         );
   }
