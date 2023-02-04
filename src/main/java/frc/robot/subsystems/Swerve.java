@@ -26,6 +26,7 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
@@ -196,30 +197,89 @@ public class Swerve extends SubsystemBase {
 
   }
 
-  public Command alignWithAprilTag() {
-    TrajectoryConfig config = new TrajectoryConfig(
-        RobotMap.DriveMap.MAX_VELOCITY,
-        RobotMap.DriveMap.MAX_ACCELERATION).setKinematics(RobotMap.DriveMap.KINEMATICS);
+  public Command alignWithAprilTag(boolean useSpeeds) {
+    // Uses Chassis Speeds
+    if (useSpeeds) {
+      PIDController xPID = new PIDController(RobotMap.DriveMap.DRIVE_KP, RobotMap.DriveMap.DRIVE_KI,
+          RobotMap.DriveMap.DRIVE_KD); 
+      xPID.setTolerance(RobotMap.DriveMap.XPID_POSITION_TOLERANCE, RobotMap.DriveMap.XPID_VELOCITY_TOLERANCE);
+      PIDController yPID = new PIDController(RobotMap.DriveMap.DRIVE_KP, RobotMap.DriveMap.DRIVE_KI,
+          RobotMap.DriveMap.DRIVE_KD); 
+      yPID.setTolerance(RobotMap.DriveMap.YPID_POSITION_TOLERANCE, RobotMap.DriveMap.YPID_VELOCITY_TOLERANCE);
+      PIDController thetaPID = new PIDController(DriveMap.ROTATOR_KP, DriveMap.ROTATOR_KI,
+          DriveMap.ROTATOR_KD); 
+      thetaPID.setTolerance(DriveMap.THETAPID_POSITION_TOLERANCE, DriveMap.THETAPID_VELOCITY_TOLERANCE);
+      
+      
+      return new FunctionalCommand(
+          () -> {
+          },
+          () -> {
+            double isInverted;
+            Pose2d offset = transform3dToPose2d(vision.getLatestPose());
+            if (odometry.getPoseMeters().getY() >= offset.getY()) {
+              isInverted = .75;
+            }
+          else{
+              isInverted = -.75;
+            
+          }
+            ChassisSpeeds newSpeed = new ChassisSpeeds(
+                xPID.calculate(poseEstimator.getEstimatedPosition().getX(), offset.getX()+ poseEstimator.getEstimatedPosition().getX()),
+                yPID.calculate(poseEstimator.getEstimatedPosition().getY(), offset.getY()+ poseEstimator.getEstimatedPosition().getY()),
+                  0.1*thetaPID.calculate(poseEstimator.getEstimatedPosition().getRotation().getDegrees()));
+            drive(newSpeed, true);
+          },
+          interrupted -> {
+            ChassisSpeeds endSpeed = new ChassisSpeeds(0.0, 0.0, 0.0);
+            drive(endSpeed, true);
+          },
+          () -> {
+            if (xPID.atSetpoint() && yPID.atSetpoint() && thetaPID.atSetpoint()) {
+              return true;
+            }
+            
+            for(PhotonTrackedTarget target : vision.getLastTargetsList()){
+              System.out.println(target);
+              if(!(target == null)){
+                return false;
+              }
+            }
+            return true;
+          }
+      );
+    }
 
-    PIDController xPID = new PIDController(RobotMap.DriveMap.DRIVE_KP, RobotMap.DriveMap.DRIVE_KI,
-        RobotMap.DriveMap.DRIVE_KD);
-    xPID.setTolerance(RobotMap.DriveMap.XPID_POSITION_TOLERANCE, RobotMap.DriveMap.XPID_VELOCITY_TOLERANCE);
-    PIDController yPID = new PIDController(RobotMap.DriveMap.DRIVE_KP, RobotMap.DriveMap.DRIVE_KI,
-        RobotMap.DriveMap.DRIVE_KD);
-    yPID.setTolerance(RobotMap.DriveMap.YPID_POSITION_TOLERANCE, RobotMap.DriveMap.YPID_VELOCITY_TOLERANCE);
-    ProfiledPIDController thetaPID = new ProfiledPIDController(DriveMap.ROTATOR_KP, DriveMap.ROTATOR_KI,
-        DriveMap.ROTATOR_KD, null);
-    thetaPID.setTolerance(DriveMap.THETAPID_POSITION_TOLERANCE, DriveMap.THETAPID_VELOCITY_TOLERANCE);
+    // Uses Path
+    else if (vision.getLatestPose() != null) {
+      TrajectoryConfig config = new TrajectoryConfig(
+          RobotMap.DriveMap.MAX_VELOCITY,
+          RobotMap.DriveMap.MAX_ACCELERATION).setKinematics(RobotMap.DriveMap.KINEMATICS);
 
-    return new SwerveControllerCommand(
+      PIDController xPID = new PIDController(RobotMap.DriveMap.DRIVE_KP, RobotMap.DriveMap.DRIVE_KI,
+          RobotMap.DriveMap.DRIVE_KD);
+      xPID.setTolerance(RobotMap.DriveMap.XPID_POSITION_TOLERANCE, RobotMap.DriveMap.XPID_VELOCITY_TOLERANCE);
+      PIDController yPID = new PIDController(RobotMap.DriveMap.DRIVE_KP, RobotMap.DriveMap.DRIVE_KI,
+          RobotMap.DriveMap.DRIVE_KD);
+      yPID.setTolerance(RobotMap.DriveMap.YPID_POSITION_TOLERANCE, RobotMap.DriveMap.YPID_VELOCITY_TOLERANCE);
+      ProfiledPIDController thetaPID = new ProfiledPIDController(DriveMap.ROTATOR_KP, DriveMap.ROTATOR_KI,
+          DriveMap.ROTATOR_KD, new TrapezoidProfile.Constraints(0.1, 0.1));
+      thetaPID.setTolerance(DriveMap.THETAPID_POSITION_TOLERANCE, DriveMap.THETAPID_VELOCITY_TOLERANCE);
 
-        TrajectoryGenerator.generateTrajectory(poseEstimator.getEstimatedPosition(),
-            List.of(new Translation2d(transformOffsetToEndpath(transform3dToPose2d(vision.getLatestPose())).getX() / 2,
-                transformOffsetToEndpath(transform3dToPose2d(vision.getLatestPose())).getY() / 2)),
-            transformOffsetToEndpath(transform3dToPose2d(vision.getLatestPose())),
-            config),
-        this::getPose, RobotMap.DriveMap.KINEMATICS, xPID, yPID, thetaPID, this::setModuleStates, this);
+      return new SwerveControllerCommand(
 
+          TrajectoryGenerator.generateTrajectory(odometry.getPoseMeters(),
+              List.of(new Translation2d(transformOffsetToEndpath(transform3dToPose2d(vision.getLatestPose())).getX() / 2,
+                  transformOffsetToEndpath(transform3dToPose2d(vision.getLatestPose())).getY() / 2)),
+              transformOffsetToEndpath(transform3dToPose2d(vision.getLatestPose())),
+              config),
+          this::getPose, RobotMap.DriveMap.KINEMATICS, xPID, yPID, thetaPID, this::setModuleStates, this);
+
+    }
+
+    else {
+      return new InstantCommand(() -> System.out.println("-----------Vision.getlatestInstance is null----------------"));
+    }
   }
     public Pose2d transform3dToPose2d(Transform3d targetPosition) {
 
@@ -237,12 +297,11 @@ public class Swerve extends SubsystemBase {
   
     public Pose2d transformOffsetToEndpath(Pose2d offset) {
       double isInverted = (offset.getX() < 0) ? 0.75 : -0.75;
-      Pose2d currentPose = poseEstimator.getEstimatedPosition();
       return new Pose2d(
-        currentPose.getX() +  offset.getX() + isInverted,
-        currentPose.getY() + offset.getY(),
+        odometry.getPoseMeters().getX() +  offset.getX() + isInverted,
+        odometry.getPoseMeters().getY() + offset.getY(),
         new Rotation2d(
-          currentPose.getRotation().getRadians() + offset.getRotation().getRadians())
+          odometry.getPoseMeters().getRotation().getRadians() + offset.getRotation().getRadians())
       );
     }
   
@@ -446,12 +505,19 @@ public class Swerve extends SubsystemBase {
     return poseEstimator.getEstimatedPosition();
   }
 
+  public SequentialCommandGroup chargingStationPPAndBalance(HashMap<String, Command> eventMap)
+  {
+    return new SequentialCommandGroup(
+          followTrajectoryCommand("One Metre", eventMap, true),
+          chargingStationCommand()
+        );
+  }
   
   @Override
   public void periodic() {
     odometry.update(getYaw(), getModulePositions());
-  //  updateCameraOdometry();
-  //  vision.updateResult();
+    updateCameraOdometry();
+    vision.updateResult();
     for (SwerveModule mod : modules) {
       SmartDashboard.putNumber(
           "Mod " + mod.moduleNumber + " Cancoder", mod.getCanCoder().getDegrees());
@@ -472,13 +538,5 @@ public class Swerve extends SubsystemBase {
     // System.out.println("Roll: " + gyro.getRoll()+"\n ");
     //System.out.println("Yaw: " + gyro.getYaw()+"\n ");
    }
-
-  public SequentialCommandGroup chargingStationPPAndBalance(HashMap<String, Command> eventMap)
-  {
-    return new SequentialCommandGroup(
-          followTrajectoryCommand("Directional Testing", eventMap, true),
-          chargingStationCommand()
-        );
-  }
 
 }

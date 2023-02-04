@@ -43,7 +43,7 @@ public abstract class DriverMap extends CommandMap {
 
     getPathPlanningTestButton().onTrue(swerve.chargingStationPPAndBalance(oneMeterEventMap));
 
-    getAprilTagAlignmentButton().onTrue(swerve.alignWithAprilTag());
+    getAprilTagAlignmentButton().onTrue(swerve.alignWithAprilTag(false));
 
     // pixyCam.setDefaultCommand(pixyCam.printCommand());
 
