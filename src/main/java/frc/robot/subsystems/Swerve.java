@@ -204,9 +204,9 @@ public class Swerve extends SubsystemBase {
     PIDController yPID = new PIDController(RobotMap.DriveMap.DRIVE_KP, RobotMap.DriveMap.DRIVE_KI,
         RobotMap.DriveMap.DRIVE_KD); 
     yPID.setTolerance(RobotMap.DriveMap.YPID_POSITION_TOLERANCE, RobotMap.DriveMap.YPID_VELOCITY_TOLERANCE);
-    PIDController thetaPID = new PIDController(RobotMap.DriveMap.DRIVE_KP, RobotMap.DriveMap.DRIVE_KI,
-        RobotMap.DriveMap.DRIVE_KD); 
-    thetaPID.setTolerance(RobotMap.DriveMap.THETAPID_POSITION_TOLERANCE, RobotMap.DriveMap.THETAPID_VELOCITY_TOLERANCE);
+    PIDController thetaPID = new PIDController(DriveMap.ROTATOR_KP, DriveMap.ROTATOR_KI,
+        DriveMap.ROTATOR_KD); 
+    thetaPID.setTolerance(DriveMap.THETAPID_POSITION_TOLERANCE, DriveMap.THETAPID_VELOCITY_TOLERANCE);
     
     
     return new FunctionalCommand(
@@ -223,10 +223,9 @@ public class Swerve extends SubsystemBase {
           
         }
           ChassisSpeeds newSpeed = new ChassisSpeeds(
-            xPID.calculate(offset.getX(), odometry.getPoseMeters().getX()),
-            yPID.calculate(offset.getY() + isInverted, odometry.getPoseMeters().getY()),
-              thetaPID.calculate(offset.getRotation().getDegrees(),
-                  odometry.getPoseMeters().getRotation().getDegrees()));
+              xPID.calculate(poseEstimator.getEstimatedPosition().getX(), offset.getX()+ poseEstimator.getEstimatedPosition().getX()),
+              yPID.calculate(poseEstimator.getEstimatedPosition().getY(), offset.getY()+ poseEstimator.getEstimatedPosition().getY()),
+                0.1*thetaPID.calculate(poseEstimator.getEstimatedPosition().getRotation().getDegrees()));
           drive(newSpeed, true);
         },
         interrupted -> {
@@ -237,12 +236,14 @@ public class Swerve extends SubsystemBase {
           if (xPID.atSetpoint() && yPID.atSetpoint() && thetaPID.atSetpoint()) {
             return true;
           }
-
-          if (vision.getLatestPose() == null) {
-            System.out.println("No target detected");
-            return true;
+          
+          for(PhotonTrackedTarget target : vision.getLastTargetsList()){
+            System.out.println(target);
+            if(!(target == null)){
+              return false;
+            }
           }
-          return false;
+          return true;
         }
     );
     
