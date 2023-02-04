@@ -1,12 +1,23 @@
 package frc.robot.layout;
 
+import java.util.HashMap;
+
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+
+import edu.wpi.first.wpilibj.Filesystem;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.PrintCommand;
+import edu.wpi.first.wpilibj2.command.RunCommand;
+
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.subsystems.PistonSystemOne;
 import frc.robot.subsystems.Swerve;
+import frc.robot.subsystems.PixyCam;
 import frc.robot.util.controllers.CommandMap;
 import frc.robot.util.controllers.GameController;
+import pixy2api.Pixy2CCC.Block;
 
 public abstract class DriverMap extends CommandMap {
 
@@ -19,12 +30,32 @@ public abstract class DriverMap extends CommandMap {
 
   abstract JoystickButton getPathPlanningTestButton();
 
+  abstract JoystickButton getPixyCamDistanceButton();
+
+  abstract JoystickButton getAlingmentButton();
+
+  abstract JoystickButton getAprilTagAlignmentButton();
+
   @Override
   public void registerCommands() {
     var swerve = Swerve.getInstance();
     PistonSystemOne instance = PistonSystemOne.getInstance();
     
     getPistonButton().onTrue(new InstantCommand(() -> instance.shootPiston()));
+    HashMap<String, Command> oneMeterEventMap = new HashMap<String, Command>();
+    oneMeterEventMap.put("I mean it's alright like", new PrintCommand("I'm here"));
+    oneMeterEventMap.put("finishedPath", new PrintCommand("This works"));
+    
     swerve.setDefaultCommand(swerve.driveCommand(this::getChassisSpeeds));
+
+    getAlingmentButton().onTrue(swerve.ChargingStationCommand());
+
+    getPathPlanningTestButton().onTrue(swerve.followTrajectoryCommand("Charging Station", oneMeterEventMap, true));
+
+    getAprilTagAlignmentButton().onTrue(swerve.alignWithAprilTag());
+
+    // pixyCam.setDefaultCommand(pixyCam.printCommand());
+
+    // getPixyCamDistanceButton().onTrue(swerve.AlignWithGameObject());
   }
 }
