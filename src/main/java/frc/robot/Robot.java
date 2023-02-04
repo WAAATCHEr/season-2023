@@ -24,7 +24,7 @@ public class Robot extends TimedRobot {
   public void robotInit() {
     ctreConfigs = new CTREConfigs();
     var autoModeSelector = AutoModeSelector.getInstance();
-    SmartDashboard.putData("Autos", autoModeSelector.getChooser());
+    // SmartDashboard.putData("Autos", autoModeSelector.getChooser());
     SmartDashboard.putNumber("Auto Wait Time", 0);
     // TODO put auto chooser here. make sure to use the one from
     // robot/auto/selector/AutoModeSelector.java
@@ -61,8 +61,8 @@ public class Robot extends TimedRobot {
     CommandScheduler.getInstance().cancelAll();
     Command autonomousCommand = AutoModeSelector.getInstance().getChooser().getSelected();
     if (autonomousCommand != null) {
-      Command timeOutAuto = autonomousCommand.withTimeout(SmartDashboard.getNumber("Auto Wait Time", 0));
-      timeOutAuto.schedule();
+      // Command timeOutAuto = autonomousCommand.withTimeout(SmartDashboard.getNumber("Auto Wait Time", 0));
+      autonomousCommand.schedule();
     }
 
   }

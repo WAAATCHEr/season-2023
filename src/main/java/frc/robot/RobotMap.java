@@ -122,7 +122,7 @@ public class RobotMap {
       public static final int DRIVE_ID = 5;
       public static final int ROTATOR_ID = 6;
       public static final int ENCODER_ID = 11;
-      public static final Rotation2d OFFSET = Rotation2d.fromDegrees(217.5);
+      public static final Rotation2d OFFSET = Rotation2d.fromDegrees(214);
       public static final SwerveModuleConstants CONSTANTS = new SwerveModuleConstants(DRIVE_ID, ROTATOR_ID, ENCODER_ID,
           OFFSET);
     }
@@ -132,7 +132,7 @@ public class RobotMap {
       public static final int DRIVE_ID = 3;
       public static final int ROTATOR_ID = 4;
       public static final int ENCODER_ID = 13;
-      public static final Rotation2d OFFSET = Rotation2d.fromDegrees(307.1);
+      public static final Rotation2d OFFSET = Rotation2d.fromDegrees(277);
       public static final SwerveModuleConstants CONSTANTS = new SwerveModuleConstants(DRIVE_ID, ROTATOR_ID, ENCODER_ID,
           OFFSET);
     }
@@ -142,7 +142,7 @@ public class RobotMap {
       public static final int DRIVE_ID = 7;
       public static final int ROTATOR_ID = 8;
       public static final int ENCODER_ID = 12;
-      public static final Rotation2d OFFSET = Rotation2d.fromDegrees(331.65);
+      public static final Rotation2d OFFSET = Rotation2d.fromDegrees(254);
       public static final SwerveModuleConstants CONSTANTS = new SwerveModuleConstants(DRIVE_ID, ROTATOR_ID, ENCODER_ID,
           OFFSET);
     }
@@ -150,9 +150,8 @@ public class RobotMap {
     /* Back Right Module - Module 3 */
     public static final class BackRight { // TODO: This must be tuned to specific robot
       public static final int DRIVE_ID = 1;
-      public static final int ROTATOR_ID = 2;
-      public static final int ENCODER_ID = 10;
-      public static final Rotation2d OFFSET = Rotation2d.fromDegrees(41.5);
+      public static final int ROTATOR_ID = 2;      public static final int ENCODER_ID = 10;
+      public static final Rotation2d OFFSET = Rotation2d.fromDegrees(16);
       public static final SwerveModuleConstants CONSTANTS = new SwerveModuleConstants(DRIVE_ID, ROTATOR_ID, ENCODER_ID,
           OFFSET);
     }
@@ -195,9 +194,10 @@ public class RobotMap {
 
   public static class ChargingStationMap
   {
-    public static final double kP = 0.1;
+    //TODO tune once robot complete
+    public static final double kP = 0.05;
     public static final double kI = 0.0;
-    public static final double kD = 0.0005;
-    public static final double MAX_VELOCITY = 0.3;
+    public static final double kD = 0.0;
+    public static final double MAX_VELOCITY = 2;
   }
 }

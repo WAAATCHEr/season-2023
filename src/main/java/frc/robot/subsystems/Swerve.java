@@ -83,8 +83,8 @@ public class Swerve extends SubsystemBase {
     gyro.configFactoryDefault();
     zeroGyro();
 
-    vision = Vision.getInstance();
-    // pixyCam = PixyCam.getInstance();
+   vision = Vision.getInstance();
+    pixyCam = PixyCam.getInstance();
 
     modules = new SwerveModule[] {
         new SwerveModule(0, DriveMap.FrontLeft.CONSTANTS),
@@ -198,39 +198,40 @@ public class Swerve extends SubsystemBase {
 
   public Command alignWithAprilTag() {
 
-    PIDController xPID = new PIDController(DriveMap.DRIVE_KP, DriveMap.DRIVE_KI,
-        DriveMap.DRIVE_KD); 
-    xPID.setTolerance(DriveMap.XPID_POSITION_TOLERANCE, DriveMap.XPID_VELOCITY_TOLERANCE);
-    PIDController yPID = new PIDController(DriveMap.DRIVE_KP, DriveMap.DRIVE_KI,
+    PIDController xPID = new PIDController(RobotMap.DriveMap.DRIVE_KP, RobotMap.DriveMap.DRIVE_KI,
         RobotMap.DriveMap.DRIVE_KD); 
-    yPID.setTolerance(DriveMap.YPID_POSITION_TOLERANCE, DriveMap.YPID_VELOCITY_TOLERANCE);
-    PIDController thetaPID = new PIDController(DriveMap.DRIVE_KP, DriveMap.DRIVE_KI,
-        DriveMap.DRIVE_KD); 
-    thetaPID.setTolerance(DriveMap.THETAPID_POSITION_TOLERANCE, DriveMap.THETAPID_VELOCITY_TOLERANCE);
+    xPID.setTolerance(RobotMap.DriveMap.XPID_POSITION_TOLERANCE, RobotMap.DriveMap.XPID_VELOCITY_TOLERANCE);
+    PIDController yPID = new PIDController(RobotMap.DriveMap.DRIVE_KP, RobotMap.DriveMap.DRIVE_KI,
+        RobotMap.DriveMap.DRIVE_KD); 
+    yPID.setTolerance(RobotMap.DriveMap.YPID_POSITION_TOLERANCE, RobotMap.DriveMap.YPID_VELOCITY_TOLERANCE);
+    PIDController thetaPID = new PIDController(RobotMap.DriveMap.DRIVE_KP, RobotMap.DriveMap.DRIVE_KI,
+        RobotMap.DriveMap.DRIVE_KD); 
+    thetaPID.setTolerance(RobotMap.DriveMap.THETAPID_POSITION_TOLERANCE, RobotMap.DriveMap.THETAPID_VELOCITY_TOLERANCE);
     
     
     return new FunctionalCommand(
         () -> {
         },
         () -> {
-          vision.updateResult();
+          double isInverted;
           Pose2d offset = transform3dToPose2d(vision.getLatestPose());
-          double isInverted = (offset.getY() < 0) ? 0.75 : -0.75;
-          /* 
-          ChassisSpeeds newSpeed = new ChassisSpeeds(
-            xPID.calculate(poseEstimator.getEstimatedPosition().getX(), offset.getX()+ poseEstimator.getEstimatedPosition().getX()),
-            yPID.calculate(poseEstimator.getEstimatedPosition().getY(), offset.getY()+ poseEstimator.getEstimatedPosition().getY()),
-              thetaPID.calculate(poseEstimator.getEstimatedPosition().getRotation().getDegrees(),
-              offset.getRotation().getDegrees() + poseEstimator.getEstimatedPosition().getRotation().getDegrees()));*/
-          System.out.println(xPID.calculate(poseEstimator.getEstimatedPosition().getX(), offset.getX()+ poseEstimator.getEstimatedPosition().getX()));
-          ChassisSpeeds newSpeed = new ChassisSpeeds(
-                xPID.calculate(poseEstimator.getEstimatedPosition().getX(), offset.getX()+ poseEstimator.getEstimatedPosition().getX()),0, 0);
-          drive(newSpeed, true);
+          if (odometry.getPoseMeters().getY() >= offset.getY()) {
+            isInverted = .75;
+          }
+        else{
+            isInverted = -.75;
           
+        }
+          ChassisSpeeds newSpeed = new ChassisSpeeds(
+            xPID.calculate(offset.getX(), odometry.getPoseMeters().getX()),
+            yPID.calculate(offset.getY() + isInverted, odometry.getPoseMeters().getY()),
+              thetaPID.calculate(offset.getRotation().getDegrees(),
+                  odometry.getPoseMeters().getRotation().getDegrees()));
+          drive(newSpeed, true);
         },
         interrupted -> {
           ChassisSpeeds endSpeed = new ChassisSpeeds(0.0, 0.0, 0.0);
-          drive(endSpeed, false);
+          drive(endSpeed, true);
         },
         () -> {
           if (xPID.atSetpoint() && yPID.atSetpoint() && thetaPID.atSetpoint()) {
@@ -384,6 +385,7 @@ public class Swerve extends SubsystemBase {
     // final ChassisSpeeds finalChassisSpeeds = new ChassisSpeeds(-0.5, 0, 0);
     // final Rotation2d initialPosition = modules[0].getCanCoder();
     PIDController pid = new PIDController(ChargingStationMap.kP, ChargingStationMap.kI, ChargingStationMap.kD);
+    pid.setTolerance(0.5);
     
       return new FunctionalCommand(
         () -> {
@@ -404,7 +406,8 @@ public class Swerve extends SubsystemBase {
 
         },
         () -> {
-          if(pid.calculate(gyro.getRoll(), 0.0) == 0.0)
+          //TODO look at PID docs for proper tolerance code
+          if(pid.calculate(gyro.getRoll()+gyro.getPitch(), 0.0) <= 0.05 && pid.calculate(gyro.getRoll()+gyro.getPitch(), 0.0) >= -0.05)
           {
             return true;
           }
@@ -472,11 +475,11 @@ public class Swerve extends SubsystemBase {
           "Mod " + mod.moduleNumber + " Velocity", mod.getState().speedMetersPerSecond);
     }
     
-    // camData();
-    // System.out.println("Pitch: " + gyro.getPitch()+"\n ");
-    // System.out.println("Roll: " + gyro.getRoll()+"\n ");
-    //System.out.println("Yaw: " + gyro.getYaw()+"\n ");
-  }
+  //   // camData();
+  //   // System.out.println("Pitch: " + gyro.getPitch()+"\n ");
+  //   // System.out.println("Roll: " + gyro.getRoll()+"\n ");
+  //   //System.out.println("Yaw: " + gyro.getYaw()+"\n ");
+   }
 
   public SequentialCommandGroup chargingStationPPAndBalance(HashMap<String, Command> eventMap)
   {
