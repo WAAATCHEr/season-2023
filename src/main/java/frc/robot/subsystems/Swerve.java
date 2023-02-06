@@ -390,6 +390,29 @@ public class Swerve extends SubsystemBase {
         : Rotation2d.fromDegrees(gyro.getYaw());
   }
 
+  public Command compensateDrift(double yawGoal) {
+    PIDController compensatePID = new PIDController(DriveMap.DRIVE_KP, DriveMap.DRIVE_KI, DriveMap.DRIVE_KD);
+
+    return new FunctionalCommand(
+        () -> { // init
+        compensatePID.setTolerance(5); // +/- 5 degrees
+      },
+        () -> {  // execute
+          this.drive(ChassisSpeeds.fromFieldRelativeSpeeds(0, 0,
+              (int) (compensatePID.calculate(yawGoal - this.getYaw().getDegrees())), this.getYaw()), false);
+          
+      },
+        (interrupted) -> {  // end
+          // Do Nothing
+      },
+        () -> {  // isFinished
+          if (compensatePID.atSetpoint())
+            return true;
+          return false;
+        },
+      this);
+  }
+
   public Command followTrajectoryCommand(String path, HashMap<String, Command> eventMap,
       boolean isFirstPath) {
     PathPlannerTrajectory traj = PathPlanner.loadPath(path, 1, 1);
