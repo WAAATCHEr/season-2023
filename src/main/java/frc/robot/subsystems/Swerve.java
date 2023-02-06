@@ -11,6 +11,7 @@ import com.pathplanner.lib.commands.FollowPathWithEvents;
 import com.pathplanner.lib.commands.PPSwerveControllerCommand;
 
 import edu.wpi.first.math.Pair;
+import edu.wpi.first.math.controller.HolonomicDriveController;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -253,8 +254,8 @@ public class Swerve extends SubsystemBase {
     // Uses Path
     else if (vision.getLatestPose() != null) {
       TrajectoryConfig config = new TrajectoryConfig(
-          RobotMap.DriveMap.MAX_VELOCITY,
-          RobotMap.DriveMap.MAX_ACCELERATION).setKinematics(RobotMap.DriveMap.KINEMATICS);
+          RobotMap.DriveMap.MAX_VELOCITY * 0.2,
+          RobotMap.DriveMap.MAX_ACCELERATION * 0.2).setKinematics(RobotMap.DriveMap.KINEMATICS);
 
       PIDController xPID = new PIDController(RobotMap.DriveMap.DRIVE_KP, RobotMap.DriveMap.DRIVE_KI,
           RobotMap.DriveMap.DRIVE_KD);
@@ -266,14 +267,15 @@ public class Swerve extends SubsystemBase {
           DriveMap.ROTATOR_KD, new TrapezoidProfile.Constraints(0.1, 0.1));
       thetaPID.setTolerance(DriveMap.THETAPID_POSITION_TOLERANCE, DriveMap.THETAPID_VELOCITY_TOLERANCE);
 
-      return new SwerveControllerCommand(
+    HolonomicDriveController alignPID = new HolonomicDriveController(xPID, yPID, thetaPID);
+    return new SwerveControllerCommand(
 
           TrajectoryGenerator.generateTrajectory(odometry.getPoseMeters(),
               List.of(new Translation2d(transformOffsetToEndpath(transform3dToPose2d(vision.getLatestPose())).getX() / 2,
                   transformOffsetToEndpath(transform3dToPose2d(vision.getLatestPose())).getY() / 2)),
               transformOffsetToEndpath(transform3dToPose2d(vision.getLatestPose())),
               config),
-          this::getPose, RobotMap.DriveMap.KINEMATICS, xPID, yPID, thetaPID, this::setModuleStates, this);
+          this::getPose, RobotMap.DriveMap.KINEMATICS, alignPID, this::setModuleStates, this);
 
     }
 
