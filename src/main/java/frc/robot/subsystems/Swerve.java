@@ -115,14 +115,10 @@ public class Swerve extends SubsystemBase {
   private List<Boolean> lastTenFrames = new ArrayList<>();
 
   public Command alignWithGameObject(){
-    PIDController speedController2 = new PIDController(0.0001, 0, 0);
-    speedController2.setTolerance(RobotMap.DriveMap.PIXYCAM_PID_POSITION_TOLERANCE,
-        RobotMap.DriveMap.PIXYCAM_PID_VELOCITY_TOLERANCE);
-
+    PIDController pixyPID = new PIDController(0, 0, 0.1);
+    //TODO: Please set tolerances for pixyPID
         
-        PIDController pixyPID = new PIDController(0, 0, 0.1);
-        
-        ChassisSpeeds targetSwerve = new ChassisSpeeds();
+    ChassisSpeeds targetSwerveSpeeds = new ChassisSpeeds();
       
 
     return new FunctionalCommand( //TODO: YIFEI PLEASE FIX
@@ -160,6 +156,7 @@ public class Swerve extends SubsystemBase {
           double centeredXPos = pixyCam.getBiggestObject().getX() - DriveMap.PIXYCAM_RESOLUTION / 2;
           double angleToTurn =  30 * centeredXPos / 160; // linear function (30 is FOV / 2)
           double targetRotation = gyro.getYaw() + angleToTurn;
+          pixyCam.setTargetObjectRotation(targetRotation);
           
           // swerve turn angleToTurn
           //NTS: make pid that goes into chassisspeeds using angle of robot vs needed angle
@@ -169,10 +166,9 @@ public class Swerve extends SubsystemBase {
         },
         () -> {
           
-          double targetRotation; //asign to the same as above by getter meathod
           // LOOP PART OF COMMAND (RUN ONCE PER FRAME)
-          //targetSwerve.omegaRadiansPerSecond = Math.toRadians(pixyPID.calculate(gyro.getYaw(),targetRotation)); TODO: Yifei
-          //instance.drive();
+          targetSwerveSpeeds.omegaRadiansPerSecond = Math.toRadians(pixyPID.calculate(gyro.getYaw(),pixyCam.getTargetObjectRotation()));
+          drive(targetSwerveSpeeds, true);
         },
         interrupted -> {
           System.out.println("End");

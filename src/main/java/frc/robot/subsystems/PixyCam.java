@@ -44,6 +44,7 @@ public class PixyCam extends SubsystemBase {
 
     private Block biggestObject = null;
     private int objectIndex = -1;
+    private double targetObjectRotation = 0;
 
     private PixyCam() {
         pixy = Pixy2.createInstance(new SPILink());
@@ -69,9 +70,17 @@ public class PixyCam extends SubsystemBase {
         return objectIndex;
     }
 
-    public void setObjectIndex(int oI){
+    public void setObjectIndex(int oI) {
         objectIndex = oI;
         // return objectIndex;
+    }
+    
+    public void setTargetObjectRotation(double rot) {
+        targetObjectRotation = rot;
+    }
+
+    public double getTargetObjectRotation() {
+        return targetObjectRotation;
     }
 
     /**
