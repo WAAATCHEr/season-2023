@@ -85,7 +85,7 @@ public class Swerve extends SubsystemBase {
     gyro.configFactoryDefault();
     zeroGyro();
 
-   vision = Vision.getInstance();
+    //vision = Vision.getInstance();
     pixyCam = PixyCam.getInstance();
 
     modules = new SwerveModule[] {
@@ -118,8 +118,17 @@ public class Swerve extends SubsystemBase {
     PIDController speedController2 = new PIDController(0.0001, 0, 0);
     speedController2.setTolerance(RobotMap.DriveMap.PIXYCAM_PID_POSITION_TOLERANCE,
         RobotMap.DriveMap.PIXYCAM_PID_VELOCITY_TOLERANCE);
-    return new FunctionalCommand(
+
+        
+        PIDController pixyPID = new PIDController(0, 0, 0.1);
+        
+        ChassisSpeeds targetSwerve = new ChassisSpeeds();
+      
+
+    return new FunctionalCommand( //TODO: YIFEI PLEASE FIX
         () -> {
+          
+          
           pixyCam.setObjectIndex(-1);
           var cones = pixyCam.getBlocksOfType(2);
           var cubes = pixyCam.getBlocksOfType(1);
@@ -146,55 +155,38 @@ public class Swerve extends SubsystemBase {
           if (cubes.isEmpty() && cones.isEmpty())
             return;
           pixyCam.setObjectIndex(pixyCam.getBiggestObject().getIndex());
+
+          
+          double centeredXPos = pixyCam.getBiggestObject().getX() - DriveMap.PIXYCAM_RESOLUTION / 2;
+          double angleToTurn =  30 * centeredXPos / 160; // linear function (30 is FOV / 2)
+          double targetRotation = gyro.getYaw() + angleToTurn;
+          
+          // swerve turn angleToTurn
+          //NTS: make pid that goes into chassisspeeds using angle of robot vs needed angle
+          // public double getTR(){
+          //   return targetRotation;
+          // }
         },
         () -> {
-
-          if (pixyCam.getObjectIndex() != -1) {
-            pixyCam.setBiggestObject(pixyCam.getBlockByIndex(pixyCam.getObjectIndex()));
-          } else {
-            return;
-          }
-          // SmartDashboard.putData("PixyCam PID Controller", speedController);
-          // SmartDashboard.putNumber("error", speedController.getPositionError());
-
-          ChassisSpeeds newSpeed = new ChassisSpeeds(0.0,
-              0.0,
-              speedController2.calculate(pixyCam.getBiggestObject().getX(), RobotMap.DriveMap.PIXYCAM_RESOLUTION / 2));
-
-          drive(newSpeed, true);
+          
+          double targetRotation; //asign to the same as above by getter meathod
+          // LOOP PART OF COMMAND (RUN ONCE PER FRAME)
+          //targetSwerve.omegaRadiansPerSecond = Math.toRadians(pixyPID.calculate(gyro.getYaw(),targetRotation)); TODO: Yifei
+          //instance.drive();
         },
         interrupted -> {
           System.out.println("End");
-          System.out.println(interrupted);
+          System.out.println(interrupted); // COMMAND IS BEING INTERRUPTED IMMEDIATELY!! this needs to be fixed could be taking too long?
           ChassisSpeeds endSpeed = new ChassisSpeeds(0.0, 0.0, 0.0);
-          drive(endSpeed, false);
+          drive(endSpeed, true);
         },
         () -> {
-          if (pixyCam.getObjectIndex() == -1) {
-            return true;
-          }
-          if (speedController2.atSetpoint()) {
-            System.out.println("At Setpoint");
-            return true;
-          }
-          boolean anythingDetected = !pixyCam.getBlocksOfType(1).isEmpty() || !pixyCam.getBlocksOfType(2).isEmpty();
-          lastTenFrames.add(anythingDetected);
-          if (lastTenFrames.size() > 10)
-            lastTenFrames.remove(0);
-
-          boolean noBlocks = true;
-          for (boolean detected : lastTenFrames) {
-            if (detected)
-              noBlocks = false;
-          }
-          if (noBlocks)
-            return true;
-
+          // IS COMMAND FINISHED?
           return false;
         },
         this, pixyCam
 
-    );
+    ).withInterruptBehavior(Command.InterruptionBehavior.kCancelIncoming);
 
   }
 
