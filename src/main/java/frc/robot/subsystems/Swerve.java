@@ -224,10 +224,14 @@ public class Swerve extends SubsystemBase {
               isInverted = -.75;
             
           }
-            ChassisSpeeds newSpeed = new ChassisSpeeds(
-                xPID.calculate(poseEstimator.getEstimatedPosition().getX(), offset.getX()+ poseEstimator.getEstimatedPosition().getX()),
-                yPID.calculate(poseEstimator.getEstimatedPosition().getY(), offset.getY()+ poseEstimator.getEstimatedPosition().getY()),
-                  0.1*thetaPID.calculate(poseEstimator.getEstimatedPosition().getRotation().getDegrees()));
+            SmartDashboard.putNumber("GyroYaw", getYaw().getDegrees());
+            SmartDashboard.putNumber("offset", offset.getRotation().getDegrees());
+            ChassisSpeeds newSpeed = ChassisSpeeds.fromFieldRelativeSpeeds(
+                0.5*xPID.calculate(poseEstimator.getEstimatedPosition().getX(), offset.getX()+ poseEstimator.getEstimatedPosition().getX()),
+                0.5*yPID.calculate(poseEstimator.getEstimatedPosition().getY(), offset.getY()+ poseEstimator.getEstimatedPosition().getY()),
+                  0.2*thetaPID.calculate(offset.getRotation().getRadians(), Math.PI),
+                  getYaw());
+            
             drive(newSpeed, true);
           },
           interrupted -> {
