@@ -2,19 +2,38 @@ package frc.robot.auto.selector;
 
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
 
-public class AutoModeSelector {
-  private final SendableChooser<AutoModeList> modeChooser;
+public class AutoModeSelector{
+  private static AutoModeSelector instance;
 
-  // private final DoNothing doNothing = new DoNothing();
+  public static AutoModeSelector getInstance() {
+    if (instance == null) {
+      instance = new AutoModeSelector();
+    }
+    return instance;
+  }
 
-  public AutoModeSelector() {
+  private final SendableChooser<Command> modeChooser;
+
+  private AutoModeSelector() {
     modeChooser = new SendableChooser<>();
     // ModeChooser.addOption(name, enum);
-    modeChooser.setDefaultOption("DO NOTHING", AutoModeList.DO_NOTHING);
+    modeChooser.setDefaultOption("DO_NOTHING", AutoModeList.DO_NOTHING.getAuto());
+    updateAutoModeSelector();
 
     SmartDashboard.putData(modeChooser);
   }
 
-  public void updateAutoModeSelector() {}
+  public void updateAutoModeSelector() {
+    for (AutoModeList auto : AutoModeList.values()) {
+      modeChooser.addOption(auto.name(), auto.getAuto());
+    }
+  }
+  
+  public SendableChooser<Command> getChooser() {
+    return modeChooser;
+  }
+
+  
 }
