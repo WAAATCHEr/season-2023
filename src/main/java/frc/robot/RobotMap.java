@@ -192,11 +192,6 @@ public class RobotMap {
     public static final int OPERATOR_JOYSTICK = 1;
     public static final double STICK_DEADBAND = 0.1;
   }
-<<<<<<< HEAD
-  public static class PistonMap{
-    public static final int FOWARD_CHANNEL = 0;
-    public static final int REVERSE_CHANNEL = 0;
-=======
 
   public static class ChargingStationMap
   {
@@ -205,6 +200,5 @@ public class RobotMap {
     public static final double kI = 0.0;
     public static final double kD = 0.0;
     public static final double MAX_VELOCITY = 2;
->>>>>>> 053762986cd0c1c77f7f7cb1d0bc746543e98a80
   }
 }
