@@ -15,6 +15,11 @@ public class TwoJoyStickDriverMap extends DriverMap {
   }
 
   @Override
+  public JoystickButton getPistonButton(){
+    return controller.getButton(Button.BUTTON_A);
+  }
+
+  @Override
   public ChassisSpeeds getChassisSpeeds() {
     var x = controller.getAxis(Axis.AXIS_LEFT_X) * RobotMap.DriveMap.MAX_VELOCITY * 0.25;
     var y = controller.getAxis(Axis.AXIS_LEFT_Y) * RobotMap.DriveMap.MAX_VELOCITY * 0.25;
@@ -47,4 +52,7 @@ public class TwoJoyStickDriverMap extends DriverMap {
   public void registerCommands() {
     super.registerCommands();
   }
+
+
+
 }

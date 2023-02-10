@@ -3,11 +3,16 @@ package frc.robot.layout;
 import java.util.HashMap;
 
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
+
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import frc.robot.subsystems.PistonSystemOne;
 import frc.robot.subsystems.Swerve;
 import frc.robot.subsystems.PixyCam;
 import frc.robot.util.controllers.CommandMap;
@@ -19,6 +24,7 @@ public abstract class DriverMap extends CommandMap {
   public DriverMap(GameController controller) {
     super(controller);
   }
+  abstract JoystickButton getPistonButton();
 
   abstract ChassisSpeeds getChassisSpeeds();
 
@@ -33,6 +39,9 @@ public abstract class DriverMap extends CommandMap {
   @Override
   public void registerCommands() {
     var swerve = Swerve.getInstance();
+    PistonSystemOne instance = PistonSystemOne.getInstance();
+    
+    getPistonButton().onTrue(new InstantCommand(() -> instance.shootPiston()));
     HashMap<String, Command> oneMeterEventMap = new HashMap<String, Command>();
     oneMeterEventMap.put("I mean it's alright like", new PrintCommand("I'm here"));
     oneMeterEventMap.put("finishedPath", new PrintCommand("This works"));
