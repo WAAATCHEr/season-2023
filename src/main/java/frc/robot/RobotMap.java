@@ -193,12 +193,40 @@ public class RobotMap {
     public static final double STICK_DEADBAND = 0.1;
   }
 
-  public static class ChargingStationMap
-  {
+  public static class ChargingStationMap {
     //TODO tune once robot complete
     public static final double kP = 0.05;
     public static final double kI = 0.0;
     public static final double kD = 0.0;
     public static final double MAX_VELOCITY = 2;
+  }
+  
+  public static class IntakeMap {
+    public static final int MOTOR = -1;
+    public static final double kP = 0.1;
+    public static final double kI = 0.0;
+    public static final double kD = 0.1;
+    public static final double OPENANGLE = 100;
+    public static final double CLOSEANGLE = 10;
+    public static final double BUFFER = 5;
+  }
+
+  public static class ElevatorMap {
+    public static final int ELEVATOR_MOTOR = -1;
+    public static final int BOTTOM_PORT = 0;
+    public static final int TOP_PORT = 1;
+    public static final double MIDPOINT1 = 20; //arbitrary
+
+    public static final int PIVOT_MOTOR = -1;
+    public static final double PIVOT_BOTTOM = 10; //arbitrary
+    public static final double PIVOT_TOP = 20; //arbitrary
+    public static final double MIDPOINT2 = 15; //arbitrary
+
+  }
+
+  public static class FrictionPadMap{
+    public static final int FOWARD_CHANNEL = 0;
+    public static final int REVERSE_CHANNEL = 0;
+
   }
 }

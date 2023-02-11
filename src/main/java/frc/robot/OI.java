@@ -38,7 +38,7 @@ public class OI {
         new GameController(
             RobotMap.ControllerMap.DRIVER_JOYSTICK,
             new Xbox());
-    // operator = new GameController(RobotMap.ControllerMap.OPERATOR_JOYSTICK, new
+    operator = new GameController(RobotMap.ControllerMap.OPERATOR_JOYSTICK, new Xbox());
     // Logitech());
   }
 }
