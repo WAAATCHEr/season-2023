@@ -2,6 +2,7 @@ package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
+import com.revrobotics.CANSparkMax.ControlType;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.math.controller.PIDController;
@@ -12,134 +13,130 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RobotMap.ElevatorMap;
 
 public class ElevatorArm extends SubsystemBase {
-  public static ElevatorArm instance;
+    public static ElevatorArm instance;
 
-  public static ElevatorArm getInstance() {
-    if (instance == null) {
-      instance = new ElevatorArm();
+    public static ElevatorArm getInstance() {
+        if (instance == null) {
+            instance = new ElevatorArm();
+        }
+        return instance;
     }
-    return instance;
-  }
 
-  public enum ElevatorPosition {
-    ELEVATOR_TOP,
-    ELEVATOR_MID,
-    ELEVATOR_BOT
-  }
+    public enum SetPoint {
+        GROUND (ElevatorPosition.GROUND, PivotPosition.GROUND),
+        SINGLE_SUBSTATION (ElevatorPosition.SUBSTATION, PivotPosition.SUBSTATION),
+        MIDDLE (ElevatorPosition.MID, PivotPosition.MID),
+        TOP (ElevatorPosition.TOP, PivotPosition.TOP);
 
-  public enum PivotPosition {
-    PIVOT_MAX,
-    PIVOT_MID,
-    PIVOT_INT
-  }
+        private final ElevatorPosition elevatorPosition;
+        private final PivotPosition pivotPosition;
 
+        SetPoint(ElevatorPosition ePos, PivotPosition pPos) {
+            this.elevatorPosition = ePos;
+            this.pivotPosition = pPos;
+        }
+        
+        public ElevatorPosition getElevatorPosition() {
+            return elevatorPosition;
+        }
 
-  private CANSparkMax eleMotor, pivotMotor;
-  private DigitalInput bottomSwitch, topSwitch;
-  private RelativeEncoder encoder1, encoder2;
-  private PIDController elevatorPID, armPID;
+        public PivotPosition getPivotPosition() {
+            return pivotPosition;
+        }
 
-  private ElevatorArm() {
-    eleMotor = new CANSparkMax(ElevatorMap.ELEVATOR_MOTOR, MotorType.kBrushless);
-    pivotMotor = new CANSparkMax(ElevatorMap.PIVOT_MOTOR, MotorType.kBrushless);
-    bottomSwitch = new DigitalInput(ElevatorMap.BOTTOM_PORT);
-    topSwitch = new DigitalInput(ElevatorMap.TOP_PORT);
-
-    encoder1 = eleMotor.getEncoder();
-    encoder2 = pivotMotor.getEncoder();
-    elevatorPID = new PIDController(0.1, 0, 0);
-    elevatorPID.setTolerance(5, 10);
-    armPID = new PIDController(.1, 0, 0);
-    armPID.setTolerance(5, 10);
-  }
-  //Elevator Functionality
-  public void moveElevator(double input) {
-    if ((input < 0.0 && bottomSwitch.get())
-        || (input > 0.0 && topSwitch.get())) {
-      eleMotor.set(0);
-    } else {
-      eleMotor.set(input * 0.6);
     }
-  }
+    public enum ElevatorPosition {
+        TOP (0.0),
+        MID (0.0),
+        GROUND (0.0),
+        SUBSTATION (0.0),
+        START_POS (0.0);
 
-  public FunctionalCommand SpecifiedLoc(ElevatorPosition position) {
-    switch (position) {
-      case ELEVATOR_BOT:
-        return new FunctionalCommand(
-            () -> eleMotor.set(-0.5),
-            () -> {
-            },
-            interrupted -> eleMotor.set(0.0),
-            () -> bottomSwitch.get(),
-            this);
-      case ELEVATOR_MID:
-        return new FunctionalCommand(
-            null,
-            () -> eleMotor.set(elevatorPID.calculate(encoder1.getPosition(), ElevatorMap.MIDPOINT1)),
-            null,
-            () -> elevatorPID.atSetpoint(),
-            this);
-      case ELEVATOR_TOP:
-        new FunctionalCommand(
-            () -> eleMotor.set(0.5),
-            () -> {
-            },
-            interrupted -> eleMotor.set(0.0),
-            () -> topSwitch.get(),
-            this);
-      default: // Equivalent of ELEVATOR_BOT
-        return new FunctionalCommand(
-            () -> eleMotor.set(-0.5),
-            () -> {
-            },
-            interrupted -> eleMotor.set(0.0),
-            () -> bottomSwitch.get(),
-            this);
-    }
-  }
+        private final double encoderValue;
 
-  //Pivot part functionality
-  //NOTE:  60:1 ratio 
-  public void movePivot(double input) {
-    if ((input < 0 && encoder2.getPosition() <= ElevatorMap.PIVOT_BOTTOM)
-    || (input > 0 && encoder2.getPosition() >= ElevatorMap.PIVOT_TOP)) {
-      pivotMotor.set(0);
-    } else {
-      pivotMotor.set(input * .2); //.2 up for alteration
+        ElevatorPosition(double encoderValue){
+            this.encoderValue = encoderValue;
+        }
+        
+        public double getEncoderPos() {
+            return encoderValue;
+        }
     }
-  }
-  
-  public FunctionalCommand specifiedRot(PivotPosition position) {
-    switch (position) {
-      case PIVOT_INT:
-      return new FunctionalCommand(
-        null,
-        () -> pivotMotor.set(armPID.calculate(encoder2.getPosition(), ElevatorMap.PIVOT_BOTTOM)),
-        null,
-        () -> armPID.atSetpoint(),
-        this);
-    case PIVOT_MID:
-      return new FunctionalCommand(
-        null, 
-        () -> pivotMotor.set(armPID.calculate(encoder2.getPosition(), ElevatorMap.MIDPOINT2)),
-        null,
-        () -> armPID.atSetpoint(),
-        this);
-    case PIVOT_MAX:
-      return new FunctionalCommand(
-        null,
-        () -> pivotMotor.set(armPID.calculate(encoder2.getPosition(),ElevatorMap.PIVOT_TOP)), 
-        null, 
-        () -> armPID.atSetpoint(), 
-        this);
-      default: //same as 'PIVOT_MAX'
-      return new FunctionalCommand(
-        null,
-        () -> pivotMotor.set(armPID.calculate(encoder2.getPosition(),ElevatorMap.PIVOT_TOP)), 
-        null, 
-        () -> armPID.atSetpoint(), 
-        this);
+
+    public enum PivotPosition {
+        TOP(0.0),
+        MID(0.0),
+        GROUND(0.0),
+        SUBSTATION(0.0),
+        START_POS(0.0);
+
+        private final double encoderValue;
+
+        PivotPosition(double encoderValue) {
+            this.encoderValue = encoderValue;
+        }
+
+        public double getEncoderPos() {
+            return encoderValue;
+        }
+
     }
-  }
+
+    private CANSparkMax eleMotor, pivotMotor;
+    private DigitalInput bottomSwitch, topSwitch;
+    private RelativeEncoder encoder1, encoder2;
+    private PIDController elevatorPID, armPID;
+
+    private ElevatorArm() {
+        eleMotor = new CANSparkMax(ElevatorMap.ELEVATOR_MOTOR_ID, MotorType.kBrushless);
+        pivotMotor = new CANSparkMax(ElevatorMap.PIVOT_MOTOR_ID, MotorType.kBrushless);
+        bottomSwitch = new DigitalInput(ElevatorMap.BOTTOM_PORT);
+        topSwitch = new DigitalInput(ElevatorMap.TOP_PORT);
+
+        elevatorPID = new PIDController(0.1, 0, 0);
+        elevatorPID.setTolerance(5, 10);
+        armPID = new PIDController(.1, 0, 0);
+        armPID.setTolerance(5, 10);
+    }
+
+    public void moveElevator(ElevatorPosition setPoint) {
+        eleMotor.getPIDController().setReference(setPoint.getEncoderPos(), ControlType.kPosition);
+    }
+    // Elevator Functionality
+    public void moveElevator(double input) {
+        // if ((input < 0.0 && bottomSwitch.get())
+        // || (input > 0.0 && topSwitch.get())) {
+        // eleMotor.set(0);
+        // } else {
+        // eleMotor.set(input * 0.6);
+        // }
+        eleMotor.set(input * 0.6);
+    }
+
+    public void movePivot(PivotPosition setPoint) {
+        pivotMotor.getPIDController().setReference(setPoint.getEncoderPos(), ControlType.kPosition);
+    }
+
+    // Pivot part functionality
+    // NOTE: 60:1 ratio
+    public void movePivot(double input) {
+        // if ((input < 0 && encoder2.getPosition() <= ElevatorMap.PIVOT_BOTTOM)
+        // || (input > 0 && encoder2.getPosition() >= ElevatorMap.PIVOT_TOP)) {
+        // pivotMotor.set(0);
+        // } else {
+        // pivotMotor.set(input * .2); //.2 up for alteration
+        // }
+        pivotMotor.set(input * 0.2);
+    }
+
+    public void moveElevatorAndPivot(double elevatorInput, double pivotInput) {
+        moveElevator(elevatorInput);
+        movePivot(pivotInput);
+    }
+
+    public void moveElevatorAndPivot(ElevatorPosition elevatorPosition, PivotPosition pivotPosition) {
+        moveElevator(elevatorPosition);
+        movePivot(pivotPosition);
+    }
 
 }

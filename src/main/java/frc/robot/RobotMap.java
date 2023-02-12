@@ -110,7 +110,7 @@ public class RobotMap {
     public static final double MAX_ANGULAR_VELOCITY = 10.0; // TODO: This must be tuned to specific robot
 
     /* Meteres per second squared */
-    public static final double MAX_ACCELERATION = 3; //TODO: TUNE THIS
+    public static final double MAX_ACCELERATION = 3; // TODO: TUNE THIS
 
     /* Neutral Modes */
     public static final NeutralMode ROTATOR_NEUTRAL_MODE = NeutralMode.Coast;
@@ -194,15 +194,15 @@ public class RobotMap {
   }
 
   public static class ChargingStationMap {
-    //TODO tune once robot complete
+    // TODO tune once robot complete
     public static final double kP = 0.05;
     public static final double kI = 0.0;
     public static final double kD = 0.0;
     public static final double MAX_VELOCITY = 2;
   }
-  
+
   public static class IntakeMap {
-    public static final int MOTOR = -1;
+    public static final int MOTOR_ID = -1;
     public static final double kP = 0.1;
     public static final double kI = 0.0;
     public static final double kD = 0.1;
@@ -211,22 +211,38 @@ public class RobotMap {
     public static final double BUFFER = 5;
   }
 
+  public static class MotorIntakeMap {
+    public static final int MOTOR_ID = 1;
+  }
+
   public static class ElevatorMap {
-    public static final int ELEVATOR_MOTOR = -1;
+    public static final int ELEVATOR_MOTOR_ID = -1;
     public static final int BOTTOM_PORT = 0;
     public static final int TOP_PORT = 1;
-    public static final double MIDPOINT1 = 20; //arbitrary
+    public static final double MIDPOINT1 = 20; // arbitrary
 
-    public static final int PIVOT_MOTOR = -1;
-    public static final double PIVOT_BOTTOM = 10; //arbitrary
-    public static final double PIVOT_TOP = 20; //arbitrary
-    public static final double MIDPOINT2 = 15; //arbitrary
+    public static final int PIVOT_MOTOR_ID = -1;
+    public static final double PIVOT_BOTTOM = 10; // arbitrary
+    public static final double PIVOT_TOP = 20; // arbitrary
+    public static final double MIDPOINT2 = 15; // arbitrary
 
   }
 
-  public static class FrictionPadMap{
+  public static class FrictionPadMap {
     public static final int FOWARD_CHANNEL = 0;
     public static final int REVERSE_CHANNEL = 0;
+
+  }
+  public static class PinkArmMap{
+    public static final int PIVOT_PORT = 0;
+    public static final int TELESCOPE_PORT = 0;
+    public static final int PIVOT_RATIO = 100;
+    public static final double PIVOT_MIN = 0;
+    public static final double PIVOT_MAX = .75;
+    public static final int TELESCOPE_RATIO = 40;
+    public static final double TELESCOPE_MIN = 0;//assuming it starts as spooled as possible
+    public static final double TELESCOPE_MAX = 4;//should be in terms of rotations of the larger gear
+
 
   }
 }
