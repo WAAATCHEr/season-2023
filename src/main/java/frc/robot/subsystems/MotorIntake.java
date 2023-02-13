@@ -19,7 +19,7 @@ public class MotorIntake extends SubsystemBase {
     }
 
     private CANSparkMax intakeMotor;
-    private double MOTOR_SPEED = 0.4;
+    private double MOTOR_SPEED = 0.6;
 
     private MotorIntake() {
         intakeMotor = new CANSparkMax(RobotMap.MotorIntakeMap.MOTOR_ID, MotorType.kBrushless);
@@ -29,15 +29,24 @@ public class MotorIntake extends SubsystemBase {
         intakeMotor.set(speed);
     }
 
-    public Command moveIntake(int direction) {
-        return new StartEndCommand(
-            () -> {
-                setSpeed(direction * MOTOR_SPEED);
-            },
-            () -> {
-                    setSpeed(0);
-            },
-             this);
+    public void moveIntake(int direction) {
+        if (intakeMotor.get() < 0) {
+            if (direction < 0) {
+                intakeMotor.set(0);
+            } else if (direction > 0) {
+                intakeMotor.set(direction * MOTOR_SPEED);
+            }
+        }
+        else if (intakeMotor.get() > 0) {
+            if (direction > 0) {
+                intakeMotor.set(0);
+            } else if (direction < 0){
+                intakeMotor.set(direction * MOTOR_SPEED);
+            }
+        }
+        else {
+            intakeMotor.set(direction * MOTOR_SPEED);
+        }
     }
 
 }

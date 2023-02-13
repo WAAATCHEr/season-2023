@@ -46,9 +46,9 @@ public class ElevatorArm extends SubsystemBase {
     }
 
     public enum ElevatorPosition {
-        TOP(0.0),
-        MID(0.0),
-        GROUND(0.0),
+        TOP(60.2),
+        MID(16.2),
+        GROUND(-25.6),
         SUBSTATION(0.0),
         START_POS(0.0);
 
@@ -64,9 +64,9 @@ public class ElevatorArm extends SubsystemBase {
     }
 
     public enum PivotPosition {
-        TOP(0.0),
-        MID(0.0),
-        GROUND(0.0),
+        TOP(-25.0),
+        MID(-26.1),
+        GROUND(-16.5),
         SUBSTATION(0.0),
         START_POS(0.0);
 
