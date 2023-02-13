@@ -212,16 +212,16 @@ public class RobotMap {
   }
 
   public static class MotorIntakeMap {
-    public static final int MOTOR_ID = 1;
+    public static final int MOTOR_ID = 2;
   }
 
   public static class ElevatorMap {
-    public static final int ELEVATOR_MOTOR_ID = -1;
+    public static final int ELEVATOR_MOTOR_ID = 1;
     public static final int BOTTOM_PORT = 0;
     public static final int TOP_PORT = 1;
     public static final double MIDPOINT1 = 20; // arbitrary
 
-    public static final int PIVOT_MOTOR_ID = -1;
+    public static final int PIVOT_MOTOR_ID = 8;
     public static final double PIVOT_BOTTOM = 10; // arbitrary
     public static final double PIVOT_TOP = 20; // arbitrary
     public static final double MIDPOINT2 = 15; // arbitrary

@@ -21,6 +21,14 @@ public abstract class OperatorMap extends CommandMap {
 
   public abstract JoystickButton getReverseIntakeButton();
 
+  public abstract JoystickButton getElevatorTopButton();
+
+  public abstract JoystickButton getElevatorMidButton();
+
+  public abstract JoystickButton getElevatorGroundButton();
+
+  public abstract JoystickButton getElevatorSingleSubstationButton();
+
   public abstract double getLeftXAxis();
 
   public abstract double getLeftYAxis();
@@ -34,8 +42,12 @@ public abstract class OperatorMap extends CommandMap {
     ElevatorArm elevatorArm = ElevatorArm.getInstance();
 
     elevatorArm.setDefaultCommand(
-        new RepeatCommand(new RunCommand(() -> elevatorArm.moveElevatorAndPivot(getLeftYAxis(), getRightYAxis()),
+        new RepeatCommand(new RunCommand(() -> elevatorArm.moveElevatorAndPivot(-getLeftYAxis() * 0.5, getRightYAxis() * 0.8),
             elevatorArm)));
+    getElevatorTopButton().onTrue(elevatorArm.moveToSetPoint(ElevatorArm.SetPoint.TOP));
+    getElevatorMidButton().onTrue(elevatorArm.moveToSetPoint(ElevatorArm.SetPoint.MIDDLE));
+    getElevatorGroundButton().onTrue(elevatorArm.moveToSetPoint(ElevatorArm.SetPoint.GROUND));
+    getElevatorSingleSubstationButton().onTrue(elevatorArm.moveToSetPoint(ElevatorArm.SetPoint.SINGLE_SUBSTATION));
 
     MotorIntake motorIntake = MotorIntake.getInstance();
     getForwardIntakeButton().onTrue(new InstantCommand(() -> motorIntake.moveIntake(1)));

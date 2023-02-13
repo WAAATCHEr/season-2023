@@ -7,7 +7,10 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.RobotMap.ElevatorMap;
 
 public class ElevatorArm extends SubsystemBase {
@@ -19,7 +22,7 @@ public class ElevatorArm extends SubsystemBase {
         }
         return instance;
     }
-    
+
     public enum SetPoint {
         GROUND(ElevatorPosition.GROUND, PivotPosition.GROUND),
         SINGLE_SUBSTATION(ElevatorPosition.SUBSTATION, PivotPosition.SUBSTATION),
@@ -49,8 +52,8 @@ public class ElevatorArm extends SubsystemBase {
         TOP(60.2),
         MID(16.2),
         GROUND(-25.6),
-        SUBSTATION(0.0),
-        START_POS(0.0);
+        SUBSTATION(0.3),
+        START_POS(-40);
 
         private final double encoderValue;
 
@@ -67,8 +70,8 @@ public class ElevatorArm extends SubsystemBase {
         TOP(-25.0),
         MID(-26.1),
         GROUND(-16.5),
-        SUBSTATION(0.0),
-        START_POS(0.0);
+        SUBSTATION(-15.6),
+        START_POS(-34);
 
         private final double encoderValue;
 
@@ -92,10 +95,8 @@ public class ElevatorArm extends SubsystemBase {
         bottomSwitch = new DigitalInput(ElevatorMap.BOTTOM_PORT);
         topSwitch = new DigitalInput(ElevatorMap.TOP_PORT);
 
-        elevatorPID = new PIDController(0.1, 0, 0);
-        elevatorPID.setTolerance(5, 10);
-        armPID = new PIDController(.1, 0, 0);
-        armPID.setTolerance(5, 10);
+        elevatorMotor.getPIDController().setSmartMotionMaxVelocity(0.5, 1);
+        elevatorMotor.getPIDController().setSmartMotionMaxVelocity(0.8, 1);
     }
 
     public double getEncoderPosition(CANSparkMax motor) {
@@ -143,14 +144,28 @@ public class ElevatorArm extends SubsystemBase {
         movePivot(setPoint.getPivotPosition());
     }
 
-    public void moveToSetPoint(SetPoint setPoint) {
+    public SequentialCommandGroup moveToSetPoint(SetPoint setPoint) {
         switch (setPoint) {
             case TOP:
+                return new SequentialCommandGroup(
+                        new InstantCommand(() -> movePivot(PivotPosition.START_POS)),
+                        new WaitCommand(1),
+                        new InstantCommand(() -> moveElevator(ElevatorPosition.TOP)),
+                        new WaitCommand(1),
+                        new InstantCommand(() -> movePivot(PivotPosition.TOP)));
             case MIDDLE:
+                return new SequentialCommandGroup(
+                        new InstantCommand(() -> moveElevatorAndPivot(SetPoint.MIDDLE)));
             case GROUND:
+                return new SequentialCommandGroup(
+                        new InstantCommand(() -> moveElevatorAndPivot(SetPoint.GROUND)));
             case SINGLE_SUBSTATION:
+                return new SequentialCommandGroup(
+                        new InstantCommand(() -> moveElevatorAndPivot(SetPoint.SINGLE_SUBSTATION)));
             default:
-                moveElevatorAndPivot(SetPoint.START);
+                return new SequentialCommandGroup(
+                        new InstantCommand(() -> moveElevatorAndPivot(SetPoint.START)));
+
         }
 
     }
