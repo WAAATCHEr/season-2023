@@ -16,22 +16,16 @@ public abstract class OperatorMap extends CommandMap {
   public OperatorMap(GameController controller) {
     super(controller);
   }
+  
+  public abstract JoystickButton getForwardIntakeButton();
+  
+  public abstract JoystickButton getReverseIntakeButton();
 
-  public abstract JoystickButton getElevatorUpButton();
-
-  public abstract JoystickButton getElevatorDownButton();
-
-  public abstract JoystickButton getElevatorMiddleButton();
-  
-  public abstract JoystickButton getElevatorPivotUp();
-  
-  public abstract JoystickButton getElevatorPivotMid();
-  
-  public abstract JoystickButton getElevatorPivotIntake();
-  
   public abstract double getLeftXAxis();
 
   public abstract double getLeftYAxis();
+
+  public abstract double getRightXAxis();
 
   public abstract double getRightYAxis();
 
@@ -44,5 +38,8 @@ public abstract class OperatorMap extends CommandMap {
     elevatorArm)));
 
     MotorIntake motorIntake = MotorIntake.getInstance();
+    getForwardIntakeButton().onTrue(motorIntake.moveIntake(1));
+    getReverseIntakeButton().onTrue(motorIntake.moveIntake(-1));
+
   }
 }

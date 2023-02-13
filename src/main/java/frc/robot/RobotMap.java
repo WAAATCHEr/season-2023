@@ -229,20 +229,24 @@ public class RobotMap {
   }
 
   public static class FrictionPadMap {
-    public static final int FOWARD_CHANNEL = 0;
-    public static final int REVERSE_CHANNEL = 0;
+    //TODO: Change these ports
+    public static final int FOWARD_CHANNEL_1 = 0;
+    public static final int REVERSE_CHANNEL_1 = 0;
+
+    public static final int FORWARD_CHANNEL_2 = 0;
+    public static final int REVERSE_CHANNEL_2 = 0;
 
   }
-  public static class PinkArmMap{
+
+  public static class PinkArmMap {
     public static final int PIVOT_PORT = 0;
     public static final int TELESCOPE_PORT = 0;
     public static final int PIVOT_RATIO = 100;
     public static final double PIVOT_MIN = 0;
     public static final double PIVOT_MAX = .75;
     public static final int TELESCOPE_RATIO = 40;
-    public static final double TELESCOPE_MIN = 0;//assuming it starts as spooled as possible
-    public static final double TELESCOPE_MAX = 4;//should be in terms of rotations of the larger gear
-
+    public static final double TELESCOPE_MIN = 0;// assuming it starts as spooled as possible
+    public static final double TELESCOPE_MAX = 4;// should be in terms of rotations of the larger gear
 
   }
 }

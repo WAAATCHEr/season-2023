@@ -16,39 +16,15 @@ public class TwoJoyStickOperatorMap extends OperatorMap {
     }
 
     @Override
-    public JoystickButton getElevatorUpButton() {
-        return controller.getButton(Button.BUTTON_A);
-        // TODO Auto-generated method stub
-
+    public JoystickButton getForwardIntakeButton() {
+        return controller.getButton(Button.BUTTON_RIGHT_BUMPER);
     }
 
     @Override
-    public JoystickButton getElevatorDownButton() {
-        return controller.getButton(Button.BUTTON_B);
-        // TODO Auto-generated method stub
-
+    public JoystickButton getReverseIntakeButton() {
+        return controller.getButton(Button.BUTTON_LEFT_BUMPER);
     }
-
-    @Override
-    public JoystickButton getElevatorMiddleButton() {
-        return controller.getButton(Button.BUTTON_X);
-        // TODO Auto-generated method stub
-
-    }    @Override
-    public JoystickButton getElevatorPivotUp() {
-        return controller.getDpad(Dpad.DPAD_UP);
-    }
-
-    @Override
-    public JoystickButton getElevatorPivotMid() {
-        return controller.getDpad(Dpad.DPAD_RIGHT);
-    }
-
-    @Override
-    public JoystickButton getElevatorPivotIntake() {
-        return controller.getDpad(Dpad.DPAD_DOWN);
-    }
-
+    
     @Override
     public double getLeftXAxis() {
         return controller.getAxis(Axis.AXIS_LEFT_X);
@@ -57,6 +33,11 @@ public class TwoJoyStickOperatorMap extends OperatorMap {
     @Override
     public double getLeftYAxis() {
         return controller.getAxis(Axis.AXIS_LEFT_Y);
+    }
+
+    @Override
+    public double getRightXAxis() {
+        return controller.getAxis(Axis.AXIS_RIGHT_X);
     }
 
     @Override
