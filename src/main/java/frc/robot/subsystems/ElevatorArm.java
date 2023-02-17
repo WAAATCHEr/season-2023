@@ -7,6 +7,8 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -28,7 +30,7 @@ public class ElevatorArm extends SubsystemBase {
         SINGLE_SUBSTATION(ElevatorPosition.SUBSTATION, PivotPosition.SUBSTATION),
         MIDDLE(ElevatorPosition.MID, PivotPosition.MID),
         TOP(ElevatorPosition.TOP, PivotPosition.TOP),
-        START(ElevatorPosition.START_POS, PivotPosition.START_POS);
+        STORED(ElevatorPosition.STORED, PivotPosition.STORED);
 
         private final ElevatorPosition elevatorPosition;
         private final PivotPosition pivotPosition;
@@ -53,7 +55,7 @@ public class ElevatorArm extends SubsystemBase {
         MID(16.2),
         GROUND(-25.6),
         SUBSTATION(0.3),
-        START_POS(-40);
+        STORED(-40);
 
         private final double encoderValue;
 
@@ -71,7 +73,7 @@ public class ElevatorArm extends SubsystemBase {
         MID(-26.1),
         GROUND(-16.5),
         SUBSTATION(-15.6),
-        START_POS(-34);
+        STORED(-34);
 
         private final double encoderValue;
 
@@ -88,6 +90,8 @@ public class ElevatorArm extends SubsystemBase {
     private CANSparkMax elevatorMotor, pivotMotor;
     private DigitalInput bottomSwitch, topSwitch;
     private PIDController elevatorPID, armPID;
+    private ElevatorPosition currentElevatorPos = ElevatorPosition.STORED;
+    private PivotPosition currentPivotPos = PivotPosition.STORED;
 
     private ElevatorArm() {
         elevatorMotor = new CANSparkMax(ElevatorMap.ELEVATOR_MOTOR_ID, MotorType.kBrushless);
@@ -107,6 +111,8 @@ public class ElevatorArm extends SubsystemBase {
         elevatorMotor.getPIDController().setReference(setPoint.getEncoderPos(), ControlType.kPosition);
     }
 
+
+
     // Elevator Functionality
     public void moveElevator(double input) {
         // if ((input < 0.0 && bottomSwitch.get())
@@ -118,6 +124,21 @@ public class ElevatorArm extends SubsystemBase {
         elevatorMotor.set(input * 0.6);
     }
 
+    public Command moveElevatorCommand(ElevatorPosition elevatorPos) {
+        return new FunctionalCommand(
+                () -> {
+                    moveElevator(elevatorPos);
+                },
+                () -> {
+                },
+                interrupted -> {
+                    currentElevatorPos = elevatorPos;
+                },
+                () -> {
+                    return (Math.abs(elevatorMotor.getEncoder().getPosition() - elevatorPos.getEncoderPos()) < 1);
+                });
+    }
+    
     public void movePivot(PivotPosition setPoint) {
         pivotMotor.getPIDController().setReference(setPoint.getEncoderPos(), ControlType.kPosition);
     }
@@ -134,6 +155,21 @@ public class ElevatorArm extends SubsystemBase {
         pivotMotor.set(input * 0.2);
     }
 
+    public Command movePivotCommand(PivotPosition pivotPos) {
+        return new FunctionalCommand(
+            () -> {
+                    movePivot(pivotPos);
+            },
+            () -> {
+            },
+            interrupted -> {
+                currentPivotPos = pivotPos;
+            },
+            () -> {
+                return (Math.abs(pivotMotor.getEncoder().getPosition() - pivotPos.getEncoderPos()) < 1);
+            });
+    }
+
     public void moveElevatorAndPivot(double elevatorInput, double pivotInput) {
         moveElevator(elevatorInput);
         movePivot(pivotInput);
@@ -148,23 +184,35 @@ public class ElevatorArm extends SubsystemBase {
         switch (setPoint) {
             case TOP:
                 return new SequentialCommandGroup(
-                        new InstantCommand(() -> movePivot(PivotPosition.START_POS)),
-                        new WaitCommand(1),
-                        new InstantCommand(() -> moveElevator(ElevatorPosition.TOP)),
-                        new WaitCommand(1),
-                        new InstantCommand(() -> movePivot(PivotPosition.TOP)));
+                    movePivotCommand(PivotPosition.STORED),
+                    moveElevatorCommand(setPoint.getElevatorPosition()),
+                    movePivotCommand(setPoint.getPivotPosition())
+                        );
             case MIDDLE:
                 return new SequentialCommandGroup(
-                        new InstantCommand(() -> moveElevatorAndPivot(SetPoint.MIDDLE)));
+                    moveElevatorCommand(setPoint.getElevatorPosition()),
+                    movePivotCommand(setPoint.getPivotPosition())
+                        );
             case GROUND:
                 return new SequentialCommandGroup(
-                        new InstantCommand(() -> moveElevatorAndPivot(SetPoint.GROUND)));
+                    moveElevatorCommand(setPoint.getElevatorPosition()),
+                    movePivotCommand(setPoint.getPivotPosition())
+                );
+                        
             case SINGLE_SUBSTATION:
                 return new SequentialCommandGroup(
-                        new InstantCommand(() -> moveElevatorAndPivot(SetPoint.SINGLE_SUBSTATION)));
+                    moveElevatorCommand(setPoint.getElevatorPosition()),
+                    movePivotCommand(setPoint.getPivotPosition())
+                );
+            case STORED:
+                return new SequentialCommandGroup(
+                    movePivotCommand(setPoint.getPivotPosition()),
+                    moveElevatorCommand(setPoint.getElevatorPosition())
+                );
             default:
                 return new SequentialCommandGroup(
-                        new InstantCommand(() -> moveElevatorAndPivot(SetPoint.START)));
+
+                        );
 
         }
 
