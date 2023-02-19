@@ -3,6 +3,7 @@ package frc.robot.layout;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import frc.robot.subsystems.ElevatorArm;
 import frc.robot.subsystems.MotorIntake;
+import frc.robot.subsystems.FrictionPad;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RepeatCommand;
 import frc.robot.subsystems.ElevatorArm.ElevatorPosition;
@@ -31,6 +32,8 @@ public abstract class OperatorMap extends CommandMap {
 
   public abstract JoystickButton getElevatorStoredButton();
 
+  public abstract JoystickButton getFrictionPadButton();
+
   public abstract double getLeftXAxis();
 
   public abstract double getLeftYAxis();
@@ -44,7 +47,7 @@ public abstract class OperatorMap extends CommandMap {
     ElevatorArm elevatorArm = ElevatorArm.getInstance();
 
     elevatorArm.setDefaultCommand(
-        new RepeatCommand(new RunCommand(() -> elevatorArm.moveElevatorAndPivot(-getLeftYAxis() * 0.5, getRightYAxis() * 0.8),
+      new RepeatCommand(new RunCommand(() -> elevatorArm.moveElevatorAndPivot(-getLeftYAxis() * 0.5, getRightYAxis() * 1),
             elevatorArm)));
     // getElevatorTopButton().onTrue(elevatorArm.moveToSetPoint(ElevatorArm.SetPoint.TOP));
     // getElevatorMidButton().onTrue(elevatorArm.moveToSetPoint(ElevatorArm.SetPoint.MIDDLE));
@@ -56,6 +59,9 @@ public abstract class OperatorMap extends CommandMap {
     MotorIntake motorIntake = MotorIntake.getInstance();
     getForwardIntakeButton().onTrue(new InstantCommand(() -> motorIntake.moveIntake(1)));
     getReverseIntakeButton().onTrue(new InstantCommand(() -> motorIntake.moveIntake(-1)));
+
+    FrictionPad frictionPad = FrictionPad.getInstance();
+    getFrictionPadButton().onTrue(new InstantCommand(() -> frictionPad.togglePistons()));
 
   }
 }

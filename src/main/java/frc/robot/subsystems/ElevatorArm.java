@@ -1,7 +1,10 @@
 package frc.robot.subsystems;
 
+import com.revrobotics.CANDigitalInput;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
+import com.revrobotics.SparkMaxLimitSwitch;
+import com.revrobotics.CANDigitalInput.LimitSwitchPolarity;
 import com.revrobotics.CANSparkMax.ControlType;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
@@ -97,19 +100,22 @@ public class ElevatorArm extends SubsystemBase {
     }
 
     private CANSparkMax elevatorMotor, pivotMotor;
-    private DigitalInput bottomSwitch, topSwitch;
+    private SparkMaxLimitSwitch forwardLimit, reverseLimit;
     private PIDController elevatorPID, armPID;
     private ElevatorPosition currentElevatorPos = ElevatorPosition.STORED;
     private PivotPosition currentPivotPos = PivotPosition.STORED;
     private ArmFeedforward pivotFF;
     private ElevatorFeedforward elevatorFF;
-    private double encoderStartValue, encoderStartValueP;
+    private double encoderStartValue = -31.55;
+    private double encoderStartValueP =  -7.33;
 
     private ElevatorArm() {
         elevatorMotor = new CANSparkMax(ElevatorMap.ELEVATOR_MOTOR_ID, MotorType.kBrushless);
+        forwardLimit = elevatorMotor.getForwardLimitSwitch(SparkMaxLimitSwitch.Type.kNormallyOpen);
+        forwardLimit.enableLimitSwitch(true);
+        reverseLimit = elevatorMotor.getReverseLimitSwitch(SparkMaxLimitSwitch.Type.kNormallyOpen);
+        reverseLimit.enableLimitSwitch(true);
         pivotMotor = new CANSparkMax(ElevatorMap.PIVOT_MOTOR_ID, MotorType.kBrushless);
-        bottomSwitch = new DigitalInput(ElevatorMap.BOTTOM_PORT);
-        topSwitch = new DigitalInput(ElevatorMap.TOP_PORT);
 
         getEncoderPosition();
 
@@ -137,30 +143,11 @@ public class ElevatorArm extends SubsystemBase {
 
     // Elevator Functionality
     public void moveElevator(double input) {
-        if ((input < 0.0 && bottomSwitch.get())
-                || (input > 0.0 && topSwitch.get())) {
-            elevatorMotor.set(0);
-        } else {
-            elevatorMotor.set(input * 0.6);
-        }
+        elevatorMotor.set(input * 0.6);
     }
 
     public Command moveElevatorCommand(ElevatorPosition elevatorPos) {
-        return new FunctionalCommand(
-                () -> {
-                    moveElevator(elevatorPos);
-                },
-                () -> {
-                },
-                interrupted -> {
-                    currentElevatorPos = elevatorPos;
-                },
-                () -> {
-                    if (bottomSwitch.get() || topSwitch.get()) {
-                        return true;
-                    }
-                    return (Math.abs(elevatorMotor.getEncoder().getPosition() - elevatorPos.getEncoderPos()) < 1);
-                });
+        return new InstantCommand(() -> moveElevator(elevatorPos));
     }
 
     public void movePivot(PivotPosition setPoint) {
@@ -236,6 +223,12 @@ public class ElevatorArm extends SubsystemBase {
 
         }
 
+    }
+
+    @Override
+    public void periodic() {
+        SmartDashboard.putBoolean("bottom switch", forwardLimit.isPressed());
+        SmartDashboard.putBoolean("top switch", reverseLimit.isPressed());
     }
 
 }

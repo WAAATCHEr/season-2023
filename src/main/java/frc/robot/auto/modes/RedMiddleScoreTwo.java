@@ -8,7 +8,7 @@ import frc.robot.subsystems.Swerve;
 
 public class RedMiddleScoreTwo extends SequentialCommandGroup{
     public RedMiddleScoreTwo() {
-        String path = "Red Middle Score Overcharge Pickup Roundcharge Score";
+        String path = "Red Middle Score Overcharge Pickup RoundCharge Score";
         HashMap<String, Command> eventMap = new HashMap<String, Command>();
 
         var swerve = Swerve.getInstance();

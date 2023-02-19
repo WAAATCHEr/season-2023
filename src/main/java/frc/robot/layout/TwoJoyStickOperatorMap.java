@@ -49,6 +49,11 @@ public class TwoJoyStickOperatorMap extends OperatorMap {
     public JoystickButton getElevatorStoredButton(){
         return controller.getDpad(Dpad.DPAD_UP); 
     }
+    
+    @Override
+    public JoystickButton getFrictionPadButton(){
+        return controller.getButton(Button.BUTTON_START);
+    }
 
     @Override
     public double getLeftXAxis() {

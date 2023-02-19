@@ -85,8 +85,8 @@ public class Swerve extends SubsystemBase {
     gyro.configFactoryDefault();
     zeroGyro();
 
-    vision = Vision.getInstance();
-    pixyCam = PixyCam.getInstance();
+    // vision = Vision.getInstance();
+    // pixyCam = PixyCam.getInstance();
 
     modules = new SwerveModule[] {
         new SwerveModule(0, DriveMap.FrontLeft.CONSTANTS),
@@ -553,8 +553,8 @@ public class Swerve extends SubsystemBase {
   @Override
   public void periodic() {
     odometry.update(getYaw(), getModulePositions());
-    updateCameraOdometry();
-    vision.updateResult();
+    // updateCameraOdometry();
+    // vision.updateResult();
     for (SwerveModule mod : modules) {
       SmartDashboard.putNumber(
           "Mod " + mod.moduleNumber + " Cancoder", mod.getCanCoder().getDegrees());
@@ -570,7 +570,7 @@ public class Swerve extends SubsystemBase {
     SmartDashboard.putNumber("module 2 position" , getModulePositions()[2].distanceMeters);
     SmartDashboard.putNumber("module 3 position" , getModulePositions()[3].distanceMeters);
     
-    camData();
+    // camData();
     // System.out.println("Pitch: " + gyro.getPitch()+"\n ");
     // System.out.println("Roll: " + gyro.getRoll()+"\n ");
     //System.out.println("Yaw: " + gyro.getYaw()+"\n ");
