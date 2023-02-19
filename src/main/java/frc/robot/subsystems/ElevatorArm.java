@@ -5,8 +5,11 @@ import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkMax.ControlType;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
+import edu.wpi.first.math.controller.ArmFeedforward;
+import edu.wpi.first.math.controller.ElevatorFeedforward;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -69,20 +72,26 @@ public class ElevatorArm extends SubsystemBase {
     }
 
     public enum PivotPosition {
-        TOP(-25.0),
-        MID(-26.1),
-        GROUND(-16.5),
-        SUBSTATION(-15.6),
-        STORED(-34);
+        TOP(-25.0, 40),
+        MID(-26.1, 35),
+        GROUND(-16.5, -15),
+        SUBSTATION(-15.6, 5),
+        STORED(-34, 55);
 
         private final double encoderValue;
+        private final double horizontalAngleDegrees;
 
-        PivotPosition(double encoderValue) {
+        PivotPosition(double encoderValue, double horizontalAngleDegrees) {
             this.encoderValue = encoderValue;
+            this.horizontalAngleDegrees = horizontalAngleDegrees;
         }
 
         public double getEncoderPos() {
             return encoderValue;
+        }
+
+        public double getAngle() {
+            return horizontalAngleDegrees;
         }
 
     }
@@ -92,6 +101,9 @@ public class ElevatorArm extends SubsystemBase {
     private PIDController elevatorPID, armPID;
     private ElevatorPosition currentElevatorPos = ElevatorPosition.STORED;
     private PivotPosition currentPivotPos = PivotPosition.STORED;
+    private ArmFeedforward pivotFF;
+    private ElevatorFeedforward elevatorFF;
+    private double encoderStartValue, encoderStartValueP;
 
     private ElevatorArm() {
         elevatorMotor = new CANSparkMax(ElevatorMap.ELEVATOR_MOTOR_ID, MotorType.kBrushless);
@@ -99,16 +111,28 @@ public class ElevatorArm extends SubsystemBase {
         bottomSwitch = new DigitalInput(ElevatorMap.BOTTOM_PORT);
         topSwitch = new DigitalInput(ElevatorMap.TOP_PORT);
 
+        getEncoderPosition();
+
         elevatorMotor.getPIDController().setSmartMotionMaxVelocity(0.5, 1);
         elevatorMotor.getPIDController().setSmartMotionMaxVelocity(0.8, 1);
+
+        pivotFF = new ArmFeedforward(ElevatorMap.PIVOT_KA, ElevatorMap.PIVOT_KG,
+                ElevatorMap.PIVOT_KV, ElevatorMap.PIVOT_KA);
+
+        elevatorFF = new ElevatorFeedforward(ElevatorMap.ELEVATOR_KS, ElevatorMap.ELEVATOR_KG,
+                ElevatorMap.ELEVATOR_KV, ElevatorMap.ELEVATOR_KA);
     }
 
-    public double getEncoderPosition(CANSparkMax motor) {
-        return motor.getEncoder().getPosition();
+    public void getEncoderPosition() {
+        SmartDashboard.putNumber("Elevator encoder pos", elevatorMotor.getEncoder().getPosition());
+        SmartDashboard.putNumber("Pivot encoder pos", pivotMotor.getEncoder().getPosition());
+
     }
 
     public void moveElevator(ElevatorPosition setPoint) {
-        elevatorMotor.getPIDController().setReference(setPoint.getEncoderPos(), ControlType.kPosition);
+
+        elevatorMotor.getPIDController().setReference(setPoint.getEncoderPos(), ControlType.kPosition,
+                0, elevatorFF.calculate(0.2));
     }
 
     // Elevator Functionality
@@ -140,7 +164,8 @@ public class ElevatorArm extends SubsystemBase {
     }
 
     public void movePivot(PivotPosition setPoint) {
-        pivotMotor.getPIDController().setReference(setPoint.getEncoderPos(), ControlType.kPosition);
+        pivotMotor.getPIDController().setReference(setPoint.getEncoderPos(), ControlType.kPosition, 0,
+                pivotFF.calculate(Math.toRadians(setPoint.getAngle()), 0.2));
     }
 
     // Pivot part functionality

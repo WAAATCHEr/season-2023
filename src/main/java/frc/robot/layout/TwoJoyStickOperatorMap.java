@@ -47,7 +47,7 @@ public class TwoJoyStickOperatorMap extends OperatorMap {
 
     @Override
     public JoystickButton getElevatorStoredButton(){
-        return controller.getButton(Button.BUTTON_A); //TODO: Reassign to something comfortable
+        return controller.getDpad(Dpad.DPAD_UP); 
     }
 
     @Override

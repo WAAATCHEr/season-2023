@@ -221,15 +221,24 @@ public class RobotMap {
     public static final int TOP_PORT = 1;
     public static final double MIDPOINT1 = 20; // arbitrary
 
-    public static final int PIVOT_MOTOR_ID = 8;
+    public static final int PIVOT_MOTOR_ID = 3;
     public static final double PIVOT_BOTTOM = 10; // arbitrary
     public static final double PIVOT_TOP = 20; // arbitrary
     public static final double MIDPOINT2 = 15; // arbitrary
 
+    public static final double PIVOT_KS = 0;
+    public static final double PIVOT_KG = 0;
+    public static final double PIVOT_KV = 0;
+    public static final double PIVOT_KA = 0;
+
+    public static final double ELEVATOR_KS = 0;
+    public static final double ELEVATOR_KG = 0;
+    public static final double ELEVATOR_KV = 0;
+    public static final double ELEVATOR_KA = 0;
   }
 
   public static class FrictionPadMap {
-    //TODO: Change these ports
+    // TODO: Change these ports
     public static final int FOWARD_CHANNEL_1 = 0;
     public static final int REVERSE_CHANNEL_1 = 0;
 

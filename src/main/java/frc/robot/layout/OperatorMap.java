@@ -46,11 +46,12 @@ public abstract class OperatorMap extends CommandMap {
     elevatorArm.setDefaultCommand(
         new RepeatCommand(new RunCommand(() -> elevatorArm.moveElevatorAndPivot(-getLeftYAxis() * 0.5, getRightYAxis() * 0.8),
             elevatorArm)));
-    getElevatorTopButton().onTrue(elevatorArm.moveToSetPoint(ElevatorArm.SetPoint.TOP));
-    getElevatorMidButton().onTrue(elevatorArm.moveToSetPoint(ElevatorArm.SetPoint.MIDDLE));
-    getElevatorGroundButton().onTrue(elevatorArm.moveToSetPoint(ElevatorArm.SetPoint.GROUND));
-    getElevatorSingleSubstationButton().onTrue(elevatorArm.moveToSetPoint(ElevatorArm.SetPoint.SINGLE_SUBSTATION));
-    getElevatorStoredButton().onTrue(elevatorArm.moveToSetPoint(ElevatorArm.SetPoint.STORED));
+    // getElevatorTopButton().onTrue(elevatorArm.moveToSetPoint(ElevatorArm.SetPoint.TOP));
+    // getElevatorMidButton().onTrue(elevatorArm.moveToSetPoint(ElevatorArm.SetPoint.MIDDLE));
+    // getElevatorGroundButton().onTrue(elevatorArm.moveToSetPoint(ElevatorArm.SetPoint.GROUND));
+    // getElevatorSingleSubstationButton().onTrue(elevatorArm.moveToSetPoint(ElevatorArm.SetPoint.SINGLE_SUBSTATION));
+    // getElevatorStoredButton().onTrue(elevatorArm.moveToSetPoint(ElevatorArm.SetPoint.STORED));
+    getElevatorTopButton().onTrue(new InstantCommand( () -> elevatorArm.getEncoderPosition()));
 
     MotorIntake motorIntake = MotorIntake.getInstance();
     getForwardIntakeButton().onTrue(new InstantCommand(() -> motorIntake.moveIntake(1)));
