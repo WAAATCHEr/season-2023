@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.RobotMap;
 import frc.robot.util.controllers.ButtonMap.Button;
 import frc.robot.util.controllers.ButtonMap.Dpad;
+import frc.robot.util.controllers.ButtonMap.Trigger;
 import frc.robot.util.controllers.GameController;
 
 public class TwoJoyStickOperatorMap extends OperatorMap {
@@ -16,38 +17,18 @@ public class TwoJoyStickOperatorMap extends OperatorMap {
     }
 
     @Override
-    public JoystickButton getForwardIntakeButton() {
-        return controller.getButton(Button.BUTTON_RIGHT_BUMPER);
-    }
-
-    @Override
-    public JoystickButton getReverseIntakeButton() {
-        return controller.getButton(Button.BUTTON_LEFT_BUMPER);
-    }
-
-    @Override
-    public JoystickButton getElevatorTopButton() {
-        return controller.getButton(Button.BUTTON_Y);
-    }
-
-    @Override
-    public JoystickButton getElevatorMidButton() {
-        return controller.getButton(Button.BUTTON_X);
-    }
-
-    @Override
-    public JoystickButton getElevatorGroundButton() {
+    public JoystickButton getElevatorEncoderButton() {
         return controller.getButton(Button.BUTTON_A);
     }
 
     @Override
-    public JoystickButton getElevatorSingleSubstationButton() {
-        return controller.getButton(Button.BUTTON_B);
+    public JoystickButton getElevatorCycleUpButton() {
+        return controller.getButton(Button.BUTTON_RIGHT_BUMPER);
     }
 
     @Override
-    public JoystickButton getElevatorStoredButton(){
-        return controller.getDpad(Dpad.DPAD_UP); 
+    public JoystickButton getElevatorCycleDownButton() {
+        return controller.getButton(Button.BUTTON_LEFT_BUMPER);
     }
     
     @Override
@@ -55,6 +36,16 @@ public class TwoJoyStickOperatorMap extends OperatorMap {
         return controller.getButton(Button.BUTTON_START);
     }
 
+    @Override
+    public double getForwardIntakeValue() {
+        return controller.getTrigger(Trigger.BUTTON_RIGHT_TRIGGER);
+    }
+
+    @Override
+    public double getReverseIntakeValue() {
+        return controller.getTrigger(Trigger.BUTTON_LEFT_TRIGGER);
+    }
+    
     @Override
     public double getLeftXAxis() {
         return controller.getAxis(Axis.AXIS_LEFT_X);

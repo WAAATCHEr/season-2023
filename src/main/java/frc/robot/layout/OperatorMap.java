@@ -18,21 +18,18 @@ public abstract class OperatorMap extends CommandMap {
     super(controller);
   }
 
-  public abstract JoystickButton getForwardIntakeButton();
 
-  public abstract JoystickButton getReverseIntakeButton();
+  public abstract JoystickButton getElevatorEncoderButton();
 
-  public abstract JoystickButton getElevatorTopButton();
+  public abstract JoystickButton getElevatorCycleUpButton();
 
-  public abstract JoystickButton getElevatorMidButton();
-
-  public abstract JoystickButton getElevatorGroundButton();
-
-  public abstract JoystickButton getElevatorSingleSubstationButton();
-
-  public abstract JoystickButton getElevatorStoredButton();
+  public abstract JoystickButton getElevatorCycleDownButton();
 
   public abstract JoystickButton getFrictionPadButton();
+
+  public abstract double getForwardIntakeValue();
+
+  public abstract double getReverseIntakeValue();
 
   public abstract double getLeftXAxis();
 
@@ -47,18 +44,17 @@ public abstract class OperatorMap extends CommandMap {
     ElevatorArm elevatorArm = ElevatorArm.getInstance();
 
     elevatorArm.setDefaultCommand(
-      new RepeatCommand(new RunCommand(() -> elevatorArm.moveElevatorAndPivot(-getLeftYAxis() * 0.5, getRightYAxis() * 1),
-            elevatorArm)));
-    // getElevatorTopButton().onTrue(elevatorArm.moveToSetPoint(ElevatorArm.SetPoint.TOP));
-    // getElevatorMidButton().onTrue(elevatorArm.moveToSetPoint(ElevatorArm.SetPoint.MIDDLE));
-    // getElevatorGroundButton().onTrue(elevatorArm.moveToSetPoint(ElevatorArm.SetPoint.GROUND));
-    // getElevatorSingleSubstationButton().onTrue(elevatorArm.moveToSetPoint(ElevatorArm.SetPoint.SINGLE_SUBSTATION));
-    // getElevatorStoredButton().onTrue(elevatorArm.moveToSetPoint(ElevatorArm.SetPoint.STORED));
-    getElevatorTopButton().onTrue(new InstantCommand( () -> elevatorArm.getEncoderPosition()));
+      new RepeatCommand(
+            new RunCommand(() -> elevatorArm.moveElevatorAndPivot(-getLeftYAxis() * 0.5, getRightYAxis() * 1),
+                elevatorArm)));
+    getElevatorEncoderButton().onTrue(new InstantCommand(() -> elevatorArm.getEncoderPosition()));
+    getElevatorCycleUpButton().onTrue(elevatorArm.cycleElevator(1));
+    getElevatorCycleDownButton().onTrue(elevatorArm.cycleElevator(-1));
 
     MotorIntake motorIntake = MotorIntake.getInstance();
-    getForwardIntakeButton().onTrue(new InstantCommand(() -> motorIntake.moveIntake(1)));
-    getReverseIntakeButton().onTrue(new InstantCommand(() -> motorIntake.moveIntake(-1)));
+    motorIntake.setDefaultCommand(
+      new RepeatCommand(new RunCommand(()-> motorIntake.moveIntake(getForwardIntakeValue(), getReverseIntakeValue()), motorIntake))
+    );
 
     FrictionPad frictionPad = FrictionPad.getInstance();
     getFrictionPadButton().onTrue(new InstantCommand(() -> frictionPad.togglePistons()));

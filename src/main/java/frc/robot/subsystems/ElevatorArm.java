@@ -31,10 +31,10 @@ public class ElevatorArm extends SubsystemBase {
 
     public enum SetPoint {
         GROUND(ElevatorPosition.GROUND, PivotPosition.GROUND),
-        SINGLE_SUBSTATION(ElevatorPosition.SUBSTATION, PivotPosition.SUBSTATION),
         MIDDLE(ElevatorPosition.MID, PivotPosition.MID),
-        TOP(ElevatorPosition.TOP, PivotPosition.TOP),
-        STORED(ElevatorPosition.STORED, PivotPosition.STORED);
+        SINGLE_SUBSTATION(ElevatorPosition.SUBSTATION, PivotPosition.SUBSTATION),
+        STOW(ElevatorPosition.STOW, PivotPosition.STOW),
+        TOP(ElevatorPosition.TOP, PivotPosition.TOP);
 
         private final ElevatorPosition elevatorPosition;
         private final PivotPosition pivotPosition;
@@ -59,7 +59,7 @@ public class ElevatorArm extends SubsystemBase {
         MID(16.2),
         GROUND(-25.6),
         SUBSTATION(0.3),
-        STORED(-40);
+        STOW(-40);
 
         private final double encoderValue;
 
@@ -77,7 +77,7 @@ public class ElevatorArm extends SubsystemBase {
         MID(-26.1, 35),
         GROUND(-16.5, -15),
         SUBSTATION(-15.6, 5),
-        STORED(-34, 55);
+        STOW(-34, 55);
 
         private final double encoderValue;
         private final double horizontalAngleDegrees;
@@ -98,12 +98,10 @@ public class ElevatorArm extends SubsystemBase {
     }
 
     private CANSparkMax elevatorMotor, pivotMotor;
+    private DigitalInput bottomSwitch, topSwitch;
+    private SetPoint setPoints[] = SetPoint.values();
+    private int index = 3;
     private SparkMaxLimitSwitch forwardLimit, reverseLimit;
-    private PIDController elevatorPID, armPID;
-    private ElevatorPosition currentElevatorPos = ElevatorPosition.STORED;
-    private PivotPosition currentPivotPos = PivotPosition.STORED;
-    private ArmFeedforward pivotFF;
-    private ElevatorFeedforward elevatorFF;
     private double encoderStartValue = -31.55;
     private double encoderStartValueP =  -7.33;
 
@@ -120,11 +118,6 @@ public class ElevatorArm extends SubsystemBase {
         elevatorMotor.getPIDController().setSmartMotionMaxVelocity(0.5, 1);
         elevatorMotor.getPIDController().setSmartMotionMaxVelocity(0.8, 1);
 
-        pivotFF = new ArmFeedforward(ElevatorMap.PIVOT_KA, ElevatorMap.PIVOT_KG,
-                ElevatorMap.PIVOT_KV, ElevatorMap.PIVOT_KA);
-
-        elevatorFF = new ElevatorFeedforward(ElevatorMap.ELEVATOR_KS, ElevatorMap.ELEVATOR_KG,
-                ElevatorMap.ELEVATOR_KV, ElevatorMap.ELEVATOR_KA);
     }
 
     public void getEncoderPosition() {
@@ -135,8 +128,7 @@ public class ElevatorArm extends SubsystemBase {
 
     public void moveElevator(ElevatorPosition setPoint) {
 
-        elevatorMotor.getPIDController().setReference(setPoint.getEncoderPos(), ControlType.kPosition,
-                0, elevatorFF.calculate(0.2));
+        elevatorMotor.getPIDController().setReference(setPoint.getEncoderPos(), ControlType.kPosition);
     }
 
     // Elevator Functionality
@@ -149,8 +141,7 @@ public class ElevatorArm extends SubsystemBase {
     }
 
     public void movePivot(PivotPosition setPoint) {
-        pivotMotor.getPIDController().setReference(setPoint.getEncoderPos(), ControlType.kPosition, 0,
-                pivotFF.calculate(Math.toRadians(setPoint.getAngle()), 0.2));
+        pivotMotor.getPIDController().setReference(setPoint.getEncoderPos(), ControlType.kPosition);
     }
 
     // Pivot part functionality
@@ -173,7 +164,6 @@ public class ElevatorArm extends SubsystemBase {
                 () -> {
                 },
                 interrupted -> {
-                    currentPivotPos = pivotPos;
                 },
                 () -> {
                     return (Math.abs(pivotMotor.getEncoder().getPosition() - pivotPos.getEncoderPos()) < 1);
@@ -194,7 +184,7 @@ public class ElevatorArm extends SubsystemBase {
         switch (setPoint) {
             case TOP:
                 return new SequentialCommandGroup(
-                        movePivotCommand(PivotPosition.STORED),
+                        movePivotCommand(PivotPosition.STOW),
                         moveElevatorCommand(setPoint.getElevatorPosition()),
                         movePivotCommand(setPoint.getPivotPosition()));
             case MIDDLE:
@@ -210,7 +200,7 @@ public class ElevatorArm extends SubsystemBase {
                 return new SequentialCommandGroup(
                         moveElevatorCommand(setPoint.getElevatorPosition()),
                         movePivotCommand(setPoint.getPivotPosition()));
-            case STORED:
+            case STOW:
                 return new SequentialCommandGroup(
                         movePivotCommand(setPoint.getPivotPosition()),
                         moveElevatorCommand(setPoint.getElevatorPosition()));
@@ -221,6 +211,23 @@ public class ElevatorArm extends SubsystemBase {
 
         }
 
+    }
+
+    public SequentialCommandGroup cycleElevator(int direction) {
+        var currentSetPoint = setPoints[index];
+        if ((direction > 0 && index < 4) || (direction < 0 && index > 0)) {
+            index += direction;
+        }
+        var targetSetPoint = setPoints[index];
+        if (currentSetPoint.equals(SetPoint.STOW)) {
+            return new SequentialCommandGroup(
+                movePivotCommand(targetSetPoint.getPivotPosition()),
+                moveToSetPoint(targetSetPoint)
+            );
+        }
+        else {
+            return moveToSetPoint(targetSetPoint);
+        }
     }
 
     @Override
