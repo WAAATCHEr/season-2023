@@ -111,17 +111,14 @@ public class ElevatorArm extends SubsystemBase {
         elevatorMotor.getPIDController().setReference(setPoint.getEncoderPos(), ControlType.kPosition);
     }
 
-
-
     // Elevator Functionality
     public void moveElevator(double input) {
-        // if ((input < 0.0 && bottomSwitch.get())
-        // || (input > 0.0 && topSwitch.get())) {
-        // eleMotor.set(0);
-        // } else {
-        // eleMotor.set(input * 0.6);
-        // }
-        elevatorMotor.set(input * 0.6);
+        if ((input < 0.0 && bottomSwitch.get())
+                || (input > 0.0 && topSwitch.get())) {
+            elevatorMotor.set(0);
+        } else {
+            elevatorMotor.set(input * 0.6);
+        }
     }
 
     public Command moveElevatorCommand(ElevatorPosition elevatorPos) {
@@ -135,10 +132,13 @@ public class ElevatorArm extends SubsystemBase {
                     currentElevatorPos = elevatorPos;
                 },
                 () -> {
+                    if (bottomSwitch.get() || topSwitch.get()) {
+                        return true;
+                    }
                     return (Math.abs(elevatorMotor.getEncoder().getPosition() - elevatorPos.getEncoderPos()) < 1);
                 });
     }
-    
+
     public void movePivot(PivotPosition setPoint) {
         pivotMotor.getPIDController().setReference(setPoint.getEncoderPos(), ControlType.kPosition);
     }
@@ -157,17 +157,17 @@ public class ElevatorArm extends SubsystemBase {
 
     public Command movePivotCommand(PivotPosition pivotPos) {
         return new FunctionalCommand(
-            () -> {
+                () -> {
                     movePivot(pivotPos);
-            },
-            () -> {
-            },
-            interrupted -> {
-                currentPivotPos = pivotPos;
-            },
-            () -> {
-                return (Math.abs(pivotMotor.getEncoder().getPosition() - pivotPos.getEncoderPos()) < 1);
-            });
+                },
+                () -> {
+                },
+                interrupted -> {
+                    currentPivotPos = pivotPos;
+                },
+                () -> {
+                    return (Math.abs(pivotMotor.getEncoder().getPosition() - pivotPos.getEncoderPos()) < 1);
+                });
     }
 
     public void moveElevatorAndPivot(double elevatorInput, double pivotInput) {
@@ -184,35 +184,30 @@ public class ElevatorArm extends SubsystemBase {
         switch (setPoint) {
             case TOP:
                 return new SequentialCommandGroup(
-                    movePivotCommand(PivotPosition.STORED),
-                    moveElevatorCommand(setPoint.getElevatorPosition()),
-                    movePivotCommand(setPoint.getPivotPosition())
-                        );
+                        movePivotCommand(PivotPosition.STORED),
+                        moveElevatorCommand(setPoint.getElevatorPosition()),
+                        movePivotCommand(setPoint.getPivotPosition()));
             case MIDDLE:
                 return new SequentialCommandGroup(
-                    moveElevatorCommand(setPoint.getElevatorPosition()),
-                    movePivotCommand(setPoint.getPivotPosition())
-                        );
+                        moveElevatorCommand(setPoint.getElevatorPosition()),
+                        movePivotCommand(setPoint.getPivotPosition()));
             case GROUND:
                 return new SequentialCommandGroup(
-                    moveElevatorCommand(setPoint.getElevatorPosition()),
-                    movePivotCommand(setPoint.getPivotPosition())
-                );
-                        
+                        moveElevatorCommand(setPoint.getElevatorPosition()),
+                        movePivotCommand(setPoint.getPivotPosition()));
+
             case SINGLE_SUBSTATION:
                 return new SequentialCommandGroup(
-                    moveElevatorCommand(setPoint.getElevatorPosition()),
-                    movePivotCommand(setPoint.getPivotPosition())
-                );
+                        moveElevatorCommand(setPoint.getElevatorPosition()),
+                        movePivotCommand(setPoint.getPivotPosition()));
             case STORED:
                 return new SequentialCommandGroup(
-                    movePivotCommand(setPoint.getPivotPosition()),
-                    moveElevatorCommand(setPoint.getElevatorPosition())
-                );
+                        movePivotCommand(setPoint.getPivotPosition()),
+                        moveElevatorCommand(setPoint.getElevatorPosition()));
             default:
                 return new SequentialCommandGroup(
 
-                        );
+                );
 
         }
 
