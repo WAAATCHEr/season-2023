@@ -121,6 +121,8 @@ public class ElevatorArm extends SubsystemBase {
     }
 
     public void moveElevator(ElevatorPosition setPoint) {
+        // System.out.println("uwu");
+        System.out.println(elevatorMotor.getEncoder().getPosition() + " " + setPoint.getEncoderPos());
         elevatorMotor.getPIDController().setReference(setPoint.getEncoderPos(), ControlType.kPosition);
     }
 
@@ -130,8 +132,9 @@ public class ElevatorArm extends SubsystemBase {
     }
 
     public Command moveElevatorCommand(ElevatorPosition elevatorPos) {
+        System.out.print(Math.abs(elevatorMotor.getEncoder().getPosition() - elevatorPos.getEncoderPos()) < 1);
         return new RunCommand(() -> moveElevator(elevatorPos))
-                .until(() -> Math.abs(elevatorMotor.getEncoder().getPosition() - elevatorPos.getEncoderPos()) < 1);
+                .until(() ->Math.abs(elevatorMotor.getEncoder().getPosition() - elevatorPos.getEncoderPos()) < 1 );
     }
 
     public void movePivot(PivotPosition setPoint) {
@@ -224,7 +227,7 @@ public class ElevatorArm extends SubsystemBase {
                         // // movePivotCommand(setPoints[index].getPivotPosition())
                         // // .andThen(moveToSetPoint(setPoints[index])),
                         // () -> !atStowed))
-                        moveToSetPoint(setPoints[index]))
+                        () -> moveToSetPoint(setPoints[index]))
                 .andThen(() -> {
                     atStowed = setPoints[index] == SetPoint.STOW;
                 });

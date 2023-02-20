@@ -49,9 +49,9 @@ public class Robot extends TimedRobot {
   @Override
   public void robotPeriodic() {
     CommandScheduler.getInstance().run();
-    SmartDashboard.putNumber("Pressure supposedly", compressor.getPressure());
-    SmartDashboard.putBoolean("At Limit supposedly", compressor.getPressureSwitchValue());
-    SmartDashboard.putBoolean("Is Enabled", compressor.isEnabled());
+    // SmartDashboard.putNumber("Pressure supposedly", compressor.getPressure());
+    // SmartDashboard.putBoolean("At Limit supposedly", compressor.getPressureSwitchValue());
+    // SmartDashboard.putBoolean("Is Enabled", compressor.isEnabled());
   }
 
   /**
