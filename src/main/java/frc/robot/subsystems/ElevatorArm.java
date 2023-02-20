@@ -1,24 +1,17 @@
 package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkMax;
-import com.revrobotics.RelativeEncoder;
-import com.revrobotics.SparkMaxLimitSwitch;
 import com.revrobotics.CANSparkMax.ControlType;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+import com.revrobotics.SparkMaxLimitSwitch;
 
-import edu.wpi.first.math.controller.ArmFeedforward;
-import edu.wpi.first.math.controller.ElevatorFeedforward;
-import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
-import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.RobotMap.ElevatorMap;
 
 public class ElevatorArm extends SubsystemBase {
@@ -94,32 +87,29 @@ public class ElevatorArm extends SubsystemBase {
     }
 
     private CANSparkMax elevatorMotor, pivotMotor;
-    private DigitalInput bottomSwitch, topSwitch;
-    private SetPoint setPoints[] = {SetPoint.GROUND, SetPoint.MIDDLE, SetPoint.SINGLE_SUBSTATION, SetPoint.STOW, SetPoint.TOP};
+    private SetPoint setPoints[] = { SetPoint.GROUND, SetPoint.MIDDLE, SetPoint.SINGLE_SUBSTATION, SetPoint.STOW,
+            SetPoint.TOP };
     private int index = 3;
     private SparkMaxLimitSwitch forwardLimit, reverseLimit;
-    private double encoderStartValue = -31.55;
-    private double encoderStartValueP =  -7.33;
 
     private ElevatorArm() {
         elevatorMotor = new CANSparkMax(ElevatorMap.ELEVATOR_MOTOR_ID, MotorType.kBrushless);
+        pivotMotor = new CANSparkMax(ElevatorMap.PIVOT_MOTOR_ID, MotorType.kBrushless);
+
         forwardLimit = elevatorMotor.getForwardLimitSwitch(SparkMaxLimitSwitch.Type.kNormallyOpen);
         forwardLimit.enableLimitSwitch(true);
         reverseLimit = elevatorMotor.getReverseLimitSwitch(SparkMaxLimitSwitch.Type.kNormallyOpen);
         reverseLimit.enableLimitSwitch(true);
-        pivotMotor = new CANSparkMax(ElevatorMap.PIVOT_MOTOR_ID, MotorType.kBrushless);
 
         getEncoderPosition();
 
         elevatorMotor.getPIDController().setSmartMotionMaxVelocity(0.5, 1);
         elevatorMotor.getPIDController().setSmartMotionMaxVelocity(0.8, 1);
-
     }
 
     public void getEncoderPosition() {
         SmartDashboard.putNumber("Elevator encoder pos", elevatorMotor.getEncoder().getPosition());
         SmartDashboard.putNumber("Pivot encoder pos", pivotMotor.getEncoder().getPosition());
-
     }
 
     public void moveElevator(ElevatorPosition setPoint) {
@@ -132,7 +122,8 @@ public class ElevatorArm extends SubsystemBase {
     }
 
     public Command moveElevatorCommand(ElevatorPosition elevatorPos) {
-        return new InstantCommand(() -> moveElevator(elevatorPos));
+        return new InstantCommand(() -> moveElevator(elevatorPos))
+                .until(() -> Math.abs(elevatorMotor.getEncoder().getPosition() - elevatorPos.getEncoderPos()) < 5);
     }
 
     public void movePivot(PivotPosition setPoint) {
@@ -140,23 +131,16 @@ public class ElevatorArm extends SubsystemBase {
     }
 
     // Pivot part functionality
-    // NOTE: 60:1 ratio
+    // NOTE: 125:1 ratio
     public void movePivot(double input) {
         pivotMotor.set(input * 0.2);
     }
 
     public Command movePivotCommand(PivotPosition pivotPos) {
-        return new FunctionalCommand(
+        return new InstantCommand(
                 () -> {
                     movePivot(pivotPos);
-                },
-                () -> {
-                },
-                interrupted -> {
-                },
-                () -> {
-                    return (Math.abs(pivotMotor.getEncoder().getPosition() - pivotPos.getEncoderPos()) < 1);
-                });
+                }).until(() -> (Math.abs(pivotMotor.getEncoder().getPosition() - pivotPos.getEncoderPos()) < 5));
     }
 
     public void moveElevatorAndPivot(double elevatorInput, double pivotInput) {
@@ -172,69 +156,65 @@ public class ElevatorArm extends SubsystemBase {
     public SequentialCommandGroup moveToSetPoint(SetPoint setPoint) {
         switch (setPoint) {
             case TOP:
-                return new SequentialCommandGroup(
-                        movePivotCommand(PivotPosition.STOW),
-                        moveElevatorCommand(setPoint.getElevatorPosition()),
-                        movePivotCommand(setPoint.getPivotPosition()));
+                return movePivotCommand(PivotPosition.STOW)
+                        .andThen(moveElevatorCommand(setPoint.getElevatorPosition()))
+                        .andThen(movePivotCommand(setPoint.getPivotPosition()));
             case MIDDLE:
-                return new SequentialCommandGroup(
-                        moveElevatorCommand(setPoint.getElevatorPosition()),
-                        movePivotCommand(setPoint.getPivotPosition()));
+                return moveElevatorCommand(setPoint.getElevatorPosition())
+                        .andThen(movePivotCommand(setPoint.getPivotPosition()));
             case GROUND:
-                return new SequentialCommandGroup(
-                        moveElevatorCommand(setPoint.getElevatorPosition()),
-                        movePivotCommand(setPoint.getPivotPosition()));
+                return moveElevatorCommand(setPoint.getElevatorPosition())
+                        .andThen(movePivotCommand(setPoint.getPivotPosition()));
 
             case SINGLE_SUBSTATION:
-                return new SequentialCommandGroup(
-                        moveElevatorCommand(setPoint.getElevatorPosition()),
-                        movePivotCommand(setPoint.getPivotPosition()));
+                return moveElevatorCommand(setPoint.getElevatorPosition())
+                        .andThen(movePivotCommand(setPoint.getPivotPosition()));
             case STOW:
-                return new SequentialCommandGroup(
-                        movePivotCommand(setPoint.getPivotPosition()),
-                        moveElevatorCommand(setPoint.getElevatorPosition()));
+                return movePivotCommand(setPoint.getPivotPosition())
+                        .andThen(moveElevatorCommand(setPoint.getElevatorPosition()));
             default:
-                return new SequentialCommandGroup(
-
-                );
-
+                return new SequentialCommandGroup();
         }
-
     }
 
-    public SequentialCommandGroup cycleUp() {
+    public Command cycleUp() {
         return cycleElevator(1);
     }
 
-    public SequentialCommandGroup cycleDown() {
+    public Command cycleDown() {
         return cycleElevator(-1);
     }
 
     boolean atStowed = false;
 
-
-     SequentialCommandGroup cycleElevator(int direction) {
+    Command cycleElevator(int direction) {
         System.out.println(direction);
-        return new SequentialCommandGroup(
-            new PrintCommand("PRINTING"),
-            new InstantCommand(() -> {
-                System.out.println("Valeria");
-        var currentSetPoint = setPoints[index];
-        if (currentSetPoint == SetPoint.STOW) atStowed = true; else atStowed = false;
-        SmartDashboard.putString("curr", currentSetPoint.name());
-        SmartDashboard.putNumber("dir", direction);
-        if ((direction > 0 && index < 4) || (direction < 0 && index > 0)) {
-            index += direction;
-        }
-        var targetSetPoint = setPoints[index];
-        SmartDashboard.putString("torr", targetSetPoint.name());
-        SmartDashboard.putNumber("index", index);
-            }),
-            new ConditionalCommand(moveToSetPoint(setPoints[index]), new SequentialCommandGroup(
-                movePivotCommand(setPoints[index].getPivotPosition()),
-                moveToSetPoint(setPoints[index])
-            ), () -> !atStowed)
-        );
+
+        return new PrintCommand("PRINTING").andThen(
+                new InstantCommand(() -> {
+                    System.out.println("Valeria");
+                    var currentSetPoint = setPoints[index];
+                    if (currentSetPoint == SetPoint.STOW)
+                        atStowed = true;
+
+                    SmartDashboard.putString("curr", currentSetPoint.name());
+                    SmartDashboard.putNumber("dir", direction);
+
+                    if ((direction > 0 && index < 4) || (direction < 0 && index > 0)) {
+                        index += direction;
+                    }
+
+                    SmartDashboard.putString("torr", setPoints[index].name());
+                    SmartDashboard.putNumber("index", index);
+                }))
+                .andThen(new ConditionalCommand(
+                        moveToSetPoint(setPoints[index]),
+                        movePivotCommand(setPoints[index].getPivotPosition())
+                                .andThen(moveToSetPoint(setPoints[index])),
+                        () -> !atStowed))
+                .andThen(new InstantCommand(() -> {
+                    atStowed = setPoints[index] == SetPoint.STOW;
+                }));
     }
 
     @Override

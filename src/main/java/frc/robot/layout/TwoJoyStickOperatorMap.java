@@ -1,12 +1,8 @@
 package frc.robot.layout;
 
-import frc.robot.util.controllers.GameController;
-import frc.robot.util.controllers.ButtonMap.Axis;
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import frc.robot.RobotMap;
+import frc.robot.util.controllers.ButtonMap.Axis;
 import frc.robot.util.controllers.ButtonMap.Button;
-import frc.robot.util.controllers.ButtonMap.Dpad;
 import frc.robot.util.controllers.ButtonMap.Trigger;
 import frc.robot.util.controllers.GameController;
 
@@ -16,14 +12,10 @@ public class TwoJoyStickOperatorMap extends OperatorMap {
         super(controller);
     }
 
-    @Override
-    public JoystickButton getElevatorEncoderButton() {
-        return controller.getButton(Button.BUTTON_A);
-    }
-        public JoystickButton getIntakeSwitchModeButton(){
+    public JoystickButton getIntakeSwitchModeButton() {
         return controller.getButton(Button.BUTTON_LEFT_BUMPER);
     }
-    
+
     @Override
     public JoystickButton getElevatorCycleUpButton() {
         return controller.getButton(Button.BUTTON_X);
@@ -32,11 +24,6 @@ public class TwoJoyStickOperatorMap extends OperatorMap {
     @Override
     public JoystickButton getElevatorCycleDownButton() {
         return controller.getButton(Button.BUTTON_B);
-    }
-    
-    @Override
-    public JoystickButton getFrictionPadButton(){
-        return controller.getButton(Button.BUTTON_START);
     }
 
     @Override
@@ -48,7 +35,7 @@ public class TwoJoyStickOperatorMap extends OperatorMap {
     public double getReverseIntakeValue() {
         return controller.getTrigger(Trigger.BUTTON_LEFT_TRIGGER);
     }
-    
+
     @Override
     public double getLeftXAxis() {
         return controller.getAxis(Axis.AXIS_LEFT_X);
@@ -71,12 +58,12 @@ public class TwoJoyStickOperatorMap extends OperatorMap {
 
     // @Override
     // public JoystickButton getChargingStationRectractButton() {
-    //     return controller.getButton(Button.BUTTON_Y);
+    // return controller.getButton(Button.BUTTON_Y);
     // }
 
     // @Override
     // public JoystickButton getChargingStationDeployButton() {
-    //     return controller.getButton(Button.BUTTON_A);
+    // return controller.getButton(Button.BUTTON_A);
     // }
 
     @Override
@@ -84,5 +71,14 @@ public class TwoJoyStickOperatorMap extends OperatorMap {
         super.registerCommands();
     }
 
+    @Override
+    public JoystickButton getFrictionPadDeployButton() {
+        return controller.getButton(Button.BUTTON_A);
+    }
+
+    @Override
+    public JoystickButton getFrictionPadRetractButton() {
+        return controller.getButton(Button.BUTTON_Y);
+    }
 
 }

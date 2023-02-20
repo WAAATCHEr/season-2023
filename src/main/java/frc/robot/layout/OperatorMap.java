@@ -1,17 +1,14 @@
 package frc.robot.layout;
 
-import edu.wpi.first.wpilibj2.command.RunCommand;
-import frc.robot.subsystems.ElevatorArm;
-import frc.robot.subsystems.MotorIntake;
-import frc.robot.subsystems.FrictionPad;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.RepeatCommand;
-import frc.robot.subsystems.ElevatorArm.ElevatorPosition;
-import frc.robot.subsystems.ElevatorArm.PivotPosition;
+import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import frc.robot.subsystems.ElevatorArm;
+import frc.robot.subsystems.FrictionPad;
+import frc.robot.subsystems.MotorIntake;
 import frc.robot.util.controllers.CommandMap;
 import frc.robot.util.controllers.GameController;
-import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
 public abstract class OperatorMap extends CommandMap {
 
@@ -19,15 +16,15 @@ public abstract class OperatorMap extends CommandMap {
     super(controller);
   }
 
-
-  public abstract JoystickButton getElevatorEncoderButton();
   public abstract JoystickButton getIntakeSwitchModeButton();
 
   public abstract JoystickButton getElevatorCycleUpButton();
 
   public abstract JoystickButton getElevatorCycleDownButton();
 
-  public abstract JoystickButton getFrictionPadButton();
+  public abstract JoystickButton getFrictionPadDeployButton();
+
+  public abstract JoystickButton getFrictionPadRetractButton();
 
   public abstract double getForwardIntakeValue();
 
@@ -41,31 +38,30 @@ public abstract class OperatorMap extends CommandMap {
 
   public abstract double getRightYAxis();
 
-  //public abstract JoystickButton getChargingStationRectractButton();
-  //public abstract JoystickButton getChargingStationDeployButton();
-  
+  // public abstract JoystickButton getChargingStationRectractButton();
+  // public abstract JoystickButton getChargingStationDeployButton();
 
   @Override
   public void registerCommands() {
     ElevatorArm elevatorArm = ElevatorArm.getInstance();
 
     elevatorArm.setDefaultCommand(
-      new RepeatCommand(
+        new RepeatCommand(
             new RunCommand(() -> elevatorArm.moveElevatorAndPivot(-getLeftYAxis() * 0.5, getRightYAxis() * 1),
                 elevatorArm)));
-    getElevatorEncoderButton().onTrue(new InstantCommand(() -> elevatorArm.getEncoderPosition()));
+    // getElevatorEncoderButton().onTrue(new InstantCommand(() ->
+    // elevatorArm.getEncoderPosition()));
     getElevatorCycleUpButton().onTrue(elevatorArm.cycleUp());
-    // getElevatorCycleUpButton().onTrue(new PrintCommand(/"We are charged up"));
     getElevatorCycleDownButton().onTrue(elevatorArm.cycleDown());
 
     MotorIntake motorIntake = MotorIntake.getInstance();
     motorIntake.setDefaultCommand(
-      new RepeatCommand(new RunCommand(()-> motorIntake.moveIntake(getForwardIntakeValue(), getReverseIntakeValue()), motorIntake))
-    );
-    getIntakeSwitchModeButton().onTrue(new InstantCommand(()-> motorIntake.invertGodSpeed()));
+        new RepeatCommand(new RunCommand(() -> motorIntake.moveIntake(getForwardIntakeValue(), getReverseIntakeValue()),
+            motorIntake)));
+    getIntakeSwitchModeButton().onTrue(new InstantCommand(() -> motorIntake.invertGodSpeed()));
 
     FrictionPad frictionPad = FrictionPad.getInstance();
-    getFrictionPadButton().onTrue(new InstantCommand(() -> frictionPad.togglePistons()));
-
+    getFrictionPadDeployButton().onTrue(new InstantCommand(() -> frictionPad.deploy()));
+    getFrictionPadRetractButton().onTrue(new InstantCommand(() -> frictionPad.retract()));
   }
 }
