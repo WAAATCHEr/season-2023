@@ -239,11 +239,8 @@ public class RobotMap {
 
   public static class FrictionPadMap {
     // TODO: Change these ports
-    public static final int FOWARD_CHANNEL_1 = 0;
-    public static final int REVERSE_CHANNEL_1 = 1;
-
-    public static final int FORWARD_CHANNEL_2 = 2;
-    public static final int REVERSE_CHANNEL_2 = 3;
+    public static final int FOWARD_CHANNEL = 0;
+    public static final int REVERSE_CHANNEL = 3;
 
   }
 

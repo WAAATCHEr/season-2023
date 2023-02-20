@@ -18,20 +18,16 @@ public class FrictionPad extends SubsystemBase {
   private DoubleSolenoid frictionPadPiston, frictionPadPiston2;
 
   private FrictionPad() {
-    frictionPadPiston = new DoubleSolenoid(PneumaticsModuleType.REVPH, FrictionPadMap.FOWARD_CHANNEL_1,
-        FrictionPadMap.REVERSE_CHANNEL_1);
-    frictionPadPiston2 = new DoubleSolenoid(PneumaticsModuleType.REVPH, FrictionPadMap.FORWARD_CHANNEL_2,
-        FrictionPadMap.REVERSE_CHANNEL_2);
+    frictionPadPiston = new DoubleSolenoid(PneumaticsModuleType.REVPH, FrictionPadMap.FOWARD_CHANNEL,
+        FrictionPadMap.REVERSE_CHANNEL);
   }
 
   public void deploy() {
     frictionPadPiston.set(DoubleSolenoid.Value.kForward);
-    frictionPadPiston2.set(DoubleSolenoid.Value.kForward);
   }
 
   public void retract() {
     frictionPadPiston.set(DoubleSolenoid.Value.kReverse);
-    frictionPadPiston2.set(DoubleSolenoid.Value.kReverse);
   }
 
 }
