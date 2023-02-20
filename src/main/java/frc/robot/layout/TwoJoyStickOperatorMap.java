@@ -11,8 +11,9 @@ public class TwoJoyStickOperatorMap extends OperatorMap {
     public TwoJoyStickOperatorMap(GameController controller) {
         super(controller);
     }
-
-    public JoystickButton getIntakeSwitchModeButton() {
+    
+    @Override
+    public JoystickButton getIntakeSwitchModeButton(){
         return controller.getButton(Button.BUTTON_LEFT_BUMPER);
     }
 
@@ -55,16 +56,6 @@ public class TwoJoyStickOperatorMap extends OperatorMap {
     public double getRightYAxis() {
         return controller.getAxis(Axis.AXIS_RIGHT_Y);
     }
-
-    // @Override
-    // public JoystickButton getChargingStationRectractButton() {
-    // return controller.getButton(Button.BUTTON_Y);
-    // }
-
-    // @Override
-    // public JoystickButton getChargingStationDeployButton() {
-    // return controller.getButton(Button.BUTTON_A);
-    // }
 
     @Override
     public void registerCommands() {

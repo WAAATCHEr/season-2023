@@ -86,7 +86,7 @@ public class Swerve extends SubsystemBase {
     gyro.configFactoryDefault();
     zeroGyro();
 
-    // vision = Vision.getInstance();
+    vision = Vision.getInstance();
     // pixyCam = PixyCam.getInstance();
 
     modules = new SwerveModule[] {
