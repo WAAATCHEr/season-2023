@@ -26,7 +26,7 @@ public class Robot extends TimedRobot {
   @Override
   public void robotInit() {
     ctreConfigs = new CTREConfigs();
-    compressor = new Compressor(1, PneumaticsModuleType.REVPH);
+    compressor = new Compressor(1 , PneumaticsModuleType.REVPH);
     compressor.enableDigital();
     var autoModeSelector = AutoModeSelector.getInstance();
     // SmartDashboard.putData("Autos", autoModeSelector.getChooser());
@@ -49,6 +49,9 @@ public class Robot extends TimedRobot {
   @Override
   public void robotPeriodic() {
     CommandScheduler.getInstance().run();
+    SmartDashboard.putNumber("Pressure supposedly", compressor.getPressure());
+    SmartDashboard.putBoolean("At Limit supposedly", compressor.getPressureSwitchValue());
+    SmartDashboard.putBoolean("Is Enabled", compressor.isEnabled());
   }
 
   /**

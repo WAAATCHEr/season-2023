@@ -34,9 +34,9 @@ public class MotorIntake extends SubsystemBase {
     public void moveIntake(double forward, double backward) {
         if (forward > 0) {
             if (GODSPEED)
-                intakeMotor.set(MOTOR_SPEED_FAST);
+                intakeMotor.set(-MOTOR_SPEED_FAST);
             else
-                intakeMotor.set(MOTOR_SPEED_SLOW);
+                intakeMotor.set(-MOTOR_SPEED_SLOW);
         }
         else if (backward > 0) {
             if (GODSPEED)

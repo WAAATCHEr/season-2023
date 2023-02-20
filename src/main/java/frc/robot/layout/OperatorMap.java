@@ -5,6 +5,7 @@ import frc.robot.subsystems.ElevatorArm;
 import frc.robot.subsystems.MotorIntake;
 import frc.robot.subsystems.FrictionPad;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.RepeatCommand;
 import frc.robot.subsystems.ElevatorArm.ElevatorPosition;
 import frc.robot.subsystems.ElevatorArm.PivotPosition;
@@ -40,6 +41,10 @@ public abstract class OperatorMap extends CommandMap {
 
   public abstract double getRightYAxis();
 
+  //public abstract JoystickButton getChargingStationRectractButton();
+  //public abstract JoystickButton getChargingStationDeployButton();
+  
+
   @Override
   public void registerCommands() {
     ElevatorArm elevatorArm = ElevatorArm.getInstance();
@@ -49,13 +54,15 @@ public abstract class OperatorMap extends CommandMap {
             new RunCommand(() -> elevatorArm.moveElevatorAndPivot(-getLeftYAxis() * 0.5, getRightYAxis() * 1),
                 elevatorArm)));
     getElevatorEncoderButton().onTrue(new InstantCommand(() -> elevatorArm.getEncoderPosition()));
-    getElevatorCycleUpButton().onTrue(elevatorArm.cycleElevator(1));
-    getElevatorCycleDownButton().onTrue(elevatorArm.cycleElevator(-1));
+    getElevatorCycleUpButton().onTrue(elevatorArm.cycleUp());
+    // getElevatorCycleUpButton().onTrue(new PrintCommand(/"We are charged up"));
+    getElevatorCycleDownButton().onTrue(elevatorArm.cycleDown());
 
     MotorIntake motorIntake = MotorIntake.getInstance();
     motorIntake.setDefaultCommand(
       new RepeatCommand(new RunCommand(()-> motorIntake.moveIntake(getForwardIntakeValue(), getReverseIntakeValue()), motorIntake))
     );
+    getIntakeSwitchModeButton().onTrue(new InstantCommand(()-> motorIntake.invertGodSpeed()));
 
     FrictionPad frictionPad = FrictionPad.getInstance();
     getFrictionPadButton().onTrue(new InstantCommand(() -> frictionPad.togglePistons()));

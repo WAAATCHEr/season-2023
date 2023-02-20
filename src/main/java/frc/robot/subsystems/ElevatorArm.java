@@ -12,8 +12,10 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
@@ -55,11 +57,11 @@ public class ElevatorArm extends SubsystemBase {
     }
 
     public enum ElevatorPosition {
-        TOP(60.2),
-        MID(16.2),
-        GROUND(-25.6),
-        SUBSTATION(0.3),
-        STOW(-40);
+        TOP(103.026),
+        MID(68.883),
+        GROUND(27.856),
+        SUBSTATION(53.786),
+        STOW(52.429);
 
         private final double encoderValue;
 
@@ -73,33 +75,27 @@ public class ElevatorArm extends SubsystemBase {
     }
 
     public enum PivotPosition {
-        TOP(-25.0, 40),
-        MID(-26.1, 35),
-        GROUND(-16.5, -15),
-        SUBSTATION(-15.6, 5),
-        STOW(-34, 55);
+        TOP(10.786),
+        MID(3.929),
+        GROUND(31.262),
+        SUBSTATION(10.833),
+        STOW(-9.071);
 
         private final double encoderValue;
-        private final double horizontalAngleDegrees;
 
-        PivotPosition(double encoderValue, double horizontalAngleDegrees) {
+        PivotPosition(double encoderValue) {
             this.encoderValue = encoderValue;
-            this.horizontalAngleDegrees = horizontalAngleDegrees;
         }
 
         public double getEncoderPos() {
             return encoderValue;
         }
 
-        public double getAngle() {
-            return horizontalAngleDegrees;
-        }
-
     }
 
     private CANSparkMax elevatorMotor, pivotMotor;
     private DigitalInput bottomSwitch, topSwitch;
-    private SetPoint setPoints[] = SetPoint.values();
+    private SetPoint setPoints[] = {SetPoint.GROUND, SetPoint.MIDDLE, SetPoint.SINGLE_SUBSTATION, SetPoint.STOW, SetPoint.TOP};
     private int index = 3;
     private SparkMaxLimitSwitch forwardLimit, reverseLimit;
     private double encoderStartValue = -31.55;
@@ -206,21 +202,39 @@ public class ElevatorArm extends SubsystemBase {
 
     }
 
-    public SequentialCommandGroup cycleElevator(int direction) {
+    public SequentialCommandGroup cycleUp() {
+        return cycleElevator(1);
+    }
+
+    public SequentialCommandGroup cycleDown() {
+        return cycleElevator(-1);
+    }
+
+    boolean atStowed = false;
+
+
+     SequentialCommandGroup cycleElevator(int direction) {
+        System.out.println(direction);
+        return new SequentialCommandGroup(
+            new PrintCommand("PRINTING"),
+            new InstantCommand(() -> {
+                System.out.println("Valeria");
         var currentSetPoint = setPoints[index];
+        if (currentSetPoint == SetPoint.STOW) atStowed = true; else atStowed = false;
+        SmartDashboard.putString("curr", currentSetPoint.name());
+        SmartDashboard.putNumber("dir", direction);
         if ((direction > 0 && index < 4) || (direction < 0 && index > 0)) {
             index += direction;
         }
         var targetSetPoint = setPoints[index];
-        if (currentSetPoint.equals(SetPoint.STOW)) {
-            return new SequentialCommandGroup(
-                movePivotCommand(targetSetPoint.getPivotPosition()),
-                moveToSetPoint(targetSetPoint)
-            );
-        }
-        else {
-            return moveToSetPoint(targetSetPoint);
-        }
+        SmartDashboard.putString("torr", targetSetPoint.name());
+        SmartDashboard.putNumber("index", index);
+            }),
+            new ConditionalCommand(moveToSetPoint(setPoints[index]), new SequentialCommandGroup(
+                movePivotCommand(setPoints[index].getPivotPosition()),
+                moveToSetPoint(setPoints[index])
+            ), () -> !atStowed)
+        );
     }
 
     @Override
