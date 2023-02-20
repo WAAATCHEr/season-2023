@@ -10,7 +10,8 @@ public enum AutoModeList {
   RECLOSESCORETWO(new RedCloseScoreTwo()),
   REDMIDDLESCORETWO(new RedMiddleScoreTwo()),
   REDFARSCORECHARGING(new RedFarScoreCharging()),
-  REDFARSCORETWO(new RedFarScoreTwo());
+  REDFARSCORETWO(new RedFarScoreTwo()),
+  TESTAUTOPATH(new TestAutoPath());
 
   private final SequentialCommandGroup autoCommand;
 

@@ -44,6 +44,7 @@ import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import frc.robot.RobotMap;
 import frc.robot.RobotMap.ChargingStationMap;
 import frc.robot.RobotMap.DriveMap;
+import frc.robot.RobotMap.PPMap;
 import frc.robot.util.SwerveModule;
 import pixy2api.Pixy2CCC.Block;
 import frc.robot.subsystems.Vision;
@@ -423,7 +424,7 @@ public class Swerve extends SubsystemBase {
 
   public Command followTrajectoryCommand(String path, HashMap<String, Command> eventMap,
       boolean isFirstPath) {
-    PathPlannerTrajectory traj = PathPlanner.loadPath(path, 1, 1);
+    PathPlannerTrajectory traj = PathPlanner.loadPath(path, PPMap.MAX_VELOCITY, PPMap.MAX_ACCELERATION);
     return new FollowPathWithEvents(
         followTrajectoryCommand(traj, isFirstPath),
         traj.getMarkers(),
@@ -476,11 +477,11 @@ public class Swerve extends SubsystemBase {
         () -> {
           if(pid.calculate(gyro.getRoll()+gyro.getPitch())>ChargingStationMap.MAX_VELOCITY)
           {
-            this.drive(new ChassisSpeeds(ChargingStationMap.MAX_VELOCITY, .0, 0), true);
+            this.drive(new ChassisSpeeds(-ChargingStationMap.MAX_VELOCITY, .0, 0), true);
           }
           else
           {
-            this.drive(new ChassisSpeeds(pid.calculate(gyro.getRoll()+gyro.getPitch(), 0.0), 0, 0), true);
+            this.drive(new ChassisSpeeds(-pid.calculate(gyro.getRoll()+gyro.getPitch(), 0.0), 0, 0), true);
           }
            
         },
@@ -545,8 +546,8 @@ public class Swerve extends SubsystemBase {
   public SequentialCommandGroup chargingStationPPAndBalance(HashMap<String, Command> eventMap)
   {
     return new SequentialCommandGroup(
-          followTrajectoryCommand("One Metre", eventMap, true),
-          chargingStationCommand()
+          followTrajectoryCommand("Test path", eventMap, true)
+          //chargingStationCommand()
         );
   }
   
@@ -570,7 +571,6 @@ public class Swerve extends SubsystemBase {
     SmartDashboard.putNumber("module 2 position" , getModulePositions()[2].distanceMeters);
     SmartDashboard.putNumber("module 3 position" , getModulePositions()[3].distanceMeters);
     
-    // camData();
     // System.out.println("Pitch: " + gyro.getPitch()+"\n ");
     // System.out.println("Roll: " + gyro.getRoll()+"\n ");
     //System.out.println("Yaw: " + gyro.getYaw()+"\n ");

@@ -19,7 +19,7 @@ public class MotorIntake extends SubsystemBase {
     }
 
     private CANSparkMax intakeMotor;
-    private double MOTOR_SPEED_FAST = 0.6;
+    private double MOTOR_SPEED_FAST = 0.8;
     private double MOTOR_SPEED_SLOW = 0.3;
     private boolean GODSPEED = true;
 
@@ -47,6 +47,10 @@ public class MotorIntake extends SubsystemBase {
         else {
             intakeMotor.set(0);
         }
+    }
+
+    public void invertGodSpeed(){
+        GODSPEED = !GODSPEED;
     }
 
 }

@@ -27,8 +27,8 @@ public class Xbox implements ButtonMap {
   public HashMap<Trigger, Integer> triggerMap() {
     var map = new HashMap<Trigger, Integer>();
 
-    map.put(Trigger.BUTTON_LEFT_TRIGGER, 0);
-    map.put(Trigger.BUTTON_RIGHT_TRIGGER, 1);
+    map.put(Trigger.BUTTON_LEFT_TRIGGER, 2);
+    map.put(Trigger.BUTTON_RIGHT_TRIGGER, 3);
 
     return map;
   }

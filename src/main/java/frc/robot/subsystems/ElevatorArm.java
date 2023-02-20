@@ -127,13 +127,12 @@ public class ElevatorArm extends SubsystemBase {
     }
 
     public void moveElevator(ElevatorPosition setPoint) {
-
         elevatorMotor.getPIDController().setReference(setPoint.getEncoderPos(), ControlType.kPosition);
     }
 
     // Elevator Functionality
     public void moveElevator(double input) {
-        elevatorMotor.set(input * 0.6);
+        elevatorMotor.set(input * 0.8);
     }
 
     public Command moveElevatorCommand(ElevatorPosition elevatorPos) {
@@ -147,12 +146,6 @@ public class ElevatorArm extends SubsystemBase {
     // Pivot part functionality
     // NOTE: 60:1 ratio
     public void movePivot(double input) {
-        // if ((input < 0 && encoder2.getPosition() <= ElevatorMap.PIVOT_BOTTOM)
-        // || (input > 0 && encoder2.getPosition() >= ElevatorMap.PIVOT_TOP)) {
-        // pivotMotor.set(0);
-        // } else {
-        // pivotMotor.set(input * .2); //.2 up for alteration
-        // }
         pivotMotor.set(input * 0.2);
     }
 

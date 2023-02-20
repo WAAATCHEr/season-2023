@@ -18,7 +18,7 @@ public class RobotMap {
     public static final boolean INVERT_GYRO = false; // Always ensure Gyro is CCW+ CW-
 
     public static final COTSFalconSwerveConstants MODULE_TYPE = // TODO: This must be tuned to specific robot
-        COTSFalconSwerveConstants.SDSMK4(COTSFalconSwerveConstants.DriveGearRatios.SDSMK4_L1);
+        COTSFalconSwerveConstants.SDSMK4(COTSFalconSwerveConstants.DriveGearRatios.SDSMK4_L3);
 
     /* Drivetrain Constants */
     public static final double TRACK_WIDTH = Units.inchesToMeters(21.73); // TODO: This must be tuned to specific robot
@@ -122,7 +122,7 @@ public class RobotMap {
       public static final int DRIVE_ID = 5;
       public static final int ROTATOR_ID = 6;
       public static final int ENCODER_ID = 11;
-      public static final Rotation2d OFFSET = Rotation2d.fromDegrees(201.6);
+      public static final Rotation2d OFFSET = Rotation2d.fromDegrees(193.3);
       public static final SwerveModuleConstants CONSTANTS = new SwerveModuleConstants(DRIVE_ID, ROTATOR_ID, ENCODER_ID,
           OFFSET);
     }
@@ -132,7 +132,7 @@ public class RobotMap {
       public static final int DRIVE_ID = 3;
       public static final int ROTATOR_ID = 4;
       public static final int ENCODER_ID = 13;
-      public static final Rotation2d OFFSET = Rotation2d.fromDegrees(279.4);
+      public static final Rotation2d OFFSET = Rotation2d.fromDegrees(9.3);
       public static final SwerveModuleConstants CONSTANTS = new SwerveModuleConstants(DRIVE_ID, ROTATOR_ID, ENCODER_ID,
           OFFSET);
     }
@@ -142,7 +142,7 @@ public class RobotMap {
       public static final int DRIVE_ID = 7;
       public static final int ROTATOR_ID = 8;
       public static final int ENCODER_ID = 12;
-      public static final Rotation2d OFFSET = Rotation2d.fromDegrees(254.3);
+      public static final Rotation2d OFFSET = Rotation2d.fromDegrees(339.4);
       public static final SwerveModuleConstants CONSTANTS = new SwerveModuleConstants(DRIVE_ID, ROTATOR_ID, ENCODER_ID,
           OFFSET);
     }
@@ -152,7 +152,7 @@ public class RobotMap {
       public static final int DRIVE_ID = 1;
       public static final int ROTATOR_ID = 2;
       public static final int ENCODER_ID = 10;
-      public static final Rotation2d OFFSET = Rotation2d.fromDegrees(16.5);
+      public static final Rotation2d OFFSET = Rotation2d.fromDegrees(330.6);
       public static final SwerveModuleConstants CONSTANTS = new SwerveModuleConstants(DRIVE_ID, ROTATOR_ID, ENCODER_ID,
           OFFSET);
     }
@@ -257,5 +257,10 @@ public class RobotMap {
     public static final double TELESCOPE_MIN = 0;// assuming it starts as spooled as possible
     public static final double TELESCOPE_MAX = 4;// should be in terms of rotations of the larger gear
 
+  }
+
+  public static class PPMap {
+    public static final int MAX_VELOCITY = 2;
+    public static final int MAX_ACCELERATION =1;
   }
 }

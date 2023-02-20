@@ -1,5 +1,7 @@
 package frc.robot;
 
+import edu.wpi.first.wpilibj.Compressor;
+import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -15,6 +17,7 @@ import frc.robot.util.CTREConfigs;
  */
 public class Robot extends TimedRobot {
   public static CTREConfigs ctreConfigs;
+  private static Compressor compressor;
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -23,6 +26,8 @@ public class Robot extends TimedRobot {
   @Override
   public void robotInit() {
     ctreConfigs = new CTREConfigs();
+    compressor = new Compressor(1, PneumaticsModuleType.REVPH);
+    compressor.enableDigital();
     var autoModeSelector = AutoModeSelector.getInstance();
     // SmartDashboard.putData("Autos", autoModeSelector.getChooser());
     SmartDashboard.putNumber("Auto Wait Time", 0);

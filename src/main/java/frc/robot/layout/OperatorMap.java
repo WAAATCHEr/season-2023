@@ -20,6 +20,7 @@ public abstract class OperatorMap extends CommandMap {
 
 
   public abstract JoystickButton getElevatorEncoderButton();
+  public abstract JoystickButton getIntakeSwitchModeButton();
 
   public abstract JoystickButton getElevatorCycleUpButton();
 

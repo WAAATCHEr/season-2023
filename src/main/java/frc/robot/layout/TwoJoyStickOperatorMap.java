@@ -20,7 +20,10 @@ public class TwoJoyStickOperatorMap extends OperatorMap {
     public JoystickButton getElevatorEncoderButton() {
         return controller.getButton(Button.BUTTON_A);
     }
-
+        public JoystickButton getIntakeSwitchModeButton(){
+        return controller.getButton(Button.BUTTON_LEFT_BUMPER);
+    }
+    
     @Override
     public JoystickButton getElevatorCycleUpButton() {
         return controller.getButton(Button.BUTTON_RIGHT_BUMPER);
