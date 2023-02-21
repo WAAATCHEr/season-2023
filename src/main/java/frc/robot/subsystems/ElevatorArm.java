@@ -34,7 +34,8 @@ public class ElevatorArm extends SubsystemBase {
         MIDDLE(ElevatorPosition.MID, PivotPosition.MID),
         SINGLE_SUBSTATION(ElevatorPosition.SUBSTATION, PivotPosition.SUBSTATION),
         STOW(ElevatorPosition.STOW, PivotPosition.STOW),
-        TOP(ElevatorPosition.TOP, PivotPosition.TOP);
+        TOP(ElevatorPosition.TOP, PivotPosition.TOP),
+        DEFAULT(ElevatorPosition.DEFAULT, PivotPosition.DEFAULT);
 
         private final ElevatorPosition elevatorPosition;
         private final PivotPosition pivotPosition;
@@ -59,7 +60,8 @@ public class ElevatorArm extends SubsystemBase {
         MID(68.883),
         GROUND(27.856),
         SUBSTATION(53.786),
-        STOW(39);
+        STOW(39),
+        DEFAULT(0);
 
         private final double encoderValue;
 
@@ -77,7 +79,8 @@ public class ElevatorArm extends SubsystemBase {
         MID(3.929),
         GROUND(31.262),
         SUBSTATION(10.833),
-        STOW(-9.071);
+        STOW(-9.071),
+        DEFAULT(0);
 
         private final double encoderValue;
 
@@ -103,7 +106,6 @@ public class ElevatorArm extends SubsystemBase {
         elevatorP = 5.0;
         elevatorI = 0;
         elevatorD = 0;
-        var elevatorkFF = 0;
         pivotP = 500;
         pivotI = 0.001;
         pivotD = 0;
@@ -229,47 +231,6 @@ public class ElevatorArm extends SubsystemBase {
 
     }
 
-    public Command cycleUp() {
-        return cycleElevator(1);
-    }
-
-    public Command cycleDown() {
-        return cycleElevator(-1);
-    }
-
-    boolean atStowed = false;
-
-    Command cycleElevator(int direction) {
-        System.out.println(direction);
-
-        return new PrintCommand("PRINTING")
-                .andThen(
-                        () -> {
-                            System.out.println("Valeria");
-                            var currentSetPoint = setPoints[index];
-                            if (currentSetPoint == SetPoint.STOW)
-                                atStowed = true;
-
-                            SmartDashboard.putString("old", currentSetPoint.name());
-                            SmartDashboard.putNumber("dir", direction);
-
-                            if ((direction > 0 && index < 4) || (direction < 0 && index > 0)) {
-                                index += direction;
-                                System.out.println("Changed Index");
-                            }
-
-                        })
-                .andThen(
-                        new ConditionalCommand(
-                        moveToSetPoint(() -> setPoints[index]),
-                        movePivotCommand(() -> setPoints[index].getPivotPosition())
-                        .andThen(moveToSetPoint(() -> setPoints[index])),
-                        () -> !atStowed))
-                .andThen(() -> {
-                    atStowed = setPoints[index] == SetPoint.STOW;
-                });
-    }
-
     public Command resetElevatorMotor() {
         return new InstantCommand(() -> {
             elevatorMotor.getEncoder().setPosition(ElevatorPosition.STOW.getEncoderPos());
@@ -285,40 +246,6 @@ public class ElevatorArm extends SubsystemBase {
         SmartDashboard.putNumber("index", index);
         SmartDashboard.putString("torr", setPoints[index].name());
         getEncoderPosition();
-
-        // SmartDashboard.putNumber("P (elevator)", elevatorP);
-        // SmartDashboard.putNumber("I (elevator)", elevatorI);
-        // SmartDashboard.putNumber("D (elevator)", elevatorD);
-        // SmartDashboard.putNumber("mVel (elevator)", elevatorMaxVel);
-        // SmartDashboard.putNumber("mAccel (elevator)", elevatorMaxAccel);
-
-        double newElevatorP = SmartDashboard.getNumber("P (elevator)", elevatorP);
-        double newElevatorI = SmartDashboard.getNumber("I (elevator)", elevatorI);
-        double newElevatorD = SmartDashboard.getNumber("D (elevator)", elevatorD);
-        double newElevatorMaxVel = SmartDashboard.getNumber("mVel (elevator)", elevatorMaxVel);
-        double newElevatorMaxAccel = SmartDashboard.getNumber("mAccel (elevator)", elevatorMaxAccel);
-
-
-        // if (elevatorP != newElevatorP) {
-        //     elevatorP = newElevatorP;
-        //     elevatorMotor.getPIDController().setP(elevatorP);
-        // }
-        // if (elevatorI != newElevatorI) {
-        //     elevatorI = newElevatorI;
-        //     elevatorMotor.getPIDController().setI(elevatorI);
-        // }
-        // if (elevatorD != newElevatorD) {
-        //     elevatorD = newElevatorD;
-        //     elevatorMotor.getPIDController().setD(elevatorD);
-        // }
-        // if (elevatorMaxVel != newElevatorMaxVel) {
-        //     elevatorMaxVel = newElevatorMaxVel;
-        //     elevatorMotor.getPIDController().setSmartMotionMaxVelocity(elevatorMaxVel, 0);
-        // }
-        // if (elevatorMaxAccel != newElevatorMaxAccel) {
-        //     elevatorMaxAccel = newElevatorMaxAccel;
-        //     elevatorMotor.getPIDController().setSmartMotionMaxAccel(elevatorMaxAccel, 0);
-        // }
     }
 
 }

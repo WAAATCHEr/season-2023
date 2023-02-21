@@ -3,6 +3,7 @@ package frc.robot.layout;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.util.controllers.ButtonMap.Axis;
 import frc.robot.util.controllers.ButtonMap.Button;
+import frc.robot.util.controllers.ButtonMap.Dpad;
 import frc.robot.util.controllers.ButtonMap.Trigger;
 import frc.robot.util.controllers.GameController;
 
@@ -18,13 +19,29 @@ public class TwoJoyStickOperatorMap extends OperatorMap {
     }
 
     @Override
-    public JoystickButton getElevatorCycleUpButton() {
-        return controller.getButton(Button.BUTTON_X);
+    public JoystickButton getStowButton() {
+        return controller.getButton(Button.BUTTON_B);
     }
 
     @Override
-    public JoystickButton getElevatorCycleDownButton() {
-        return controller.getButton(Button.BUTTON_B);
+    public JoystickButton getSingleSubstationButton() {
+        return controller.getDpad(Dpad.DPAD_UP);
+    }
+    @Override
+    public JoystickButton getMiddleScoreButton() {
+        return controller.getButton(Button.BUTTON_X);
+    }
+    @Override
+    public JoystickButton getTopScoreButton() {
+        return controller.getButton(Button.BUTTON_Y);
+    }
+    @Override
+    public JoystickButton getGroundButton() {
+        return controller.getButton(Button.BUTTON_A);
+    }
+    @Override
+    public JoystickButton getDefaultButton() {
+        return controller.getDpad(Dpad.DPAD_DOWN);
     }
 
     @Override
@@ -62,15 +79,15 @@ public class TwoJoyStickOperatorMap extends OperatorMap {
         super.registerCommands();
     }
 
-    @Override
-    public JoystickButton getFrictionPadDeployButton() {
-        return controller.getButton(Button.BUTTON_A);
-    }
+    // @Override
+    // public JoystickButton getFrictionPadDeployButton() {
+    //     return controller.getButton(Button.BUTTON_A);
+    // }
 
-    @Override
-    public JoystickButton getFrictionPadRetractButton() {
-        return controller.getButton(Button.BUTTON_Y);
-    }
+    // @Override
+    // public JoystickButton getFrictionPadRetractButton() {
+    //     return controller.getButton(Button.BUTTON_Y);
+    // }
 
     @Override
     public JoystickButton getElevatorResetButton() {

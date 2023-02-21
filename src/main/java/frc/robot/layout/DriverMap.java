@@ -5,10 +5,12 @@ import java.util.HashMap;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.subsystems.Swerve;
+import frc.robot.subsystems.FrictionPad;
 import frc.robot.subsystems.PixyCam;
 import frc.robot.util.controllers.CommandMap;
 import frc.robot.util.controllers.GameController;
@@ -30,6 +32,10 @@ public abstract class DriverMap extends CommandMap {
 
   abstract JoystickButton getAprilTagAlignmentButton();
 
+  public abstract JoystickButton getFrictionPadDeployButton();
+
+  // public abstract JoystickButton getFrictionPadRetractButton();
+
   @Override
   public void registerCommands() {
     var swerve = Swerve.getInstance();
@@ -39,9 +45,13 @@ public abstract class DriverMap extends CommandMap {
     
     swerve.setDefaultCommand(swerve.driveCommand(this::getChassisSpeeds));
 
-    getAlingmentButton().onTrue(swerve.chargingStationCommand());
 
-    getPathPlanningTestButton().onTrue(swerve.chargingStationPPAndBalance(oneMeterEventMap));
+    var frictionPad = FrictionPad.getInstance();
+    getFrictionPadDeployButton().onTrue(new InstantCommand(() -> frictionPad.deploy()));
+
+    // getAlingmentButton().onTrue(swerve.chargingStationCommand());
+
+    // getPathPlanningTestButton().onTrue(swerve.chargingStationPPAndBalance(oneMeterEventMap));
 
     // getAprilTagAlignmentButton().onTrue(swerve.alignWithAprilTag(true));
 

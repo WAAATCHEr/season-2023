@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.subsystems.ElevatorArm;
 import frc.robot.subsystems.FrictionPad;
 import frc.robot.subsystems.MotorIntake;
+import frc.robot.subsystems.ElevatorArm.SetPoint;
 import frc.robot.util.controllers.CommandMap;
 import frc.robot.util.controllers.GameController;
 
@@ -18,13 +19,21 @@ public abstract class OperatorMap extends CommandMap {
 
   public abstract JoystickButton getIntakeSwitchModeButton();
 
-  public abstract JoystickButton getElevatorCycleUpButton();
+  public abstract JoystickButton getStowButton();
 
-  public abstract JoystickButton getElevatorCycleDownButton();
+  public abstract JoystickButton getSingleSubstationButton();
+  
+  public abstract JoystickButton getMiddleScoreButton();
 
-  public abstract JoystickButton getFrictionPadDeployButton();
+  public abstract JoystickButton getTopScoreButton();
 
-  public abstract JoystickButton getFrictionPadRetractButton();
+  public abstract JoystickButton getGroundButton();
+
+  public abstract JoystickButton getDefaultButton();
+  
+  // public abstract JoystickButton getFrictionPadDeployButton();
+
+  // public abstract JoystickButton getFrictionPadRetractButton();
 
   public abstract double getForwardIntakeValue();
 
@@ -51,11 +60,13 @@ public abstract class OperatorMap extends CommandMap {
         new RepeatCommand(
             new RunCommand(() -> elevatorArm.moveElevatorAndPivot(-getLeftYAxis() * 0.5, getRightYAxis() * 1),
                 elevatorArm)));
-    // getElevatorEncoderButton().onTrue(new InstantCommand(() ->
-    // elevatorArm.getEncoderPosition()));
-    getElevatorCycleUpButton().onTrue(elevatorArm.cycleUp());
-    getElevatorCycleDownButton().onTrue(elevatorArm.cycleDown());
     getElevatorResetButton().onTrue(elevatorArm.resetElevatorMotor());
+    getStowButton().onTrue(elevatorArm.moveToSetPoint(() -> SetPoint.STOW));
+    getSingleSubstationButton().onTrue(elevatorArm.moveToSetPoint(() -> SetPoint.SINGLE_SUBSTATION));
+    getMiddleScoreButton().onTrue(elevatorArm.moveToSetPoint(() -> SetPoint.MIDDLE));
+    getTopScoreButton().onTrue(elevatorArm.moveToSetPoint(() -> SetPoint.TOP));
+    getGroundButton().onTrue(elevatorArm.moveToSetPoint(() -> SetPoint.GROUND));
+    getDefaultButton().onTrue(elevatorArm.moveToSetPoint(() -> SetPoint.DEFAULT));
 
     MotorIntake motorIntake = MotorIntake.getInstance();
     motorIntake.setDefaultCommand(
@@ -63,8 +74,8 @@ public abstract class OperatorMap extends CommandMap {
             motorIntake)));
     getIntakeSwitchModeButton().onTrue(new InstantCommand(() -> motorIntake.invertGodSpeed()));
 
-    FrictionPad frictionPad = FrictionPad.getInstance();
-    getFrictionPadDeployButton().onTrue(new InstantCommand(() -> frictionPad.deploy()));
-    getFrictionPadRetractButton().onTrue(new InstantCommand(() -> frictionPad.retract()));
+    // FrictionPad frictionPad = FrictionPad.getInstance();
+    // getFrictionPadDeployButton().onTrue(new InstantCommand(() -> frictionPad.deploy()));
+    // getFrictionPadRetractButton().onTrue(new InstantCommand(() -> frictionPad.retract()));
   }
 }
