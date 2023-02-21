@@ -95,9 +95,6 @@ public class ElevatorArm extends SubsystemBase {
     }
 
     private CANSparkMax elevatorMotor, pivotMotor;
-    private SetPoint setPoints[] = { SetPoint.GROUND, SetPoint.MIDDLE, SetPoint.SINGLE_SUBSTATION, SetPoint.STOW,
-            SetPoint.TOP };
-    private int index = 3;
     private SparkMaxLimitSwitch forwardLimit, reverseLimit;
     private double elevatorP, elevatorI, elevatorD, elevatorMaxVel, elevatorMaxAccel;
     private double pivotP, pivotI, pivotD, pivotMaxVel, pivotMaxAccel;
@@ -135,15 +132,6 @@ public class ElevatorArm extends SubsystemBase {
         elevatorMotor.getPIDController().setOutputRange(-1, 1);
         setMotorPID(pivotMotor, pivotP, pivotI, pivotD);
         
-        // elevatorMotor.getPIDController().setSmartMotionMaxVelocity(elevatorMaxVel,0 );
-        // elevatorMotor.getPIDController().setSmartMotionAccelStrategy(AccelStrategy.kTrapezoidal, 0);
-        // elevatorMotor.getPIDController().setSmartMotionMaxAccel(elevatorMaxAccel, 0);
-        // elevatorMotor.getPIDController().setSmartMotionAllowedClosedLoopError(3, 0);
-        // elevatorMotor.getPIDController().setSmartMotionMinOutputVelocity(10, 0);
-        // pivotMotor.getPIDController().setSmartMotionMaxVelocity(pivotMaxVel, 0);
-        // pivotMotor.getPIDController().setSmartMotionMaxAccel(pivotMaxAccel, 0);
-        // pivotMotor.getPIDController().setSmartMotionAllowedClosedLoopError(1, 0);
-        
         elevatorMotor.burnFlash();
         pivotMotor.burnFlash();
 
@@ -166,7 +154,7 @@ public class ElevatorArm extends SubsystemBase {
 
     // Elevator Functionality
     public void moveElevator(double input) {
-        elevatorMotor.set(input * 0.4);
+        elevatorMotor.set(input * 0.8);
     }
 
     public Command moveElevatorCommand(Supplier<ElevatorPosition> elevatorPos) {
@@ -180,7 +168,7 @@ public class ElevatorArm extends SubsystemBase {
     }
 
     public void movePivot(double input) {
-        pivotMotor.set(input * 0.2);
+        pivotMotor.set(input * 0.35);
     }
 
     public Command movePivotCommand(Supplier<PivotPosition> pivotPos) {
@@ -213,8 +201,6 @@ public class ElevatorArm extends SubsystemBase {
     public void periodic() {
         SmartDashboard.putBoolean("top switch", forwardLimit.isPressed());
         SmartDashboard.putBoolean("bottom switch", reverseLimit.isPressed());
-        SmartDashboard.putNumber("index", index);
-        SmartDashboard.putString("torr", setPoints[index].name());
         getEncoderPosition();
     }
 
