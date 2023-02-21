@@ -196,8 +196,9 @@ public class ElevatorArm extends SubsystemBase {
     }
 
     public Command moveToSetPoint(Supplier<SetPoint> setPoint) {
-        return moveElevatorCommand(() -> setPoint.get().getElevatorPosition())
-                .andThen(movePivotCommand(() -> setPoint.get().getPivotPosition()));
+        return movePivotCommand(() -> PivotPosition.MID)
+                .andThen(moveElevatorCommand(() -> setPoint.get().getElevatorPosition()))
+                .alongWith(movePivotCommand(() -> setPoint.get().getPivotPosition()));
     }
 
     public Command resetElevatorMotor() {
