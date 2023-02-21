@@ -25,11 +25,11 @@ public class TwoJoyStickOperatorMap extends OperatorMap {
 
     @Override
     public JoystickButton getSingleSubstationButton() {
-        return controller.getDpad(Dpad.DPAD_UP);
+        return controller.getButton(Button.BUTTON_X);
     }
     @Override
     public JoystickButton getMiddleScoreButton() {
-        return controller.getButton(Button.BUTTON_X);
+        return controller.getDpad(Dpad.DPAD_UP);
     }
     @Override
     public JoystickButton getTopScoreButton() {

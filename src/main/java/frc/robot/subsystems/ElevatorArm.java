@@ -161,9 +161,6 @@ public class ElevatorArm extends SubsystemBase {
     }
 
     public void moveElevator(ElevatorPosition setPoint) {
-        // System.out.println("uwu");
-        // System.out.println(elevatorMotor.getEncoder().getPosition() + " " +
-        // setPoint.getEncoderPos());
         elevatorMotor.getPIDController().setReference(setPoint.getEncoderPos(), ControlType.kPosition);
     }
 
@@ -182,8 +179,6 @@ public class ElevatorArm extends SubsystemBase {
         pivotMotor.getPIDController().setReference(setPoint.getEncoderPos(), ControlType.kPosition);
     }
 
-    // Pivot part functionality
-    // NOTE: 125:1 ratio
     public void movePivot(double input) {
         pivotMotor.set(input * 0.2);
     }
@@ -201,40 +196,14 @@ public class ElevatorArm extends SubsystemBase {
     }
 
     public Command moveToSetPoint(Supplier<SetPoint> setPoint) {
-        // return new SelectCommand(
-        // Map.ofEntries(
-        // Map.entry(SetPoint.TOP, moveElevatorCommand(setPoint.get()
-        // .getElevatorPosition())
-        // // .andThen(movePivotCommand(setPoint.get().getPivotPosition()))
-        // ),
-        // Map.entry(SetPoint.MIDDLE, moveElevatorCommand(setPoint.get()
-        // .getElevatorPosition())
-        // // .andThen(movePivotCommand(setPoint.get().getPivotPosition()))
-        // ),
-        // Map.entry(SetPoint.GROUND, moveElevatorCommand(setPoint.get()
-        // .getElevatorPosition())
-        // // .andThen(movePivotCommand(setPoint.get().getPivotPosition()))
-        // ),
-        // Map.entry(SetPoint.SINGLE_SUBSTATION,
-        // moveElevatorCommand(setPoint.get()
-        // .getElevatorPosition())
-        // // .andThen(movePivotCommand(setPoint.get().getPivotPosition()))
-        // ),
-        // Map.entry(SetPoint.STOW, moveElevatorCommand(setPoint.get()
-        // .getElevatorPosition()))
-        // // .andThen(movePivotCommand(setPoint.get().getPivotPosition()))
-        // ),
-        // setPoint::get);
-
         return moveElevatorCommand(() -> setPoint.get().getElevatorPosition())
                 .andThen(movePivotCommand(() -> setPoint.get().getPivotPosition()));
-
     }
 
     public Command resetElevatorMotor() {
         return new InstantCommand(() -> {
-            elevatorMotor.getEncoder().setPosition(ElevatorPosition.STOW.getEncoderPos());
-            pivotMotor.getEncoder().setPosition(PivotPosition.STOW.getEncoderPos());
+            elevatorMotor.getEncoder().setPosition(ElevatorPosition.DEFAULT.getEncoderPos());
+            pivotMotor.getEncoder().setPosition(PivotPosition.DEFAULT.getEncoderPos());
         });
 
     }
