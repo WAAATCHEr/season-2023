@@ -72,4 +72,9 @@ public class TwoJoyStickOperatorMap extends OperatorMap {
         return controller.getButton(Button.BUTTON_Y);
     }
 
+    @Override
+    public JoystickButton getElevatorResetButton() {
+        return controller.getButton(Button.BUTTON_START);
+    }
+
 }

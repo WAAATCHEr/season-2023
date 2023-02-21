@@ -38,6 +38,8 @@ public abstract class OperatorMap extends CommandMap {
 
   public abstract double getRightYAxis();
 
+  public abstract JoystickButton getElevatorResetButton();
+
   // public abstract JoystickButton getChargingStationRectractButton();
   // public abstract JoystickButton getChargingStationDeployButton();
 
@@ -53,6 +55,7 @@ public abstract class OperatorMap extends CommandMap {
     // elevatorArm.getEncoderPosition()));
     getElevatorCycleUpButton().onTrue(elevatorArm.cycleUp());
     getElevatorCycleDownButton().onTrue(elevatorArm.cycleDown());
+    getElevatorResetButton().onTrue(elevatorArm.resetElevatorMotor());
 
     MotorIntake motorIntake = MotorIntake.getInstance();
     motorIntake.setDefaultCommand(

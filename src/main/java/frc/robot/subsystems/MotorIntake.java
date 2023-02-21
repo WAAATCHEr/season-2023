@@ -21,7 +21,7 @@ public class MotorIntake extends SubsystemBase {
     private CANSparkMax intakeMotor;
     private double MOTOR_SPEED_FAST = 0.8;
     private double MOTOR_SPEED_SLOW = 0.15;
-    private boolean GODSPEED = true;
+    private boolean GODSPEED = false;
 
     private MotorIntake() {
         intakeMotor = new CANSparkMax(RobotMap.MotorIntakeMap.MOTOR_ID, MotorType.kBrushless);
