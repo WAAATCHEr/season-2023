@@ -46,13 +46,13 @@ public class TwoJoyStickDriverMap extends DriverMap {
 
   @Override
   public JoystickButton getFrictionPadDeployButton() {
-    return controller.getButton(Button.BUTTON_A);
+    return controller.getButton(Button.BUTTON_RIGHT_BUMPER);
   }
 
-  // @Override
-  // public JoystickButton getFrictionPadRetractButton() {
-  //   return controller.getButton(Button.BUTTON_A);
-  // }
+  @Override
+  public JoystickButton getFrictionPadRetractButton() {
+    return controller.getButton(Button.BUTTON_LEFT_BUMPER);
+  }
 
   @Override
   public void registerCommands() {

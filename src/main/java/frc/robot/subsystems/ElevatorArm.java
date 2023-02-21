@@ -56,11 +56,11 @@ public class ElevatorArm extends SubsystemBase {
     }
 
     public enum ElevatorPosition {
-        TOP(100),
-        MID(68.883),
-        GROUND(27.856),
-        SUBSTATION(53.786),
-        STOW(39),
+        TOP(95.1),
+        MID(60.0),
+        GROUND(22.6),
+        SUBSTATION(40.45),
+        STOW(40.05),
         DEFAULT(0);
 
         private final double encoderValue;
@@ -75,11 +75,11 @@ public class ElevatorArm extends SubsystemBase {
     }
 
     public enum PivotPosition {
-        TOP(10.786),
-        MID(3.929),
-        GROUND(31.262),
-        SUBSTATION(10.833),
-        STOW(-9.071),
+        TOP(-19.29),
+        MID(-17.5),
+        GROUND(-38.8),
+        SUBSTATION(-13.5),
+        STOW(6.96),
         DEFAULT(0);
 
         private final double encoderValue;
@@ -198,7 +198,7 @@ public class ElevatorArm extends SubsystemBase {
     public Command moveToSetPoint(Supplier<SetPoint> setPoint) {
         return movePivotCommand(() -> PivotPosition.MID)
                 .andThen(moveElevatorCommand(() -> setPoint.get().getElevatorPosition()))
-                .alongWith(movePivotCommand(() -> setPoint.get().getPivotPosition()));
+                .andThen(movePivotCommand(() -> setPoint.get().getPivotPosition()));
     }
 
     public Command resetElevatorMotor() {

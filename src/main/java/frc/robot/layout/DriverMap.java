@@ -34,7 +34,7 @@ public abstract class DriverMap extends CommandMap {
 
   public abstract JoystickButton getFrictionPadDeployButton();
 
-  // public abstract JoystickButton getFrictionPadRetractButton();
+  public abstract JoystickButton getFrictionPadRetractButton();
 
   @Override
   public void registerCommands() {
@@ -48,7 +48,8 @@ public abstract class DriverMap extends CommandMap {
 
     var frictionPad = FrictionPad.getInstance();
     getFrictionPadDeployButton().onTrue(new InstantCommand(() -> frictionPad.deploy()));
-
+    getFrictionPadRetractButton().onTrue(new InstantCommand(() -> frictionPad.retract()));
+    
     // getAlingmentButton().onTrue(swerve.chargingStationCommand());
 
     // getPathPlanningTestButton().onTrue(swerve.chargingStationPPAndBalance(oneMeterEventMap));
