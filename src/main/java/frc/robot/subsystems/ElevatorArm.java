@@ -100,7 +100,7 @@ public class ElevatorArm extends SubsystemBase {
     private double pivotP, pivotI, pivotD, pivotMaxVel, pivotMaxAccel;
 
     private ElevatorArm() {
-        elevatorP = 5.0;
+        elevatorP = 5;
         elevatorI = 0;
         elevatorD = 0;
         pivotP = 500;
@@ -114,7 +114,7 @@ public class ElevatorArm extends SubsystemBase {
         elevatorMotor = new CANSparkMax(ElevatorMap.ELEVATOR_MOTOR_ID, MotorType.kBrushless);
         pivotMotor = new CANSparkMax(ElevatorMap.PIVOT_MOTOR_ID, MotorType.kBrushless);
         elevatorMotor.restoreFactoryDefaults();
-        pivotMotor.restoreFactoryDefaults();
+        // pivotMotor.restoreFactoryDefaults();
 
         forwardLimit = elevatorMotor.getForwardLimitSwitch(SparkMaxLimitSwitch.Type.kNormallyOpen);
         forwardLimit.enableLimitSwitch(true);
@@ -124,16 +124,16 @@ public class ElevatorArm extends SubsystemBase {
 
         getEncoderPosition();
         elevatorMotor.setClosedLoopRampRate(0.05);
-        pivotMotor.setClosedLoopRampRate(0.05);
+        // pivotMotor.setClosedLoopRampRate(0.05);
 
         setMotorPID(elevatorMotor, elevatorP, elevatorI, elevatorD);
         elevatorMotor.getPIDController().setIZone(0);
         elevatorMotor.getPIDController().setFF(0.000156);
         elevatorMotor.getPIDController().setOutputRange(-1, 1);
-        setMotorPID(pivotMotor, pivotP, pivotI, pivotD);
+        // setMotorPID(pivotMotor, pivotP, pivotI, pivotD);
         
         elevatorMotor.burnFlash();
-        pivotMotor.burnFlash();
+        // pivotMotor.burnFlash();
 
     }
 
@@ -160,7 +160,7 @@ public class ElevatorArm extends SubsystemBase {
     public Command moveElevatorCommand(Supplier<ElevatorPosition> elevatorPos) {
         return new RunCommand(() -> moveElevator(elevatorPos.get()))
                 .until(() -> Math
-                        .abs(elevatorMotor.getEncoder().getPosition() - elevatorPos.get().getEncoderPos()) < 1);
+                        .abs(elevatorMotor.getEncoder().getPosition() - elevatorPos.get().getEncoderPos()) < 5);
     }
 
     public void movePivot(PivotPosition setPoint) {
@@ -184,17 +184,25 @@ public class ElevatorArm extends SubsystemBase {
     }
 
     public Command moveToSetPoint(Supplier<SetPoint> setPoint) {
-        return movePivotCommand(() -> PivotPosition.MID)
-                .andThen(moveElevatorCommand(() -> setPoint.get().getElevatorPosition()))
-                .andThen(movePivotCommand(() -> setPoint.get().getPivotPosition()));
+        return /*movePivotCommand(() -> PivotPosition.MID)
+                .andThen*/(moveElevatorCommand(() -> setPoint.get().getElevatorPosition()))
+                /*.andThen(movePivotCommand(() -> setPoint.get().getPivotPosition()))*/;
     }
 
     public Command resetElevatorMotor() {
         return new InstantCommand(() -> {
             elevatorMotor.getEncoder().setPosition(ElevatorPosition.DEFAULT.getEncoderPos());
-            pivotMotor.getEncoder().setPosition(PivotPosition.DEFAULT.getEncoderPos());
+            // pivotMotor.getEncoder().setPosition(PivotPosition.DEFAULT.getEncoderPos());
         });
 
+    }
+
+    public boolean getTopSwitch() {
+        return forwardLimit.isPressed();
+    }
+
+    public boolean getBottomSwitch() {
+        return reverseLimit.isPressed();
     }
 
     @Override
