@@ -490,15 +490,7 @@ public class Swerve extends SubsystemBase {
         },
         () -> {
           //TODO look at PID docs for proper tolerance code
-          if(pid.calculate(gyro.getRoll()+gyro.getPitch(), 0.0) <= 0.05 && pid.calculate(gyro.getRoll()+gyro.getPitch(), 0.0) >= -0.05)
-          {
-            return true;
-          }
-          else
-          {
-            return false;
-          }
-        
+          return pid.atSetpoint();
         },
         this);
     

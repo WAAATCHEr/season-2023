@@ -30,16 +30,16 @@ public class OI {
   }
 
   public void registerCommands() {
-    // new TwoJoyStickDriverMap(driver).registerCommands();
-    new TwoJoyStickOperatorMap(operator).registerCommands();
+    new TwoJoyStickDriverMap(driver).registerCommands();
+    // new TwoJoyStickOperatorMap(operator).registerCommands();
   }
 
   private OI() {
-    // driver =
-    //     new GameController(
-    //         RobotMap.ControllerMap.DRIVER_JOYSTICK,
-    //         new Xbox());
-    operator = new GameController(RobotMap.ControllerMap.OPERATOR_JOYSTICK, new Xbox());
+    driver =
+        new GameController(
+            RobotMap.ControllerMap.DRIVER_JOYSTICK,
+            new Xbox());
+    // operator = new GameController(RobotMap.ControllerMap.OPERATOR_JOYSTICK, new Xbox());
     // Logitech());
   }
 }

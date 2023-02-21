@@ -6,7 +6,7 @@ import frc.robot.subsystems.Swerve;
 public class TestAutoPath extends SequentialCommandGroup{
     public TestAutoPath(){
         var swerve = Swerve.getInstance();
-        String path = "Red Close Leave";
+        String path = "RED Mid to Top to CS";
         addCommands(
             swerve.followTrajectoryCommand(path, null, true),
             swerve.chargingStationCommand()
