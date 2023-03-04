@@ -1,7 +1,5 @@
 package pixy2api.links;
 
-import com.fasterxml.jackson.annotation.JsonCreator.Mode;
-
 import edu.wpi.first.wpilibj.SPI;
 import pixy2api.Pixy2.Checksum;
 
