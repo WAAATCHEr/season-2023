@@ -3,12 +3,12 @@
     {
       "anchorPoint": {
         "x": 14.7,
-        "y": 2.7
+        "y": 2.2
       },
       "prevControl": null,
       "nextControl": {
-        "x": 14.611687651946731,
-        "y": 3.7218331579520307
+        "x": 14.720837566675133,
+        "y": 2.896498761747524
       },
       "holonomicAngle": 0.0,
       "isReversal": false,
@@ -27,43 +27,16 @@
     },
     {
       "anchorPoint": {
-        "x": 13.99,
-        "y": 4.537773504118437
+        "x": 10.947560801371601,
+        "y": 2.8182150114300235
       },
       "prevControl": {
-        "x": 14.712188807358935,
-        "y": 3.996129882767816
+        "x": 11.447956391725194,
+        "y": 2.7887799767033417
       },
       "nextControl": {
-        "x": 13.703705525277961,
-        "y": 4.752495159288106
-      },
-      "holonomicAngle": 0.0,
-      "isReversal": false,
-      "velOverride": null,
-      "isLocked": false,
-      "isStopPoint": false,
-      "stopEvent": {
-        "names": [
-          "Retract"
-        ],
-        "executionBehavior": "parallel",
-        "waitBehavior": "none",
-        "waitTime": 0
-      }
-    },
-    {
-      "anchorPoint": {
-        "x": 11.54,
-        "y": 4.709550419100839
-      },
-      "prevControl": {
-        "x": 12.476404482887185,
-        "y": 4.769612646692084
-      },
-      "nextControl": {
-        "x": 10.603595517112813,
-        "y": 4.649488191509593
+        "x": 10.415231299212598,
+        "y": 2.8495285115570237
       },
       "holonomicAngle": 0.0,
       "isReversal": false,
@@ -79,15 +52,15 @@
     },
     {
       "anchorPoint": {
-        "x": 8.75,
-        "y": 7.3
+        "x": 12.607176308102616,
+        "y": 2.8182150114300235
       },
       "prevControl": {
-        "x": 9.473046469295664,
-        "y": 7.3
+        "x": 11.963533425666213,
+        "y": 2.8182150114300235
       },
       "nextControl": null,
-      "holonomicAngle": 180.0,
+      "holonomicAngle": 0,
       "isReversal": false,
       "velOverride": null,
       "isLocked": false,
