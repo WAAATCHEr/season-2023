@@ -43,20 +43,6 @@ public interface ButtonMap {
     BUTTON_RIGHT_TRIGGER;
   }
 
-  /*
-   * // Pulled from TriggerButton Class
-   * public int RIGHT_TRIGGER;
-   * public int LEFT_TRIGGER;
-   * public int RIGHT_AXIS_UP_TRIGGER;
-   * public int RIGHT_AXIS_DOWN_TRIGGER;
-   * public int RIGHT_AXIS_RIGHT_TRIGGER;
-   * public int RIGHT_AXIS_LEFT_TRIGGER;
-   * public int LEFT_AXIS_UP_TRIGGER;
-   * public int LEFT_AXIS_DOWN_TRIGGER;
-   * public int LEFT_AXIS_RIGHT_TRIGGER;
-   * public int LEFT_AXIS_LEFT_TRIGGER;
-   */
-
   public enum Dpad {
     DPAD_UP,
     DPAD_UP_RIGHT,

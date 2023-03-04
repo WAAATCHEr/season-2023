@@ -29,7 +29,6 @@ public class Logitech implements ButtonMap {
     map.put(Button.BUTTON_SHARE, 9); // Back Button
     map.put(Button.BUTTON_OPTIONS, 10);
     map.put(Button.BUTTON_START, 10);
-    // map.put(Button.BUTTON_TOUCHPAD, 11);
 
     return map;
   }

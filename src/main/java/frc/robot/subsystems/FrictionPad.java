@@ -15,7 +15,7 @@ public class FrictionPad extends SubsystemBase {
     return instance;
   }
 
-  private DoubleSolenoid frictionPadPiston, frictionPadPiston2;
+  private DoubleSolenoid frictionPadPiston;
 
   private FrictionPad() {
     frictionPadPiston = new DoubleSolenoid(PneumaticsModuleType.REVPH, FrictionPadMap.FOWARD_CHANNEL,

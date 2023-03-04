@@ -1,20 +1,13 @@
 package frc.robot.subsystems;
 
 import java.util.function.Supplier;
-
-import javax.swing.text.DefaultStyledDocument.ElementBuffer;
-
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMax.ControlType;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
-import com.revrobotics.SparkMaxPIDController.AccelStrategy;
 import com.revrobotics.SparkMaxLimitSwitch;
-
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RobotMap.ElevatorMap;
@@ -96,8 +89,8 @@ public class ElevatorArm extends SubsystemBase {
 
     private CANSparkMax elevatorMotor, pivotMotor;
     private SparkMaxLimitSwitch forwardLimit, reverseLimit;
-    private double elevatorP, elevatorI, elevatorD, elevatorMaxVel, elevatorMaxAccel;
-    private double pivotP, pivotI, pivotD, pivotMaxVel, pivotMaxAccel;
+    private double elevatorP, elevatorI, elevatorD;
+    private double pivotP, pivotI, pivotD;
 
     private ElevatorArm() {
         elevatorP = 5;
@@ -106,15 +99,11 @@ public class ElevatorArm extends SubsystemBase {
         pivotP = 500;
         pivotI = 0.001;
         pivotD = 0;
-        elevatorMaxVel = 5000; // RPM
-        elevatorMaxAccel = 5000;
-        pivotMaxVel = 900;
-        pivotMaxAccel = 700;
 
         elevatorMotor = new CANSparkMax(ElevatorMap.ELEVATOR_MOTOR_ID, MotorType.kBrushless);
         pivotMotor = new CANSparkMax(ElevatorMap.PIVOT_MOTOR_ID, MotorType.kBrushless);
         elevatorMotor.restoreFactoryDefaults();
-        // pivotMotor.restoreFactoryDefaults();
+        pivotMotor.restoreFactoryDefaults();
 
         forwardLimit = elevatorMotor.getForwardLimitSwitch(SparkMaxLimitSwitch.Type.kNormallyOpen);
         forwardLimit.enableLimitSwitch(true);
@@ -124,16 +113,16 @@ public class ElevatorArm extends SubsystemBase {
 
         getEncoderPosition();
         elevatorMotor.setClosedLoopRampRate(0.05);
-        // pivotMotor.setClosedLoopRampRate(0.05);
+        pivotMotor.setClosedLoopRampRate(0.05);
 
         setMotorPID(elevatorMotor, elevatorP, elevatorI, elevatorD);
         elevatorMotor.getPIDController().setIZone(0);
         elevatorMotor.getPIDController().setFF(0.000156);
         elevatorMotor.getPIDController().setOutputRange(-1, 1);
-        // setMotorPID(pivotMotor, pivotP, pivotI, pivotD);
+        setMotorPID(pivotMotor, pivotP, pivotI, pivotD);
         
         elevatorMotor.burnFlash();
-        // pivotMotor.burnFlash();
+        pivotMotor.burnFlash();
 
     }
 
@@ -184,15 +173,15 @@ public class ElevatorArm extends SubsystemBase {
     }
 
     public Command moveToSetPoint(Supplier<SetPoint> setPoint) {
-        return /*movePivotCommand(() -> PivotPosition.MID)
-                .andThen*/(moveElevatorCommand(() -> setPoint.get().getElevatorPosition()))
-                /*.andThen(movePivotCommand(() -> setPoint.get().getPivotPosition()))*/;
+        return movePivotCommand(() -> PivotPosition.MID)
+                .andThen(moveElevatorCommand(() -> setPoint.get().getElevatorPosition()))
+                .andThen(movePivotCommand(() -> setPoint.get().getPivotPosition()));
     }
 
     public Command resetElevatorMotor() {
         return new InstantCommand(() -> {
             elevatorMotor.getEncoder().setPosition(ElevatorPosition.DEFAULT.getEncoderPos());
-            // pivotMotor.getEncoder().setPosition(PivotPosition.DEFAULT.getEncoderPos());
+            pivotMotor.getEncoder().setPosition(PivotPosition.DEFAULT.getEncoderPos());
         });
 
     }

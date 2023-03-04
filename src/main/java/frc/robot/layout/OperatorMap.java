@@ -5,7 +5,6 @@ import edu.wpi.first.wpilibj2.command.RepeatCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.subsystems.ElevatorArm;
-import frc.robot.subsystems.FrictionPad;
 import frc.robot.subsystems.MotorIntake;
 import frc.robot.subsystems.ElevatorArm.SetPoint;
 import frc.robot.util.controllers.CommandMap;
@@ -30,10 +29,6 @@ public abstract class OperatorMap extends CommandMap {
   public abstract JoystickButton getGroundButton();
 
   public abstract JoystickButton getDefaultButton();
-  
-  // public abstract JoystickButton getFrictionPadDeployButton();
-
-  // public abstract JoystickButton getFrictionPadRetractButton();
 
   public abstract double getForwardIntakeValue();
 
@@ -48,9 +43,6 @@ public abstract class OperatorMap extends CommandMap {
   public abstract double getRightYAxis();
 
   public abstract JoystickButton getElevatorResetButton();
-
-  // public abstract JoystickButton getChargingStationRectractButton();
-  // public abstract JoystickButton getChargingStationDeployButton();
 
   @Override
   public void registerCommands() {
@@ -72,10 +64,5 @@ public abstract class OperatorMap extends CommandMap {
     motorIntake.setDefaultCommand(
         new RepeatCommand(new RunCommand(() -> motorIntake.moveIntake(getForwardIntakeValue(), getReverseIntakeValue()),
             motorIntake)));
-    getIntakeSwitchModeButton().onTrue(new InstantCommand(() -> motorIntake.invertGodSpeed()));
-
-    // FrictionPad frictionPad = FrictionPad.getInstance();
-    // getFrictionPadDeployButton().onTrue(new InstantCommand(() -> frictionPad.deploy()));
-    // getFrictionPadRetractButton().onTrue(new InstantCommand(() -> frictionPad.retract()));
   }
 }

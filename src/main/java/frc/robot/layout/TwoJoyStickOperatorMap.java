@@ -79,16 +79,6 @@ public class TwoJoyStickOperatorMap extends OperatorMap {
         super.registerCommands();
     }
 
-    // @Override
-    // public JoystickButton getFrictionPadDeployButton() {
-    //     return controller.getButton(Button.BUTTON_A);
-    // }
-
-    // @Override
-    // public JoystickButton getFrictionPadRetractButton() {
-    //     return controller.getButton(Button.BUTTON_Y);
-    // }
-
     @Override
     public JoystickButton getElevatorResetButton() {
         return controller.getButton(Button.BUTTON_START);
