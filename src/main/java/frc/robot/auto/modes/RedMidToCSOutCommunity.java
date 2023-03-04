@@ -5,14 +5,13 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.subsystems.ElevatorArm;
 import frc.robot.subsystems.MotorIntake;
 import frc.robot.subsystems.Swerve;
 
-public class RedMidToCS extends SequentialCommandGroup{
-    public RedMidToCS() {
-        String path = "RED Mid Score to CS no Leaving";
+public class RedMidToCSOutCommunity extends SequentialCommandGroup{
+    public RedMidToCSOutCommunity() {
+        String path = "RED Mid to CS with Leaving";
         HashMap<String, Command> eventMap = new HashMap<String, Command>();
         var elevatorArm = ElevatorArm.getInstance();
         var motorIntake = MotorIntake.getInstance();

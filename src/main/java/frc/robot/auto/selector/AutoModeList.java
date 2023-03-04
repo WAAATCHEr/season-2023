@@ -2,24 +2,48 @@ package frc.robot.auto.selector;
 
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.auto.modes.*;
-public enum AutoModeList {
-  DO_NOTHING (new DoNothing()),
-  MIDSTARTCHARGESTATION(new MidStartChargeStation()),
-  BLUECLOSESCORECHARING(new BlueCloseScoreCharging()),
-  REDCLOSESCORECHARGING(new RedTopNoCS()),
-  RECLOSESCORETWO(new RedTopToCS()),
-  REDMIDDLESCORETWO(new RedMiddleScoreTwo()),
-  REDFARSCORECHARGING(new RedFarScoreCharging()),
-  REDFARSCORETWO(new RedFarScoreTwo()),
-  TESTAUTOPATH(new TestAutoPath());
 
-  private final SequentialCommandGroup autoCommand;
+public interface AutoModeList {
+  public enum AutoModeListRed {
+    DONOTHING(new DoNothing()),
+    BARRIERTOCS(new RedBumperToCS()),
+    BARRIERTOLZ(new RedBumperToLZ()),
+    MIDTOCS(new RedMidToCS()),
+    MIDTOCSOUTCOMMUNITY(new RedMidToCSOutCommunity()),
+    BUMPERTOCS(new RedBumperToCS()),
+    BUMPERTOLZ(new RedBumperToLZ());
 
-  AutoModeList(SequentialCommandGroup autoCommand) {
-    this.autoCommand = autoCommand;
+    private final SequentialCommandGroup autoCommand;
 
+    AutoModeListRed(SequentialCommandGroup autoCommand) {
+      this.autoCommand = autoCommand;
+
+    }
+
+    public SequentialCommandGroup getAuto() {
+      return autoCommand;
+    }
   }
-  public SequentialCommandGroup getAuto() {
-    return autoCommand;
+  
+  public enum AutoModeListBlue {
+    DONOTHING(new DoNothing()),
+    BARRIERTOCS(new BlueBumperToCS()),
+    BARRIERTOLZ(new BlueBumperToLZ()),
+    MIDTOCS(new BlueMidToCS()),
+    MIDTOCSOUTCOMMUNITY(new BlueMidToCSOutCommunity()),
+    BUMPERTOCS(new BlueBumperToCS()),
+    BUMPERTOLZ(new BlueBumperToLZ()),
+    BUMPERTOGROUNDPIECE(new BlueBumperToGroundPiece());
+
+    private final SequentialCommandGroup autoCommand;
+
+    AutoModeListBlue(SequentialCommandGroup autoCommand){
+      this.autoCommand = autoCommand;
+    }
+
+    public SequentialCommandGroup getAuto() {
+      return autoCommand;
+    }
   }
 }
+
