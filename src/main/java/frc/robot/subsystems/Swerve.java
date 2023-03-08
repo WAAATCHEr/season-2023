@@ -234,7 +234,7 @@ public class Swerve extends SubsystemBase {
 
     return new FunctionalCommand(
         () -> {
-          System.out.println("I'm balancing now");
+          // Init
         },
         () -> {
           if (pid.calculate(gyro.getRoll() + gyro.getPitch()) > ChargingStationMap.MAX_VELOCITY) {

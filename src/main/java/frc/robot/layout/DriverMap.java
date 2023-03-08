@@ -17,14 +17,6 @@ public abstract class DriverMap extends CommandMap {
 
   abstract ChassisSpeeds getChassisSpeeds();
 
-  abstract JoystickButton getPathPlanningTestButton();
-
-  abstract JoystickButton getPixyCamDistanceButton();
-
-  abstract JoystickButton getAlingmentButton();
-
-  abstract JoystickButton getAprilTagAlignmentButton();
-
   public abstract JoystickButton getFrictionPadDeployButton();
 
   public abstract JoystickButton getFrictionPadRetractButton();
