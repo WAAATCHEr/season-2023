@@ -143,7 +143,7 @@ public class ElevatorArm extends SubsystemBase {
 
     // Elevator Functionality
     public void moveElevator(double input) {
-        elevatorMotor.set(input * 0.8);
+        elevatorMotor.set(input);
     }
 
     public Command moveElevatorCommand(Supplier<ElevatorPosition> elevatorPos) {
@@ -157,7 +157,7 @@ public class ElevatorArm extends SubsystemBase {
     }
 
     public void movePivot(double input) {
-        pivotMotor.set(input * 0.35);
+        pivotMotor.set(input);
     }
 
     public Command movePivotCommand(Supplier<PivotPosition> pivotPos) {
@@ -196,8 +196,8 @@ public class ElevatorArm extends SubsystemBase {
 
     @Override
     public void periodic() {
-        SmartDashboard.putBoolean("top switch", forwardLimit.isPressed());
-        SmartDashboard.putBoolean("bottom switch", reverseLimit.isPressed());
+        SmartDashboard.putBoolean("top switch", getTopSwitch());
+        SmartDashboard.putBoolean("bottom switch", getBottomSwitch());
         getEncoderPosition();
     }
 

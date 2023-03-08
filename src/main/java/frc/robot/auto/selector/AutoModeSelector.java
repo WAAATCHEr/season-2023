@@ -20,15 +20,15 @@ public class AutoModeSelector implements AutoModeList {
   private AutoModeSelector() {
     modeChooserRed = new SendableChooser<>();
     modeChooserBlue = new SendableChooser<>();
-    // ModeChooser.addOption(name, enum);
-    modeChooserRed.setDefaultOption("DO_NOTHING", AutoModeListRed.DONOTHING.getAuto());
-    modeChooserBlue.setDefaultOption("Do Nothing", AutoModeListBlue.DONOTHING.getAuto());
     updateAutoModeSelector();
 
     SmartDashboard.putData(modeChooserRed);
   }
 
   public void updateAutoModeSelector() {
+    modeChooserRed.setDefaultOption("DONOTHING", AutoModeListRed.DONOTHING.getAuto());
+    modeChooserBlue.setDefaultOption("DONOTHING", AutoModeListBlue.DONOTHING.getAuto());
+
     for (AutoModeListRed auto : AutoModeListRed.values()) {
       modeChooserRed.addOption(auto.name(), auto.getAuto());
     }

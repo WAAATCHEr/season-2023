@@ -203,45 +203,11 @@ public class Swerve extends SubsystemBase {
                 odometry.resetPosition(
                     getYaw(), getModulePositions(), traj.getInitialHolonomicPose());
               }
-              System.out.println("we be reseting");
             }),
         new PPSwerveControllerCommand(
             traj, this::getPose, xPID, yPID, thetaPID, speeds -> drive(speeds, true), this)
             );// KEEP IT OPEN LOOP
-  }
-
-  public Command chargingStationCommand() {
-    PIDController pid = new PIDController(ChargingStationMap.kP, ChargingStationMap.kI, ChargingStationMap.kD);
-    pid.setTolerance(0.5);
-
-    
-    
-      return new FunctionalCommand(
-        () -> {
-          System.out.println("I'm balancing now");
-        },
-        () -> {
-          if(pid.calculate(gyro.getRoll()+gyro.getPitch())>ChargingStationMap.MAX_VELOCITY)
-          {
-            this.drive(new ChassisSpeeds(-ChargingStationMap.MAX_VELOCITY, .0, 0), true);
-          }
-          else
-          {
-            this.drive(new ChassisSpeeds(-pid.calculate(gyro.getRoll()+gyro.getPitch(), 0.0), 0, 0), true);
-          }
-           
-        },
-        interrupted -> {
-          pid.close();
-        },
-        () -> {
-          return pid.atSetpoint();
-        },
-        this);
-    
-    
-
-  }
+  } 
 
   public SequentialCommandGroup followTrajectoryCommand(String path, boolean isFirstPath) {
     PathPlannerTrajectory traj = PathPlanner.loadPath(path, 2, 2);
@@ -262,11 +228,29 @@ public class Swerve extends SubsystemBase {
         );
   }
 
-  public SequentialCommandGroup chargingStationPPAndBalance(HashMap<String, Command> eventMap)
-  {
-    return new SequentialCommandGroup(
-          followTrajectoryCommand("Test path", eventMap, true)
-        );
+  public Command chargingStationCommand() {
+    PIDController pid = new PIDController(ChargingStationMap.kP, ChargingStationMap.kI, ChargingStationMap.kD);
+    pid.setTolerance(0.5);
+
+    return new FunctionalCommand(
+        () -> {
+          System.out.println("I'm balancing now");
+        },
+        () -> {
+          if (pid.calculate(gyro.getRoll() + gyro.getPitch()) > ChargingStationMap.MAX_VELOCITY) {
+            this.drive(new ChassisSpeeds(-ChargingStationMap.MAX_VELOCITY, .0, 0), true);
+          } else {
+            this.drive(new ChassisSpeeds(-pid.calculate(gyro.getRoll() + gyro.getPitch(), 0.0), 0, 0), true);
+          }
+
+        },
+        interrupted -> {
+          pid.close();
+        },
+        () -> {
+          return pid.atSetpoint();
+        },
+        this);
   }
   
   @Override
