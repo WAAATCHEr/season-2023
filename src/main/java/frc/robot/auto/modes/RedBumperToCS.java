@@ -11,16 +11,16 @@ import frc.robot.subsystems.Swerve;
 
 public class RedBumperToCS extends SequentialCommandGroup{
     public RedBumperToCS() {
-        String path = "RED Bumper Score to CS";
+        String path = "RED Bumper Score to CS out of Community";
         HashMap<String, Command> eventMap = new HashMap<String, Command>();
 
         var swerve = Swerve.getInstance();
         var elevatorArm = ElevatorArm.getInstance();
         var motorIntake = MotorIntake.getInstance();
         addCommands(
+            elevatorArm.movePivotCommand(() -> ElevatorArm.PivotPosition.TOP),
             new RunCommand(() -> elevatorArm.moveElevator(0.7))
                         .until(() -> elevatorArm.getTopSwitch()),
-            elevatorArm.movePivotCommand(() -> ElevatorArm.PivotPosition.TOP),
             new RunCommand(() -> motorIntake.autoMoveIntake(false)).withTimeout(1.0),
             new InstantCommand(() -> motorIntake.setSpeed(0)),
             elevatorArm.movePivotCommand(() -> ElevatorArm.PivotPosition.SUBSTATION)
@@ -30,6 +30,5 @@ public class RedBumperToCS extends SequentialCommandGroup{
             swerve.followTrajectoryCommand(path, eventMap, true),
             swerve.chargingStationCommand()
         );
-        
     }
 }

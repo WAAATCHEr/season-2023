@@ -6,12 +6,13 @@ import frc.robot.auto.modes.*;
 public interface AutoModeList {
   public enum AutoModeListRed {
     DONOTHING(new DoNothing()),
-    BARRIERTOCS(new RedBumperToCS()),
+    BARRIERTOCS(new RedBumperToCS()), 
     BARRIERTOLZ(new RedBumperToLZ()),
     MIDTOCS(new RedMidToCS()),
     MIDTOCSOUTCOMMUNITY(new RedMidToCSOutCommunity()),
     BUMPERTOCS(new RedBumperToCS()),
-    BUMPERTOLZ(new RedBumperToLZ());
+    BUMPERTOLZ(new RedBumperToLZ()),
+    BUMPERTOGROUNDPIECE(new RedBumperToGroundPiece());
 
     private final SequentialCommandGroup autoCommand;
 

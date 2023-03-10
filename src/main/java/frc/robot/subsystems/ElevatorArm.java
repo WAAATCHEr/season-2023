@@ -198,6 +198,8 @@ public class ElevatorArm extends SubsystemBase {
     public void periodic() {
         SmartDashboard.putBoolean("top switch", getTopSwitch());
         SmartDashboard.putBoolean("bottom switch", getBottomSwitch());
+        SmartDashboard.putNumber("Pivot Encoder", pivotMotor.getEncoder().getPosition());
+        SmartDashboard.putNumber("Elevator Encoder", elevatorMotor.getEncoder().getPosition());
         getEncoderPosition();
     }
 

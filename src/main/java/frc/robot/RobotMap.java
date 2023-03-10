@@ -102,7 +102,7 @@ public class RobotMap {
       public static final int DRIVE_ID = 5;
       public static final int ROTATOR_ID = 6;
       public static final int ENCODER_ID = 11;
-      public static final Rotation2d OFFSET = Rotation2d.fromDegrees(189.4);
+      public static final Rotation2d OFFSET = Rotation2d.fromDegrees(357.5);
       public static final SwerveModuleConstants CONSTANTS = new SwerveModuleConstants(DRIVE_ID, ROTATOR_ID, ENCODER_ID,
           OFFSET);
     }
@@ -112,7 +112,7 @@ public class RobotMap {
       public static final int DRIVE_ID = 3;
       public static final int ROTATOR_ID = 4;
       public static final int ENCODER_ID = 13;
-      public static final Rotation2d OFFSET = Rotation2d.fromDegrees(9.6);
+      public static final Rotation2d OFFSET = Rotation2d.fromDegrees(70.6);
       public static final SwerveModuleConstants CONSTANTS = new SwerveModuleConstants(DRIVE_ID, ROTATOR_ID, ENCODER_ID,
           OFFSET);
     }
@@ -122,7 +122,7 @@ public class RobotMap {
       public static final int DRIVE_ID = 7;
       public static final int ROTATOR_ID = 8;
       public static final int ENCODER_ID = 12;
-      public static final Rotation2d OFFSET = Rotation2d.fromDegrees(152.2);
+      public static final Rotation2d OFFSET = Rotation2d.fromDegrees(196.6);
       public static final SwerveModuleConstants CONSTANTS = new SwerveModuleConstants(DRIVE_ID, ROTATOR_ID, ENCODER_ID,
           OFFSET);
     }
@@ -132,7 +132,7 @@ public class RobotMap {
       public static final int DRIVE_ID = 1;
       public static final int ROTATOR_ID = 2;
       public static final int ENCODER_ID = 10;
-      public static final Rotation2d OFFSET = Rotation2d.fromDegrees(341.2);
+      public static final Rotation2d OFFSET = Rotation2d.fromDegrees(34.85);                                                                                                                
       public static final SwerveModuleConstants CONSTANTS = new SwerveModuleConstants(DRIVE_ID, ROTATOR_ID, ENCODER_ID,
           OFFSET);
     }

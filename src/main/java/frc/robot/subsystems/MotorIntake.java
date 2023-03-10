@@ -29,9 +29,9 @@ public class MotorIntake extends SubsystemBase {
 
     public void moveIntake(double forward, double backward) {
         if (forward > 0) {
-            intakeMotor.set(-MOTOR_SPEED_SLOW);
+            intakeMotor.set(MOTOR_SPEED_SLOW);
         } else if (backward > 0) {
-            intakeMotor.set(MOTOR_SPEED_FAST);
+            intakeMotor.set(-MOTOR_SPEED_FAST);
         } else {
             intakeMotor.set(0);
         }
@@ -39,9 +39,9 @@ public class MotorIntake extends SubsystemBase {
     
     public void autoMoveIntake(boolean isIntake) {
         if (isIntake) {
-            intakeMotor.set(MOTOR_SPEED_FAST);
+            intakeMotor.set(-MOTOR_SPEED_FAST);
         } else if (!isIntake) {
-            intakeMotor.set(-MOTOR_SPEED_SLOW);
+            intakeMotor.set(MOTOR_SPEED_SLOW);
         }
     }
     

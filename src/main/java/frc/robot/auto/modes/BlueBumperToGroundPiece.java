@@ -11,16 +11,16 @@ import frc.robot.subsystems.Swerve;
 
 public class BlueBumperToGroundPiece extends SequentialCommandGroup {
     public BlueBumperToGroundPiece() {
-        String path = "BLUE Bumper Score to Ground Piece";
+        String path = "BLUE Bumper Score to Groud Piece";
         HashMap<String, Command> eventMap = new HashMap<String, Command>();
 
         var swerve = Swerve.getInstance();
         var elevatorArm = ElevatorArm.getInstance();
         var motorIntake = MotorIntake.getInstance();
         addCommands(
+            elevatorArm.movePivotCommand(() -> ElevatorArm.PivotPosition.TOP),
             new RunCommand(() -> elevatorArm.moveElevator(0.7))
                         .until(() -> elevatorArm.getTopSwitch()),
-            elevatorArm.movePivotCommand(() -> ElevatorArm.PivotPosition.TOP),
             new RunCommand(() -> motorIntake.autoMoveIntake(false)).withTimeout(1.0),
             new InstantCommand(() -> motorIntake.setSpeed(0)),
             elevatorArm.movePivotCommand(() -> ElevatorArm.PivotPosition.SUBSTATION)

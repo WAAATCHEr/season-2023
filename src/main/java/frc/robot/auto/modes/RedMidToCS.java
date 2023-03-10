@@ -19,9 +19,9 @@ public class RedMidToCS extends SequentialCommandGroup{
         
         var swerve = Swerve.getInstance();
         addCommands(
+            elevatorArm.movePivotCommand(() -> ElevatorArm.PivotPosition.TOP),
             new RunCommand(() -> elevatorArm.moveElevator(0.7))
                         .until(() -> elevatorArm.getTopSwitch()),
-            elevatorArm.movePivotCommand(() -> ElevatorArm.PivotPosition.TOP),
             new RunCommand(() -> motorIntake.autoMoveIntake(false)).withTimeout(1.0),
             new InstantCommand(() -> motorIntake.setSpeed(0)),
             elevatorArm.movePivotCommand(() -> ElevatorArm.PivotPosition.SUBSTATION)
