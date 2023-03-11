@@ -6,6 +6,7 @@ import frc.robot.auto.modes.*;
 public interface AutoModeList {
   public enum AutoModeListRed {
     DONOTHING(new DoNothing()),
+    TESTAUTOPATH(new TestAutoPath()),
     BARRIERTOCS(new RedBumperToCS()), 
     BARRIERTOLZ(new RedBumperToLZ()),
     MIDTOCS(new RedMidToCS()),
@@ -28,6 +29,7 @@ public interface AutoModeList {
   
   public enum AutoModeListBlue {
     DONOTHING(new DoNothing()),
+    TESTAUTOPATH(new TestAutoPath()),
     BARRIERTOCS(new BlueBumperToCS()),
     BARRIERTOLZ(new BlueBumperToLZ()),
     MIDTOCS(new BlueMidToCS()),

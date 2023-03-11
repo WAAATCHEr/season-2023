@@ -17,17 +17,17 @@ public abstract class OperatorMap extends CommandMap {
 
   public abstract JoystickButton getIntakeSwitchModeButton();
 
-  public abstract JoystickButton getStowButton();
+  // public abstract JoystickButton getStowButton();
 
-  public abstract JoystickButton getSingleSubstationButton();
+  // public abstract JoystickButton getSingleSubstationButton();
   
-  public abstract JoystickButton getMiddleScoreButton();
+  // public abstract JoystickButton getMiddleScoreButton();
 
-  public abstract JoystickButton getTopScoreButton();
+  // public abstract JoystickButton getTopScoreButton();
 
-  public abstract JoystickButton getGroundButton();
+  // public abstract JoystickButton getGroundButton();
 
-  public abstract JoystickButton getDefaultButton();
+  // public abstract JoystickButton getDefaultButton();
 
   public abstract double getForwardIntakeValue();
 
@@ -52,12 +52,12 @@ public abstract class OperatorMap extends CommandMap {
             new RunCommand(() -> elevatorArm.moveElevatorAndPivot(-getLeftYAxis() * 0.5, -getRightYAxis() * 0.35),
                 elevatorArm)));
     getElevatorResetButton().onTrue(elevatorArm.resetElevatorMotor());
-    getStowButton().onTrue(elevatorArm.moveToSetPoint(() -> SetPoint.STOW));
-    getSingleSubstationButton().onTrue(elevatorArm.moveToSetPoint(() -> SetPoint.SINGLE_SUBSTATION));
-    getMiddleScoreButton().onTrue(elevatorArm.moveToSetPoint(() -> SetPoint.MIDDLE));
-    getTopScoreButton().onTrue(elevatorArm.moveToSetPoint(() -> SetPoint.TOP));
-    getGroundButton().onTrue(elevatorArm.moveToSetPoint(() -> SetPoint.GROUND));
-    getDefaultButton().onTrue(elevatorArm.moveToSetPoint(() -> SetPoint.DEFAULT));
+    // getStowButton().onTrue(elevatorArm.moveToSetPoint(() -> SetPoint.STOW));
+    // getSingleSubstationButton().onTrue(elevatorArm.moveToSetPoint(() -> SetPoint.SINGLE_SUBSTATION));
+    // getMiddleScoreButton().onTrue(elevatorArm.moveToSetPoint(() -> SetPoint.MIDDLE));
+    // getTopScoreButton().onTrue(elevatorArm.moveToSetPoint(() -> SetPoint.TOP));
+    // getGroundButton().onTrue(elevatorArm.moveToSetPoint(() -> SetPoint.GROUND));
+    // getDefaultButton().onTrue(elevatorArm.moveToSetPoint(() -> SetPoint.DEFAULT));
 
     MotorIntake motorIntake = MotorIntake.getInstance();
     motorIntake.setDefaultCommand(

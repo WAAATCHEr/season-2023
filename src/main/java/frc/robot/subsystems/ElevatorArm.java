@@ -68,11 +68,11 @@ public class ElevatorArm extends SubsystemBase {
     }
 
     public enum PivotPosition {
-        TOP(-19.29),
-        MID(-17.5),
-        GROUND(-38.8),
-        SUBSTATION(-13.5),
-        STOW(6.96),
+        TOP(-20),
+        MID(-18.5),
+        GROUND(-49),
+        SUBSTATION(-10),
+        STOW(5.2),
         DEFAULT(0);
 
         private final double encoderValue;
@@ -96,7 +96,7 @@ public class ElevatorArm extends SubsystemBase {
         elevatorP = 5;
         elevatorI = 0;
         elevatorD = 0;
-        pivotP = 500;
+        pivotP = 0.1;
         pivotI = 0.001;
         pivotD = 0;
 

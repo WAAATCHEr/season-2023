@@ -18,31 +18,31 @@ public class TwoJoyStickOperatorMap extends OperatorMap {
         return controller.getButton(Button.BUTTON_LEFT_BUMPER);
     }
 
-    @Override
-    public JoystickButton getStowButton() {
-        return controller.getButton(Button.BUTTON_B);
-    }
+    // @Override
+    // public JoystickButton getStowButton() {
+    //     return controller.getButton(Button.BUTTON_B);
+    // }
 
-    @Override
-    public JoystickButton getSingleSubstationButton() {
-        return controller.getButton(Button.BUTTON_X);
-    }
-    @Override
-    public JoystickButton getMiddleScoreButton() {
-        return controller.getDpad(Dpad.DPAD_UP);
-    }
-    @Override
-    public JoystickButton getTopScoreButton() {
-        return controller.getButton(Button.BUTTON_Y);
-    }
-    @Override
-    public JoystickButton getGroundButton() {
-        return controller.getButton(Button.BUTTON_A);
-    }
-    @Override
-    public JoystickButton getDefaultButton() {
-        return controller.getDpad(Dpad.DPAD_DOWN);
-    }
+    // @Override
+    // public JoystickButton getSingleSubstationButton() {
+    //     return controller.getButton(Button.BUTTON_X);
+    // }
+    // @Override
+    // public JoystickButton getMiddleScoreButton() {
+    //     return controller.getDpad(Dpad.DPAD_UP);
+    // }
+    // @Override
+    // public JoystickButton getTopScoreButton() {
+    //     return controller.getButton(Button.BUTTON_Y);
+    // }
+    // @Override
+    // public JoystickButton getGroundButton() {
+    //     return controller.getButton(Button.BUTTON_A);
+    // }
+    // @Override
+    // public JoystickButton getDefaultButton() {
+    //     return controller.getDpad(Dpad.DPAD_DOWN);
+    // }
 
     @Override
     public double getForwardIntakeValue() {

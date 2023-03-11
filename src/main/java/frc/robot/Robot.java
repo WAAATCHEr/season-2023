@@ -86,7 +86,9 @@ public class Robot extends TimedRobot {
     else if (allianceColor.equals(DriverStation.Alliance.Blue)) {
       autonomousCommand = AutoModeSelector.getInstance().getBlueChooser().getSelected();
     }
-    
+    SmartDashboard.putString("Alliance Colour", allianceColor.name());
+
+
     if (autonomousCommand != null) {
       autonomousCommand.schedule();
     }
