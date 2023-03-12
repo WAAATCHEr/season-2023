@@ -30,7 +30,7 @@ public class TestAutoPath extends SequentialCommandGroup{
             //             .alongWith(new RunCommand(() -> elevatorArm.moveElevator(-0.7))
             //                         .until(() -> elevatorArm.getBottomSwitch())),
             // elevatorArm.movePivotCommand(() -> ElevatorArm.PivotPosition.DEFAULT),
-            // new WaitCommand(11),
+            // new WaitCommand(11),jhh
             swerve.followTrajectoryCommand(path, eventMap, true)
             , swerve.chargingStationCommand()
         );
