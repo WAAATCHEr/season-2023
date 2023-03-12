@@ -230,7 +230,7 @@ public class Swerve extends SubsystemBase {
 
   public Command chargingStationCommand() {
     PIDController pid = new PIDController(ChargingStationMap.kP, ChargingStationMap.kI, ChargingStationMap.kD);
-    pid.setTolerance(0.5);
+    pid.setTolerance(0.2);
 
     return new FunctionalCommand(
         () -> {

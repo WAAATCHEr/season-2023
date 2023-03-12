@@ -119,6 +119,7 @@ public class ElevatorArm extends SubsystemBase {
         elevatorMotor.getPIDController().setIZone(0);
         elevatorMotor.getPIDController().setFF(0.000156);
         elevatorMotor.getPIDController().setOutputRange(-1, 1);
+
         setMotorPID(pivotMotor, pivotP, pivotI, pivotD);
         
         elevatorMotor.burnFlash();
@@ -138,7 +139,7 @@ public class ElevatorArm extends SubsystemBase {
     }
 
     public void moveElevator(ElevatorPosition setPoint) {
-        elevatorMotor.getPIDController().setReference(setPoint.getEncoderPos(), ControlType.kPosition);
+        elevatorMotor.getPIDController().setReference(setPoint.getEncoderPos(), ControlType.kSmartMotion);
     }
 
     // Elevator Functionality
@@ -163,8 +164,8 @@ public class ElevatorArm extends SubsystemBase {
     public Command movePivotCommand(Supplier<PivotPosition> pivotPos) {
         return new RunCommand(
                 () -> {
-                    movePivot(pivotPos.get());
-                }).until(() -> (Math.abs(pivotMotor.getEncoder().getPosition() - pivotPos.get().getEncoderPos()) < 1));
+                    movePivot(pivotPos.get().getEncoderPos() < pivotMotor.getEncoder().getPosition() ? -0.7 : 0.7);
+                }).until(() -> (Math.abs(pivotMotor.getEncoder().getPosition() - pivotPos.get().getEncoderPos()) < 2));
     }
 
     public void moveElevatorAndPivot(double elevatorInput, double pivotInput) {

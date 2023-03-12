@@ -46,12 +46,12 @@ public class TwoJoyStickOperatorMap extends OperatorMap {
 
     @Override
     public double getForwardIntakeValue() {
-        return controller.getTrigger(Trigger.BUTTON_RIGHT_TRIGGER);
+        return controller.getTrigger(Trigger.BUTTON_LEFT_TRIGGER);
     }
 
     @Override
     public double getReverseIntakeValue() {
-        return controller.getTrigger(Trigger.BUTTON_LEFT_TRIGGER);
+        return controller.getTrigger(Trigger.BUTTON_RIGHT_TRIGGER);
     }
 
     @Override
