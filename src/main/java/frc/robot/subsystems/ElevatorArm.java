@@ -112,7 +112,6 @@ public class ElevatorArm extends SubsystemBase {
         reverseLimit = elevatorMotor.getReverseLimitSwitch(SparkMaxLimitSwitch.Type.kNormallyOpen);
         reverseLimit.enableLimitSwitch(true);
 
-        getEncoderPosition();
         elevatorMotor.setClosedLoopRampRate(0.05);
         pivotMotor.setClosedLoopRampRate(0.05);
 
