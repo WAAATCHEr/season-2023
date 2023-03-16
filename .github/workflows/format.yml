@@ -9,12 +9,12 @@ jobs:
   formatting:
     runs-on: ubuntu-latest
     steps:
-    - name: Temporarily disable "include administrators" branch protection
-      uses: benjefferies/branch-protection-bot@master
-      if: always()
-      with:
-        access_token: ${{ secrets.GITHUB_TOKEN }}
-        branch: ${{ github.event.repository.default_branch }}
+#     - name: Temporarily disable "include administrators" branch protection
+#       uses: benjefferies/branch-protection-bot@master
+#       if: always()
+#       with:
+#         access_token: ${{ secrets.GITHUB_TOKEN }}
+#         branch: ${{ github.event.repository.default_branch }}
     
 
     - uses: actions/checkout@v3 # v2 minimum required
@@ -24,11 +24,11 @@ jobs:
         # Recommended if you use MacOS:
         github-token: ${{ secrets.GITHUB_TOKEN }}
           
-    - name: Enable "include administrators" branch protection
-      uses: benjefferies/branch-protection-bot@master
-      if: always()  # Force to always run this step to ensure "include administrators" is always turned back on
-      with:
-        access_token: ${{ secrets.GITHUB_TOKEN }}
-        owner: FRC1884
-        repo: season-2023
-        branch: ${{ github.event.repository.default_branch }}
+#     - name: Enable "include administrators" branch protection
+#       uses: benjefferies/branch-protection-bot@master
+#       if: always()  # Force to always run this step to ensure "include administrators" is always turned back on
+#       with:
+#         access_token: ${{ secrets.GITHUB_TOKEN }}
+#         owner: FRC1884
+#         repo: season-2023
+#         branch: ${{ github.event.repository.default_branch }}
