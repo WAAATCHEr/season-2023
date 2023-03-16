@@ -23,7 +23,7 @@ public class Vision extends SubsystemBase {
 
     private Vision() {
         networkTable = NetworkTableInstance.getDefault().getTable("limelight");
-        tv = networkTable.getEntry("tv"); // Whether limelight detects any valid targets 0, 1
+        tv = networkTable.getEntry("tv"); // Wether limelight detects any valid targets 0, 1
         tx = networkTable.getEntry("tx"); // Horizontal offset from crosshair to target (-27, 27)
         ty = networkTable.getEntry("ty"); // Vertical offset from crosshair to target (-20.5, 20.5)
         ta = networkTable.getEntry("ta"); // Target area (Between 0% and 100%)
