@@ -1,6 +1,7 @@
 package frc.robot;
 
 import com.ctre.phoenix.motorcontrol.NeutralMode;
+
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
@@ -14,12 +15,12 @@ public class RobotMap {
     public static final int PIGEON_ID = 9;
     public static final boolean INVERT_GYRO = false; // Always ensure Gyro is CCW+ CW-
 
-    public static final COTSFalconSwerveConstants MODULE_TYPE = // TODO: This must be tuned to specific robot
-        COTSFalconSwerveConstants.SDSMK4(COTSFalconSwerveConstants.DriveGearRatios.SDSMK4_L3);
+    public static final COTSFalconSwerveConstants MODULE_TYPE = COTSFalconSwerveConstants
+        .SDSMK4(COTSFalconSwerveConstants.DriveGearRatios.SDSMK4_L3);
 
     /* Drivetrain Constants */
-    public static final double TRACK_WIDTH = Units.inchesToMeters(21.73); // TODO: This must be tuned to specific robot
-    public static final double WHEEL_BASE = Units.inchesToMeters(21.73); // TODO: This must be tuned to specific robot
+    public static final double TRACK_WIDTH = Units.inchesToMeters(21.73);
+    public static final double WHEEL_BASE = Units.inchesToMeters(21.73);
     public static final double WHEEL_CIRCUMFERENCE = MODULE_TYPE.wheelCircumference;
 
     /*
@@ -70,7 +71,7 @@ public class RobotMap {
     public static final double ROTATOR_KF = MODULE_TYPE.angleKF;
 
     /* Drive Motor PID Values */
-    public static final double DRIVE_KP = 0.3; // TODO: This must be tuned to specific robot
+    public static final double DRIVE_KP = 0.3;
     public static final double DRIVE_KI = 0.1;
     public static final double DRIVE_KD = 0.02;
     public static final double DRIVE_KF = 0.0;
@@ -79,15 +80,15 @@ public class RobotMap {
      * Drive Motor Characterization Values
      * Divide SYSID values by 12 to convert from volts to percent output for CTRE
      */
-    public static final double DRIVE_KS = (0.32 / 12); // TODO: This must be tuned to specific robot
+    public static final double DRIVE_KS = (0.32 / 12);
     public static final double DRIVE_KV = (1.51 / 12);
     public static final double DRIVE_KA = (0.27 / 12);
 
     /* Swerve Profiling Values */
     /** Meters per Second */
-    public static final double MAX_VELOCITY = 5.4864; // TODO: This must be tuned to specific robot
+    public static final double MAX_VELOCITY = 5.4864;
     /** Radians per Second */
-    public static final double MAX_ANGULAR_VELOCITY = 10.0; // TODO: This must be tuned to specific robot
+    public static final double MAX_ANGULAR_VELOCITY = 10.0;
 
     /* Meteres per second squared */
     public static final double MAX_ACCELERATION = 3; // TODO: TUNE THIS
@@ -98,7 +99,7 @@ public class RobotMap {
 
     /* Module Specific Constants */
     /* Front Left Module - Module 0 */
-    public static final class FrontLeft { // TODO: This must be tuned to specific robot
+    public static final class FrontLeft {
       public static final int DRIVE_ID = 5;
       public static final int ROTATOR_ID = 6;
       public static final int ENCODER_ID = 11;
@@ -108,7 +109,7 @@ public class RobotMap {
     }
 
     /* Front Right Module - Module 1 */
-    public static final class FrontRight { // TODO: This must be tuned to specific robot
+    public static final class FrontRight {
       public static final int DRIVE_ID = 3;
       public static final int ROTATOR_ID = 4;
       public static final int ENCODER_ID = 13;
@@ -118,7 +119,7 @@ public class RobotMap {
     }
 
     /* Back Left Module - Module 2 */
-    public static final class BackLeft { // TODO: This must be tuned to specific robot
+    public static final class BackLeft {
       public static final int DRIVE_ID = 7;
       public static final int ROTATOR_ID = 8;
       public static final int ENCODER_ID = 12;
@@ -128,11 +129,11 @@ public class RobotMap {
     }
 
     /* Back Right Module - Module 3 */
-    public static final class BackRight { // TODO: This must be tuned to specific robot
+    public static final class BackRight {
       public static final int DRIVE_ID = 1;
       public static final int ROTATOR_ID = 2;
       public static final int ENCODER_ID = 10;
-      public static final Rotation2d OFFSET = Rotation2d.fromDegrees(9.67);                                                                                                                
+      public static final Rotation2d OFFSET = Rotation2d.fromDegrees(9.67);
       public static final SwerveModuleConstants CONSTANTS = new SwerveModuleConstants(DRIVE_ID, ROTATOR_ID, ENCODER_ID,
           OFFSET);
     }
@@ -151,7 +152,7 @@ public class RobotMap {
     public static final double kD = 0.0;
     public static final double MAX_VELOCITY = 2;
   }
- 
+
   public static class MotorIntakeMap {
     public static final int MOTOR_ID = 2;
   }

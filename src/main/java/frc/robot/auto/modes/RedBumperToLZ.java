@@ -10,7 +10,7 @@ import frc.robot.subsystems.ElevatorArm;
 import frc.robot.subsystems.MotorIntake;
 import frc.robot.subsystems.Swerve;
 
-public class RedBumperToLZ extends SequentialCommandGroup{
+public class RedBumperToLZ extends SequentialCommandGroup {
     public RedBumperToLZ() {
         String path = "RED Bumper Score to LZ prep";
         HashMap<String, Command> eventMap = new HashMap<String, Command>();
@@ -19,17 +19,16 @@ public class RedBumperToLZ extends SequentialCommandGroup{
         var elevatorArm = ElevatorArm.getInstance();
         var motorIntake = MotorIntake.getInstance();
         addCommands(
-            elevatorArm.movePivotCommand(() -> ElevatorArm.PivotPosition.TOP),
-            new RunCommand(() -> elevatorArm.moveElevator(0.7))
+                elevatorArm.movePivotCommand(() -> ElevatorArm.PivotPosition.TOP),
+                new RunCommand(() -> elevatorArm.moveElevator(0.7))
                         .until(() -> elevatorArm.getTopSwitch()),
-            new RunCommand(() -> motorIntake.autoMoveIntake(false)).withTimeout(1.0),
-            new InstantCommand(() -> motorIntake.setSpeed(0)),
-            elevatorArm.movePivotCommand(() -> ElevatorArm.PivotPosition.SUBSTATION)
+                new RunCommand(() -> motorIntake.autoMoveIntake(false)).withTimeout(1.0),
+                new InstantCommand(() -> motorIntake.setSpeed(0)),
+                elevatorArm.movePivotCommand(() -> ElevatorArm.PivotPosition.SUBSTATION)
                         .alongWith(new RunCommand(() -> elevatorArm.moveElevator(-0.7))
-                                    .until(() -> elevatorArm.getBottomSwitch())),
-            elevatorArm.movePivotCommand(() -> ElevatorArm.PivotPosition.DEFAULT),
-            swerve.followTrajectoryCommand(path, eventMap, true)
-        );
-        
+                                .until(() -> elevatorArm.getBottomSwitch())),
+                elevatorArm.movePivotCommand(() -> ElevatorArm.PivotPosition.DEFAULT),
+                swerve.followTrajectoryCommand(path, eventMap, true));
+
     }
 }
