@@ -1,7 +1,6 @@
 package frc.robot.auto.selector;
 
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 
 public class AutoModeSelector implements AutoModeList {
@@ -21,8 +20,6 @@ public class AutoModeSelector implements AutoModeList {
     modeChooserRed = new SendableChooser<>();
     modeChooserBlue = new SendableChooser<>();
     updateAutoModeSelector();
-
-    SmartDashboard.putData(modeChooserRed);
   }
 
   public void updateAutoModeSelector() {

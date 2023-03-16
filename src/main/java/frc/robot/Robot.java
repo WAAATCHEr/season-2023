@@ -1,12 +1,12 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.Compressor;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import edu.wpi.first.wpilibj.DriverStation;
 import frc.robot.auto.selector.AutoModeSelector;
 import frc.robot.util.CTREConfigs;
 
@@ -34,11 +34,13 @@ public class Robot extends TimedRobot {
     compressor = new Compressor(1, PneumaticsModuleType.REVPH);
     compressor.enableDigital();
     var autoModeSelector = AutoModeSelector.getInstance();
-    SmartDashboard.putData("Red Autos", autoModeSelector.getRedChooser());
-    SmartDashboard.putData("Blue Autos", autoModeSelector.getBlueChooser());
-    SmartDashboard.putNumber("Auto Wait Time", 0);
-    // TODO put auto chooser here. make sure to use the one from
-    // robot/auto/selector/AutoModeSelector.java
+
+    var autoTab = Shuffleboard.getTab("Autonomous");
+
+    autoTab.add("Red Autos", autoModeSelector.getRedChooser());
+    autoTab.add("Blue Autos", autoModeSelector.getBlueChooser());
+
+    autoTab.add("Auto Wait Time", 0);
 
     OI.getInstance();
   }
@@ -81,13 +83,13 @@ public class Robot extends TimedRobot {
     Command autonomousCommand = null;
     var allianceColor = DriverStation.getAlliance();
     if (allianceColor.equals(DriverStation.Alliance.Red)) {
-       autonomousCommand = AutoModeSelector.getInstance().getRedChooser().getSelected();
-    }
-    else if (allianceColor.equals(DriverStation.Alliance.Blue)) {
+      autonomousCommand = AutoModeSelector.getInstance().getRedChooser().getSelected();
+    } else if (allianceColor.equals(DriverStation.Alliance.Blue)) {
       autonomousCommand = AutoModeSelector.getInstance().getBlueChooser().getSelected();
     }
-    SmartDashboard.putString("Alliance Colour", allianceColor.name());
 
+    Shuffleboard.getTab("Autonomous").add("Auto Mode", autonomousCommand);
+    Shuffleboard.getTab("Autonomous").add("Alliance", allianceColor);
 
     if (autonomousCommand != null) {
       autonomousCommand.schedule();

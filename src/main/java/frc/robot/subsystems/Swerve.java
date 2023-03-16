@@ -24,7 +24,7 @@ import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -195,10 +195,11 @@ public class Swerve extends SubsystemBase {
     PIDController yPID = new PIDController(5.0, 0.0, 0.0);
     PIDController thetaPID = new PIDController(1.0, 0.0, 0.0);
 
-    // Create PID tuning widgets in Glass (not for use in competition)
-    SmartDashboard.putData("x-input PID Controller", xPID);
-    SmartDashboard.putData("y-input PID Controller", yPID);
-    SmartDashboard.putData("rot PID Controller", thetaPID);
+    var swerveTab = Shuffleboard.getTab("Swerve");
+
+    swerveTab.add("x-input PID Controller", xPID);
+    swerveTab.add("y-input PID Controller", yPID);
+    swerveTab.add("rot PID Controller", thetaPID);
 
     return new SequentialCommandGroup(
         new InstantCommand(
@@ -262,23 +263,19 @@ public class Swerve extends SubsystemBase {
       resetModulesToAbsolute();
     }
 
+    var swerveTab = Shuffleboard.getTab("Swerve");
+
     odometry.update(getYaw(), getModulePositions());
     for (SwerveModule mod : modules) {
-      SmartDashboard.putNumber(
-          "Mod " + mod.moduleNumber + " Cancoder", mod.getCanCoder().getDegrees());
-      SmartDashboard.putNumber(
-          "Mod " + mod.moduleNumber + " Integrated", mod.getPosition().angle.getDegrees());
-      SmartDashboard.putNumber(
-          "Mod " + mod.moduleNumber + " Velocity", mod.getState().speedMetersPerSecond);
+      swerveTab.add("Mod " + mod.moduleNumber + " Cancoder", mod.getCanCoder().getDegrees());
+      swerveTab.add("Mod " + mod.moduleNumber + " Integrated", mod.getPosition().angle.getDegrees());
+      swerveTab.add("Mod " + mod.moduleNumber + " Velocity", mod.getState().speedMetersPerSecond);
     }
 
-    SmartDashboard.putNumber("pose X", getPose().getX());
-    SmartDashboard.putNumber("Pose Y", getPose().getY());
-    SmartDashboard.putNumber("module 0 position", getModulePositions()[0].distanceMeters);
-    SmartDashboard.putNumber("module 1 position", getModulePositions()[1].distanceMeters);
-    SmartDashboard.putNumber("module 2 position", getModulePositions()[2].distanceMeters);
-    SmartDashboard.putNumber("module 3 position", getModulePositions()[3].distanceMeters);
-
+    swerveTab.add("Pose", getPose());
+    swerveTab.add("module 0 position", getModulePositions()[0].distanceMeters);
+    swerveTab.add("module 1 position", getModulePositions()[1].distanceMeters);
+    swerveTab.add("module 2 position", getModulePositions()[2].distanceMeters);
+    swerveTab.add("module 3 position", getModulePositions()[3].distanceMeters);
   }
-
 }

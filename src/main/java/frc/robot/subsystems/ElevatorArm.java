@@ -1,11 +1,13 @@
 package frc.robot.subsystems;
 
 import java.util.function.Supplier;
+
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMax.ControlType;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.revrobotics.SparkMaxLimitSwitch;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
@@ -110,7 +112,6 @@ public class ElevatorArm extends SubsystemBase {
         reverseLimit = elevatorMotor.getReverseLimitSwitch(SparkMaxLimitSwitch.Type.kNormallyOpen);
         reverseLimit.enableLimitSwitch(true);
 
-
         getEncoderPosition();
         elevatorMotor.setClosedLoopRampRate(0.05);
         pivotMotor.setClosedLoopRampRate(0.05);
@@ -121,7 +122,7 @@ public class ElevatorArm extends SubsystemBase {
         elevatorMotor.getPIDController().setOutputRange(-1, 1);
 
         setMotorPID(pivotMotor, pivotP, pivotI, pivotD);
-        
+
         elevatorMotor.burnFlash();
         pivotMotor.burnFlash();
 
@@ -131,11 +132,6 @@ public class ElevatorArm extends SubsystemBase {
         motor.getPIDController().setP(kP);
         motor.getPIDController().setI(kI);
         motor.getPIDController().setD(kD);
-    }
-
-    public void getEncoderPosition() {
-        SmartDashboard.putNumber("Elevator encoder pos", elevatorMotor.getEncoder().getPosition());
-        SmartDashboard.putNumber("Pivot encoder pos", pivotMotor.getEncoder().getPosition());
     }
 
     public void moveElevator(ElevatorPosition setPoint) {
@@ -197,11 +193,11 @@ public class ElevatorArm extends SubsystemBase {
 
     @Override
     public void periodic() {
-        SmartDashboard.putBoolean("top switch", getTopSwitch());
-        SmartDashboard.putBoolean("bottom switch", getBottomSwitch());
-        SmartDashboard.putNumber("Pivot Encoder", pivotMotor.getEncoder().getPosition());
-        SmartDashboard.putNumber("Elevator Encoder", elevatorMotor.getEncoder().getPosition());
-        getEncoderPosition();
-    }
+        var elevatorTab = Shuffleboard.getTab("Elevator");
 
+        elevatorTab.add("Top Switch", getTopSwitch());
+        elevatorTab.add("Bottom Switch", getBottomSwitch());
+        elevatorTab.add("Pivot Encoder", pivotMotor.getEncoder().getPosition());
+        elevatorTab.add("Elevator Encoder", elevatorMotor.getEncoder().getPosition());
+    }
 }
