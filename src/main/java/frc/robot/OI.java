@@ -3,6 +3,7 @@ package frc.robot;
 import frc.robot.layout.TwoJoyStickDriverMap;
 import frc.robot.layout.TwoJoyStickOperatorMap;
 import frc.robot.util.controllers.GameController;
+import frc.robot.Config.Controllers;
 
 public class OI {
   private static OI instance;
@@ -26,14 +27,22 @@ public class OI {
     return operator;
   }
 
+  private GameController tester;
+
+  public GameController getTester() {
+    return operator;
+  }
+
   public void registerCommands() {
-    new TwoJoyStickDriverMap(driver).registerCommands();
-    new TwoJoyStickOperatorMap(operator).registerCommands();
+    if (Controllers.DRIVER_ENABLED) new TwoJoyStickDriverMap(driver).registerCommands();
+    if (Controllers.OPERATOR_ENABLED) new TwoJoyStickOperatorMap(operator).registerCommands();
+    if (Controllers.TESTER_ENABLED) new TwoJoyStickOperatorMap(tester).registerCommands();
   }
 
   private OI() {
     driver = new GameController(
         RobotMap.ControllerMap.DRIVER_JOYSTICK, Config.getDriverController());
     operator = new GameController(RobotMap.ControllerMap.OPERATOR_JOYSTICK, Config.getOperatorController());
+    tester = new GameController(RobotMap.ControllerMap.TESTER_JOYSTICK, Config.getOperatorController());
   }
 }

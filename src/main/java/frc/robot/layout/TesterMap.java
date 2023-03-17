@@ -1,16 +1,15 @@
 package frc.robot.layout;
 
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.Config;
 import frc.robot.subsystems.Swerve;
 import frc.robot.util.controllers.CommandMap;
 import frc.robot.util.controllers.GameController;
 
-public abstract class DriverMap extends CommandMap {
+public abstract class TesterMap extends CommandMap {
 
-  public DriverMap(GameController controller) {
+  public TesterMap(GameController controller) {
     super(controller);
   }
 
@@ -27,6 +26,6 @@ public abstract class DriverMap extends CommandMap {
     if (Config.Subsystems.SWERVE_ENABLED) {
       registerSwerve();
     }
-
+    
   }
 }

@@ -142,6 +142,7 @@ public class RobotMap {
   public static class ControllerMap {
     public static final int DRIVER_JOYSTICK = 0;
     public static final int OPERATOR_JOYSTICK = 1;
+    public static final int TESTER_JOYSTICK = 2;
     public static final double STICK_DEADBAND = 0.1;
   }
 

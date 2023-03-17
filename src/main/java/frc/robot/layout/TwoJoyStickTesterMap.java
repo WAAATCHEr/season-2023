@@ -8,9 +8,9 @@ import frc.robot.util.controllers.ButtonMap.Axis;
 import frc.robot.util.controllers.ButtonMap.Button;
 import frc.robot.util.controllers.GameController;
 
-public class TwoJoyStickDriverMap extends DriverMap {
+public class TwoJoyStickTesterMap extends DriverMap {
 
-  public TwoJoyStickDriverMap(GameController controller) {
+  public TwoJoyStickTesterMap(GameController controller) {
     super(controller);
   }
 
