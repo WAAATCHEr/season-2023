@@ -1,12 +1,17 @@
 package frc.robot.subsystems;
 
+import java.sql.ResultSet;
+
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.RobotMap;
+import edu.wpi.first.wpilibj.DriverStation;
+import frc.robot.util.LimelightHelpers;
+import frc.robot.util.LimelightHelpers.*;
 
 public class Vision extends SubsystemBase {
     private Vision instance;
@@ -18,8 +23,32 @@ public class Vision extends SubsystemBase {
         return instance;
     }
 
+    public enum Position {
+        LEFT_CONE(0.0, 0.0),
+        CUBE(0.0, 0.0),
+        RIGHT_CONE(0.0, 0.0);
+
+        private final double horOffset, verOffset;
+
+        Position(double horizontalOffsetRadians, double verticalOffsetRadians) {
+            this.horOffset = horizontalOffsetRadians;
+            this.verOffset = verticalOffsetRadians;
+        }
+
+        public double getHorOffset() {
+            return horOffset;
+        }
+
+        public double getVerOffset() {
+            return verOffset;
+        }
+    }
+
     private NetworkTable networkTable;
     private NetworkTableEntry tv, tx, ty, ta;
+    private LimelightResults llresults;
+    private int numAprilTags;
+    private Pose3d currentBotPose;
     private boolean hasTarget = false;
     private double currentX, currentY, currentA;
 
@@ -39,7 +68,6 @@ public class Vision extends SubsystemBase {
             json	Full JSON dump of targeting results
             tclass	Class ID of primary neural detector result or neural classifier result 
         */
-
         networkTable = NetworkTableInstance.getDefault().getTable("limelight");
         tv = networkTable.getEntry("tv"); // Wether limelight detects any valid targets 0, 1
         tx = networkTable.getEntry("tx"); // Horizontal offset from crosshair to target (-27, 27)
@@ -64,15 +92,43 @@ public class Vision extends SubsystemBase {
         return currentA;
     }
 
-    public Pose2d estimateDistance() {
-        Pose2d offset = null;
-        //TODO: Incomplete
+    public Pose3d getTargetTranslation(Position pos) {
+        Pose3d offset = null;
+        if (numAprilTags > 0) {
+            LimelightTarget_Fiducial targetTag = getClosestTarget(llresults.targetingResults.targets_Fiducials);
+            offset = targetTag.getTargetPose_RobotSpace();
+        }
         return offset;
+    }
+
+    public LimelightTarget_Fiducial getClosestTarget(LimelightTarget_Fiducial[] target_Fiducials) {
+        if (numAprilTags > 1) {
+            LimelightTarget_Fiducial closestFiducial = null;
+            
+            for (LimelightTarget_Fiducial tF : target_Fiducials) {
+                if (closestFiducial == null) {
+                    closestFiducial = tF;
+                } else {
+                    if (tF.getTargetPose_CameraSpace().getTranslation().getDistance(null) < closestFiducial
+                            .getTargetPose_CameraSpace().getTranslation().getDistance(null)) {
+                        closestFiducial = tF;
+                    }
+                }
+            }
+            
+            return closestFiducial;
+        }
+        
+        return target_Fiducials[0];
     }
     
     
     @Override
     public void periodic() {
+        llresults = LimelightHelpers.getLatestResults("");
+        currentBotPose = llresults.targetingResults.getBotPose3d();
+        numAprilTags = llresults.targetingResults.targets_Fiducials.length;
+
         hasTarget = (tv.getDouble(0.0) < 1.0) ? false : true;
         currentX = tx.getDouble(0.0);
         currentY = ty.getDouble(0.0);
