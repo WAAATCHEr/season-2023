@@ -8,7 +8,7 @@ import frc.robot.util.controllers.ButtonMap.Axis;
 import frc.robot.util.controllers.ButtonMap.Button;
 import frc.robot.util.controllers.GameController;
 
-public class TwoJoyStickTesterMap extends DriverMap {
+public class TwoJoyStickTesterMap extends TesterMap {
 
   public TwoJoyStickTesterMap(GameController controller) {
     super(controller);
@@ -24,6 +24,21 @@ public class TwoJoyStickTesterMap extends DriverMap {
     return ChassisSpeeds.fromFieldRelativeSpeeds(-y, -x, -rot, swerve.getYaw());
   }
 
+  @Override
+  public JoystickButton getFullButton() {
+    return controller.getButton(Button.BUTTON_B);
+  }
+
+  @Override
+  public JoystickButton getHalfButton() {
+    return controller.getButton(Button.BUTTON_A);
+  }
+
+  @Override
+  public JoystickButton getZeroButton() {
+    return controller.getButton(Button.BUTTON_X);
+  }
+  
   @Override
   public void registerCommands() {
     super.registerCommands();

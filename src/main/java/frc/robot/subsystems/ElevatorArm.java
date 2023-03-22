@@ -24,71 +24,6 @@ public class ElevatorArm extends SubsystemBase {
         return instance;
     }
 
-    public enum SetPoint {
-        GROUND(ElevatorPosition.GROUND, PivotPosition.GROUND),
-        MIDDLE(ElevatorPosition.MID, PivotPosition.MID),
-        SINGLE_SUBSTATION(ElevatorPosition.SUBSTATION, PivotPosition.SUBSTATION),
-        STOW(ElevatorPosition.STOW, PivotPosition.STOW),
-        TOP(ElevatorPosition.TOP, PivotPosition.TOP),
-        DEFAULT(ElevatorPosition.DEFAULT, PivotPosition.DEFAULT);
-
-        private final ElevatorPosition elevatorPosition;
-        private final PivotPosition pivotPosition;
-
-        SetPoint(ElevatorPosition ePos, PivotPosition pPos) {
-            this.elevatorPosition = ePos;
-            this.pivotPosition = pPos;
-        }
-
-        public ElevatorPosition getElevatorPosition() {
-            return elevatorPosition;
-        }
-
-        public PivotPosition getPivotPosition() {
-            return pivotPosition;
-        }
-
-    }
-
-    public enum ElevatorPosition {
-        TOP(95.1),
-        MID(60.0),
-        GROUND(22.6),
-        SUBSTATION(40.45),
-        STOW(40.05),
-        DEFAULT(0);
-
-        private final double encoderValue;
-
-        ElevatorPosition(double encoderValue) {
-            this.encoderValue = encoderValue;
-        }
-
-        public double getEncoderPos() {
-            return encoderValue;
-        }
-    }
-
-    public enum PivotPosition {
-        TOP(-20),
-        MID(-18.5),
-        GROUND(-49),
-        SUBSTATION(-10),
-        STOW(5.2),
-        DEFAULT(0);
-
-        private final double encoderValue;
-
-        PivotPosition(double encoderValue) {
-            this.encoderValue = encoderValue;
-        }
-
-        public double getEncoderPos() {
-            return encoderValue;
-        }
-
-    }
-
     private CANSparkMax elevatorMotor, pivotMotor;
     private SparkMaxLimitSwitch forwardLimit, reverseLimit;
     private double elevatorP, elevatorI, elevatorD;
@@ -133,7 +68,7 @@ public class ElevatorArm extends SubsystemBase {
         motor.getPIDController().setD(kD);
     }
 
-    public void moveElevator(ElevatorPosition setPoint) {
+    public void moveElevator(ElevatorMap.ElevatorPosition setPoint) {
         elevatorMotor.getPIDController().setReference(setPoint.getEncoderPos(), ControlType.kSmartMotion);
     }
 
@@ -142,13 +77,13 @@ public class ElevatorArm extends SubsystemBase {
         elevatorMotor.set(input);
     }
 
-    public Command moveElevatorCommand(Supplier<ElevatorPosition> elevatorPos) {
+    public Command moveElevatorCommand(Supplier<ElevatorMap.ElevatorPosition> elevatorPos) {
         return new RunCommand(() -> moveElevator(elevatorPos.get()))
                 .until(() -> Math
                         .abs(elevatorMotor.getEncoder().getPosition() - elevatorPos.get().getEncoderPos()) < 5);
     }
 
-    public void movePivot(PivotPosition setPoint) {
+    public void movePivot(ElevatorMap.PivotPosition setPoint) {
         pivotMotor.getPIDController().setReference(setPoint.getEncoderPos(), ControlType.kPosition);
     }
 
@@ -156,7 +91,7 @@ public class ElevatorArm extends SubsystemBase {
         pivotMotor.set(input);
     }
 
-    public Command movePivotCommand(Supplier<PivotPosition> pivotPos) {
+    public Command movePivotCommand(Supplier<ElevatorMap.PivotPosition> pivotPos) {
         return new RunCommand(
                 () -> {
                     movePivot(pivotPos.get().getEncoderPos() < pivotMotor.getEncoder().getPosition() ? -0.7 : 0.7);
@@ -168,16 +103,16 @@ public class ElevatorArm extends SubsystemBase {
         movePivot(pivotInput);
     }
 
-    public Command moveToSetPoint(Supplier<SetPoint> setPoint) {
-        return movePivotCommand(() -> PivotPosition.MID)
+    public Command moveToSetPoint(Supplier<ElevatorMap.SetPoint> setPoint) {
+        return movePivotCommand(() -> ElevatorMap.PivotPosition.MID)
                 .andThen(moveElevatorCommand(() -> setPoint.get().getElevatorPosition()))
                 .andThen(movePivotCommand(() -> setPoint.get().getPivotPosition()));
     }
 
     public Command resetElevatorMotor() {
         return new InstantCommand(() -> {
-            elevatorMotor.getEncoder().setPosition(ElevatorPosition.DEFAULT.getEncoderPos());
-            pivotMotor.getEncoder().setPosition(PivotPosition.DEFAULT.getEncoderPos());
+            elevatorMotor.getEncoder().setPosition(ElevatorMap.ElevatorPosition.DEFAULT.getEncoderPos());
+            pivotMotor.getEncoder().setPosition(ElevatorMap.PivotPosition.DEFAULT.getEncoderPos());
         });
 
     }
