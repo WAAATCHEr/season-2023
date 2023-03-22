@@ -73,7 +73,7 @@ public class MotionProfile extends SubsystemBase {
           calculateProfile(target);
         },
         () -> { // execute
-          System.out.println(testMotor.getEncoder().getPosition() + " and " + testMotor.getEncoder().getPosition() * (360.0/(42 * MotionProfileMap.GEAR_RATIO)));
+          System.out.println(testMotor.getEncoder().getPosition() + " and " + testMotor.getEncoder().getPosition() * (360.0/(42 * MotionProfileMap.GEAR_RATIO))); //Encoder value AND Encoder Value *(degrees per encoder tick)
           testMotor.set(controller.calculate(current.position, feedforward.calculate(current.velocity)));
         },
         (interrupted) -> {}, // end

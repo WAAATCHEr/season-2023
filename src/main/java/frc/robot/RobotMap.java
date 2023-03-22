@@ -262,8 +262,8 @@ public class RobotMap {
     public static final double kV = 1.5;
 
     // Profile Constants
-    public static final double MAX_VELOCITY = 1.75; // Degrees per second
-    public static final double MAX_ACCELERATION = 0.75; // Degrees per second^2
+    public static final double MAX_VELOCITY = 1.75; // Unsure as to what the units are, I tried to have it be in degrees
+    public static final double MAX_ACCELERATION = 0.75; // Unsure as to what the units are, I tried to have it be in degrees
     public static final double kDt = 0.02;
 
     // PID
@@ -272,8 +272,8 @@ public class RobotMap {
     public static final int kD = 0;
     public static final int kIZone = 0;
     public static final int kFF = 0;
-    public static final int MIN_OUTPUT = 0; // Percentage -1 to 1
-    public static final int MAX_OUTPUT = GEAR_RATIO * 42; // Percentage 0 to 1
+    public static final int MIN_OUTPUT = 0;
+    public static final int MAX_OUTPUT = GEAR_RATIO * 42;
     public static final double TOLERANCE = 0;
     
     // Setpoints
