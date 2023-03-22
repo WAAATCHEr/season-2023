@@ -7,6 +7,7 @@ import frc.robot.subsystems.MotionProfile;
 import frc.robot.subsystems.Swerve;
 import frc.robot.util.controllers.CommandMap;
 import frc.robot.util.controllers.GameController;
+import frc.robot.RobotMap.MotionProfileMap.TestSetpoint;
 
 public abstract class TesterMap extends CommandMap {
 
@@ -29,8 +30,11 @@ public abstract class TesterMap extends CommandMap {
 
   private void registerMotionProfileTest() {
     var motionProfile = MotionProfile.getInstance();
-    
+    getFullButton().onTrue(motionProfile.moveMotorToSetpoint(() -> TestSetpoint.FULL));
+    getHalfButton().onTrue(motionProfile.moveMotorToSetpoint(() -> TestSetpoint.HALF));
+    getZeroButton().onTrue(motionProfile.moveMotorToSetpoint(() -> TestSetpoint.ZERO));
   }
+  
 
   @Override
   public void registerCommands() {

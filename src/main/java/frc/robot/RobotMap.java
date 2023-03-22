@@ -267,7 +267,7 @@ public class RobotMap {
     public static final double kDt = 0.02;
 
     // PID
-    public static final double kP = 0.001;
+    public static final double kP = 0.01;
     public static final int kI = 0;
     public static final int kD = 0;
     public static final int kIZone = 0;
@@ -292,7 +292,7 @@ public class RobotMap {
         this.degrees = degrees;
         this.gearRatio = gearRatio;
         // (Resolution * gearRatio) / full rotation in degrees === ticks per degree with given gear ratio
-        this.encoderValue = this.degrees * (this.gearRatio * 42 / 360);
+        this.encoderValue = this.degrees * (this.gearRatio * 42.0 / 360.0);
       }
 
       public double getSetpointInDegrees() {

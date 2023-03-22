@@ -1,7 +1,9 @@
 package frc.robot;
 
 import frc.robot.util.controllers.ButtonMap;
+import frc.robot.util.controllers.Logitech;
 import frc.robot.util.controllers.Xbox;
+import frc.robot.util.controllers.Logitech.Version;
 
 public class Config {
   public class Subsystems {
@@ -26,7 +28,7 @@ public class Config {
   }
 
   public static ButtonMap getTesterController() {
-    return new Xbox();
+    return new Logitech(Version.REVERSED_TRIGGER_AND_STICK);
   }
 
 }

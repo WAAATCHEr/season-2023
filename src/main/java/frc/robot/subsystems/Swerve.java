@@ -195,11 +195,11 @@ public class Swerve extends SubsystemBase {
     PIDController yPID = new PIDController(5.0, 0.0, 0.0);
     PIDController thetaPID = new PIDController(1.0, 0.0, 0.0);
 
-    var swerveTab = Shuffleboard.getTab("Swerve");
+    // var swerveTab = Shuffleboard.getTab("Swerve");
 
-    swerveTab.add("x-input PID Controller", xPID);
-    swerveTab.add("y-input PID Controller", yPID);
-    swerveTab.add("rot PID Controller", thetaPID);
+    // swerveTab.add("x-input PID Controller", xPID);
+    // swerveTab.add("y-input PID Controller", yPID);
+    // swerveTab.add("rot PID Controller", thetaPID);
 
     return new SequentialCommandGroup(
         new InstantCommand(

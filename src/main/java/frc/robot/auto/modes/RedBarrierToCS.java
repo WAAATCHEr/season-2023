@@ -12,7 +12,7 @@ import frc.robot.subsystems.Swerve;
 
 public class RedBarrierToCS extends SequentialCommandGroup{
     public RedBarrierToCS() {
-        String path = "RED Barrier Score to CS";
+        String path = "RED Barrier to CS";
         HashMap<String, Command> eventMap = new HashMap<String, Command>();
 
         var swerve = Swerve.getInstance();

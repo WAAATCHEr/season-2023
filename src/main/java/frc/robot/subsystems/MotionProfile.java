@@ -50,6 +50,10 @@ public class MotionProfile extends SubsystemBase {
     controller.setTolerance(MotionProfileMap.TOLERANCE);
   }
 
+  private void resetEncoder() {
+    // testMotor.getEncoder().
+  }
+
   // Returns true if profile is finished, false if it hasn't
   private boolean calculateProfile(Supplier<MotionProfileMap.TestSetpoint> target) {
     goal = new TrapezoidProfile.State(target.get().getSetpoint(), 0);
@@ -69,14 +73,15 @@ public class MotionProfile extends SubsystemBase {
           calculateProfile(target);
         },
         () -> { // execute
+          System.out.println(testMotor.getEncoder().getPosition() + " and " + testMotor.getEncoder().getPosition() * (360.0/(42 * MotionProfileMap.GEAR_RATIO)));
           testMotor.set(controller.calculate(current.position, feedforward.calculate(current.velocity)));
         },
         (interrupted) -> {}, // end
         () -> { // isFinished
           var profileFinished = calculateProfile(target);
           var pidFinished = controller.atSetpoint();
-          System.out.println("Profile Finished: " + profileFinished + "\nPID at Setpoint: " + pidFinished);
-          return profileFinished;
+          // System.out.println("Profile Finished: " + profileFinished + "\nPID at Setpoint: " + pidFinished);
+          return pidFinished;
         },
         this);
   }
