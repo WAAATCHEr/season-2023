@@ -66,6 +66,21 @@ public class Swerve extends SubsystemBase {
     };
 
     odometry = new SwerveDriveOdometry(DriveMap.KINEMATICS, getYaw(), getModulePositions());
+
+    var swerveTab = Shuffleboard.getTab("Swerve");
+
+    swerveTab.addDouble("module 0 position", () -> getModulePositions()[0].distanceMeters);
+    swerveTab.addDouble("module 1 position", () -> getModulePositions()[1].distanceMeters);
+    swerveTab.addDouble("module 2 position", () -> getModulePositions()[2].distanceMeters);
+    swerveTab.addDouble("module 3 position", () -> getModulePositions()[3].distanceMeters);
+    for (SwerveModule mod : modules) {
+      swerveTab.addDouble("Mod " + mod.moduleNumber + " Cancoder", () -> mod.getCanCoder().getDegrees());
+      swerveTab.addDouble("Mod " + mod.moduleNumber + " Integrated", () -> mod.getPosition().angle.getDegrees());
+      swerveTab.addDouble("Mod " + mod.moduleNumber + " Velocity", () -> mod.getState().speedMetersPerSecond);
+    }
+
+    // won't update for now
+    swerveTab.add("Pose", getPose());
   }
 
   public void resetModulesToAbsolute() {
@@ -263,19 +278,7 @@ public class Swerve extends SubsystemBase {
       resetModulesToAbsolute();
     }
 
-    var swerveTab = Shuffleboard.getTab("Swerve");
-
     odometry.update(getYaw(), getModulePositions());
-    for (SwerveModule mod : modules) {
-      swerveTab.add("Mod " + mod.moduleNumber + " Cancoder", mod.getCanCoder().getDegrees());
-      swerveTab.add("Mod " + mod.moduleNumber + " Integrated", mod.getPosition().angle.getDegrees());
-      swerveTab.add("Mod " + mod.moduleNumber + " Velocity", mod.getState().speedMetersPerSecond);
-    }
 
-    swerveTab.add("Pose", getPose());
-    swerveTab.add("module 0 position", getModulePositions()[0].distanceMeters);
-    swerveTab.add("module 1 position", getModulePositions()[1].distanceMeters);
-    swerveTab.add("module 2 position", getModulePositions()[2].distanceMeters);
-    swerveTab.add("module 3 position", getModulePositions()[3].distanceMeters);
   }
 }
