@@ -15,6 +15,8 @@ public class MotorIntake extends SubsystemBase {
         return instance;
     }
 
+
+
     private CANSparkMax intakeMotor;
     private double MOTOR_SPEED_FAST = 0.8;
     private double MOTOR_SPEED_SLOW = 0.15;
