@@ -50,6 +50,7 @@ public class MotionProfile extends SubsystemBase {
     controller.setTolerance(MotionProfileMap.TOLERANCE);
   }
 
+  //TODO Finish this resetEncoder method
   private void resetEncoder() {
     // testMotor.getEncoder().
   }
@@ -59,7 +60,6 @@ public class MotionProfile extends SubsystemBase {
     goal = new TrapezoidProfile.State(target.get().getSetpoint(), 0);
     var profile = new TrapezoidProfile(constraints, goal, current);
 
-    // The method cannot return profile.isFinished() as it will not run the last calculate if it does
     if (profile.isFinished(0))
       return true;
     current = profile.calculate(MotionProfileMap.kDt);
