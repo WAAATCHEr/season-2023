@@ -4,6 +4,7 @@ import java.sql.ResultSet;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
@@ -12,11 +13,12 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj.DriverStation;
 import frc.robot.util.LimelightHelpers;
 import frc.robot.util.LimelightHelpers.*;
+import frc.robot.RobotMap.LimelightMap;
 
 public class Vision extends SubsystemBase {
-    private Vision instance;
+    private static Vision instance;
 
-    public Vision getInstance() {
+    public static Vision getInstance() {
         if (instance == null) {
             instance = new Vision();
         }
@@ -24,31 +26,28 @@ public class Vision extends SubsystemBase {
     }
 
     public enum Position {
-        LEFT_CONE(0.0, 0.0),
-        CUBE(0.0, 0.0),
-        RIGHT_CONE(0.0, 0.0);
+        LEFT_CONE( new Pose2d(0, 0, new Rotation2d())),
+        CUBE(new Pose2d(0, 0, new Rotation2d())),
+        RIGHT_CONE(new Pose2d(0, 0, new Rotation2d()));
 
-        private final double horOffset, verOffset;
+        private final Pose2d offset;
 
-        Position(double horizontalOffsetRadians, double verticalOffsetRadians) {
-            this.horOffset = horizontalOffsetRadians;
-            this.verOffset = verticalOffsetRadians;
+        Position(Pose2d offset) {
+            this.offset = offset;
         }
 
-        public double getHorOffset() {
-            return horOffset;
+        public Pose2d getOffset() {
+            return offset;
         }
 
-        public double getVerOffset() {
-            return verOffset;
-        }
+
     }
 
     private NetworkTable networkTable;
     private NetworkTableEntry tv, tx, ty, ta;
     private LimelightResults llresults;
     private int numAprilTags;
-    private Pose3d currentBotPose;
+    private Pose3d currentPose;
     private boolean hasTarget = false;
     private double currentX, currentY, currentA;
 
@@ -92,15 +91,36 @@ public class Vision extends SubsystemBase {
         return currentA;
     }
 
-    public Pose3d getTargetTranslation(Position pos) {
-        Pose3d offset = null;
+    public Pose3d getCurrentPose() {
+        return currentPose;
+    }
+
+    public Pose2d getTargetTranslation(Position pos) {
+        Pose2d offset = null;
+        Pose3d tempOffset = null;
         if (numAprilTags > 0) {
             LimelightTarget_Fiducial targetTag = getClosestTarget(llresults.targetingResults.targets_Fiducials);
-            offset = targetTag.getTargetPose_RobotSpace();
+            tempOffset = targetTag.getTargetPose_RobotSpace();
         }
+        switch (pos) {
+            case LEFT_CONE:
+                offset = addGridOffset(tempOffset, Position.LEFT_CONE.getOffset());
+            case CUBE:
+                offset = addGridOffset(tempOffset, Position.CUBE.getOffset());
+            case RIGHT_CONE:
+                offset = addGridOffset(tempOffset, Position.RIGHT_CONE.getOffset());
+        }
+        
         return offset;
     }
 
+    public Pose2d addGridOffset(Pose3d originalOffset, Pose2d gridOffset) {
+        return new Pose2d(
+                originalOffset.getX() + gridOffset.getX(),
+                originalOffset.getY() + gridOffset.getY() + LimelightMap.OFFSET_FROM_TAG,
+                originalOffset.getRotation().toRotation2d());
+    }
+    
     public LimelightTarget_Fiducial getClosestTarget(LimelightTarget_Fiducial[] target_Fiducials) {
         if (numAprilTags > 1) {
             LimelightTarget_Fiducial closestFiducial = null;
@@ -126,7 +146,7 @@ public class Vision extends SubsystemBase {
     @Override
     public void periodic() {
         llresults = LimelightHelpers.getLatestResults("");
-        currentBotPose = llresults.targetingResults.getBotPose3d();
+        currentPose = llresults.targetingResults.getBotPose3d();
         numAprilTags = llresults.targetingResults.targets_Fiducials.length;
 
         hasTarget = (tv.getDouble(0.0) < 1.0) ? false : true;

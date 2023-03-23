@@ -200,5 +200,7 @@ public class RobotMap {
       new Rotation3d(0, 0, 0)
     );
 
+    public static final double OFFSET_FROM_TAG = 0.8; //In meters
+
   }
 }

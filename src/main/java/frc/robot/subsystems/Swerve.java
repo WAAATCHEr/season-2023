@@ -8,13 +8,16 @@ import java.util.HashMap;
 import java.util.function.Supplier;
 
 import com.ctre.phoenix.sensors.WPI_Pigeon2;
+import com.pathplanner.lib.PathConstraints;
 import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.PathPlannerTrajectory;
+import com.pathplanner.lib.PathPoint;
 import com.pathplanner.lib.commands.FollowPathWithEvents;
 import com.pathplanner.lib.commands.PPSwerveControllerCommand;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -50,10 +53,13 @@ public class Swerve extends SubsystemBase {
   private SwerveModule[] modules;
   private WPI_Pigeon2 gyro;
 
+  private Vision limelight;
+
   // Camera
   PIDController speedController = new PIDController(0.0001, 0, 0);
 
   private Swerve() {
+    limelight = Vision.getInstance();
     gyro = new WPI_Pigeon2(DriveMap.PIGEON_ID);
     gyro.configFactoryDefault();
     zeroGyro();
@@ -232,6 +238,21 @@ public class Swerve extends SubsystemBase {
         new PPSwerveControllerCommand(traj, this::getPose, xPID, yPID, thetaPID, speeds -> drive(speeds, true), this));
   }
 
+  public SequentialCommandGroup alignWithGridCommand(Vision.Position pos) {
+    Pose2d currentPos = odometry.getPoseMeters();
+    Pose2d offset = limelight.getTargetTranslation(pos);
+    PathPlannerTrajectory traj = PathPlanner.generatePath(
+        new PathConstraints(2, 1),
+        new PathPoint(new Translation2d(currentPos.getX() + offset.getX(), 0), Rotation2d.fromDegrees(0),
+            currentPos.getRotation().plus(offset.getRotation())), // position, heading(direction of travel), holonomic rotation
+        new PathPoint(new Translation2d(5.0, currentPos.getY() + offset.getY()), Rotation2d.fromDegrees(0),
+            Rotation2d.fromDegrees(0))); // position, heading(direction of travel), holonomic rotation
+
+    return new SequentialCommandGroup(
+      new InstantCommand(() -> odometry.resetPosition(getYaw(), getModulePositions(), limelight.getCurrentPose().toPose2d())),
+      followTrajectoryCommand(traj, false));
+  }
+  
   public Command chargingStationCommand() {
     PIDController pid = new PIDController(ChargingStationMap.kP, ChargingStationMap.kI, ChargingStationMap.kD);
     pid.setTolerance(0.2);
