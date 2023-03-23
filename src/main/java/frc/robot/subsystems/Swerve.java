@@ -31,6 +31,7 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.RepeatCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
@@ -241,7 +242,8 @@ public class Swerve extends SubsystemBase {
   public SequentialCommandGroup alignWithGridCommand(Vision.Position pos) {
     Pose2d currentPos = odometry.getPoseMeters();
     Pose2d offset = limelight.getTargetTranslation(pos);
-    PathPlannerTrajectory traj = PathPlanner.generatePath(
+    if (offset != null) {
+      PathPlannerTrajectory traj = PathPlanner.generatePath(
         new PathConstraints(2, 1),
         new PathPoint(new Translation2d(currentPos.getX() + offset.getX(), 0), Rotation2d.fromDegrees(0),
             currentPos.getRotation().plus(offset.getRotation())), // position, heading(direction of travel), holonomic rotation
@@ -251,6 +253,12 @@ public class Swerve extends SubsystemBase {
     return new SequentialCommandGroup(
       new InstantCommand(() -> odometry.resetPosition(getYaw(), getModulePositions(), limelight.getCurrentPose().toPose2d())),
       followTrajectoryCommand(traj, false));
+    }
+    else {
+      return new SequentialCommandGroup(
+        new PrintCommand("Can't see any aprilTags")
+      );
+    }
   }
   
   public Command chargingStationCommand() {

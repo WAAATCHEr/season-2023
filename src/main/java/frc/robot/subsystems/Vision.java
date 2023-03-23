@@ -101,16 +101,15 @@ public class Vision extends SubsystemBase {
         if (numAprilTags > 0) {
             LimelightTarget_Fiducial targetTag = getClosestTarget(llresults.targetingResults.targets_Fiducials);
             tempOffset = targetTag.getTargetPose_RobotSpace();
+            switch (pos) {
+                case LEFT_CONE:
+                    offset = addGridOffset(tempOffset, Position.LEFT_CONE.getOffset());
+                case CUBE:
+                    offset = addGridOffset(tempOffset, Position.CUBE.getOffset());
+                case RIGHT_CONE:
+                    offset = addGridOffset(tempOffset, Position.RIGHT_CONE.getOffset());
+            }
         }
-        switch (pos) {
-            case LEFT_CONE:
-                offset = addGridOffset(tempOffset, Position.LEFT_CONE.getOffset());
-            case CUBE:
-                offset = addGridOffset(tempOffset, Position.CUBE.getOffset());
-            case RIGHT_CONE:
-                offset = addGridOffset(tempOffset, Position.RIGHT_CONE.getOffset());
-        }
-        
         return offset;
     }
 
