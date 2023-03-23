@@ -239,28 +239,28 @@ public class Swerve extends SubsystemBase {
         new PPSwerveControllerCommand(traj, this::getPose, xPID, yPID, thetaPID, speeds -> drive(speeds, true), this));
   }
 
-  public SequentialCommandGroup alignWithGridCommand(Vision.Position pos) {
-    Pose2d currentPos = odometry.getPoseMeters();
-    Pose2d offset = limelight.getTargetTranslation(pos);
-    if (offset != null) {
-      PathPlannerTrajectory traj = PathPlanner.generatePath(
-        new PathConstraints(2, 1),
-        new PathPoint(new Translation2d(currentPos.getX() + offset.getX(), 0), Rotation2d.fromDegrees(0),
-            currentPos.getRotation().plus(offset.getRotation())), // position, heading(direction of travel), holonomic rotation
-        new PathPoint(new Translation2d(5.0, currentPos.getY() + offset.getY()), Rotation2d.fromDegrees(0),
-            Rotation2d.fromDegrees(0))); // position, heading(direction of travel), holonomic rotation
-
-    return new SequentialCommandGroup(
-      new InstantCommand(() -> odometry.resetPosition(getYaw(), getModulePositions(), limelight.getCurrentPose().toPose2d())),
-      followTrajectoryCommand(traj, false));
-    }
-    else {
-      return new SequentialCommandGroup(
-        new PrintCommand("Can't see any aprilTags")
-      );
-    }
+  public Command followTrajectoryCommand(Supplier<PathPlannerTrajectory> pathSupplier,
+      boolean isFirstPath) {
+    return followTrajectoryCommand(pathSupplier.get(), isFirstPath);
   }
-  
+
+  public SequentialCommandGroup alignWithGridCommand(Vision.Position pos) {
+    return new SequentialCommandGroup(
+        new InstantCommand(
+            () -> odometry.resetPosition(getYaw(), getModulePositions(), limelight.getCurrentPose().toPose2d())),
+        followTrajectoryCommand(() -> {
+          Pose2d currentPos = odometry.getPoseMeters();
+          Pose2d offset = limelight.getTargetTranslation(pos);
+          return PathPlanner.generatePath(
+              new PathConstraints(2, 1),
+              new PathPoint(new Translation2d(currentPos.getX() + offset.getX(), 0), Rotation2d.fromDegrees(0),
+                  currentPos.getRotation().plus(offset.getRotation())), // position, heading(direction of travel),
+                                                                        // holonomic rotation
+              new PathPoint(new Translation2d(5.0, currentPos.getY() + offset.getY()), Rotation2d.fromDegrees(0),
+                  Rotation2d.fromDegrees(0))); // position, heading(direction of travel), holonomic rotation
+        }, false));
+  }
+
   public Command chargingStationCommand() {
     PIDController pid = new PIDController(ChargingStationMap.kP, ChargingStationMap.kI, ChargingStationMap.kD);
     pid.setTolerance(0.2);
