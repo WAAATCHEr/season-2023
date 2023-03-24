@@ -43,16 +43,20 @@ public class MotionProfile extends SubsystemBase {
   public MotionProfile() {
     testMotor = new CANSparkMax(MotionProfileMap.TEST_MOTOR_ID, MotorType.kBrushless);
     sparkController = testMotor.getPIDController();
+
     sparkController.setP(MotionProfileMap.kP);
     sparkController.setI(MotionProfileMap.kI);
     sparkController.setD(MotionProfileMap.kD);
     sparkController.setOutputRange(MotionProfileMap.MIN_OUTPUT, MotionProfileMap.MAX_OUTPUT);
+
     controller.setTolerance(MotionProfileMap.TOLERANCE);
+
+    resetEncoder();
   }
 
-  //TODO Finish this resetEncoder method
   private void resetEncoder() {
-    // testMotor.getEncoder().
+    testMotor.getEncoder().setPosition(0);
+
   }
 
   // Returns true if profile is finished, false if it hasn't
@@ -69,14 +73,16 @@ public class MotionProfile extends SubsystemBase {
   public Command moveMotorToSetpoint(Supplier<MotionProfileMap.TestSetpoint> target) {
     return new FunctionalCommand(
         () -> { // init
-          current = new TrapezoidProfile.State(testMotor.getEncoder().getPosition(), testMotor.getEncoder().getVelocity());
           calculateProfile(target);
         },
+
         () -> { // execute
           System.out.println(testMotor.getEncoder().getPosition() + " and " + testMotor.getEncoder().getPosition() * (360.0/(42 * MotionProfileMap.GEAR_RATIO))); //Encoder value AND Encoder Value *(degrees per encoder tick)
           testMotor.set(controller.calculate(current.position, feedforward.calculate(current.velocity)));
         },
+
         (interrupted) -> {}, // end
+
         () -> { // isFinished
           var profileFinished = calculateProfile(target);
           var pidFinished = controller.atSetpoint();
