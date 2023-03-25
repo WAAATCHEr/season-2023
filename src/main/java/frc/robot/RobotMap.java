@@ -258,23 +258,23 @@ public class RobotMap {
     public static final int GEAR_RATIO = 12;
     
     // Feed Forward
-    public static final double kS = 0;
-    public static final double kV = 1.5;
+    // public static final double kS = 0;
+    // public static final double kV = 1.5;
 
     // Profile Constants
-    public static final double MAX_VELOCITY = 1.75; // Unsure as to what the units are, I tried to have it be in degrees
-    public static final double MAX_ACCELERATION = 0.75; // Unsure as to what the units are, I tried to have it be in degrees
+    public static final double MAX_VELOCITY = 100;
+    public static final double MAX_ACCELERATION = 60;
     public static final double kDt = 0.02;
 
     // PID
     public static final double kP = 0.01;
     public static final int kI = 0;
     public static final int kD = 0;
-    public static final int kIZone = 0;
-    public static final int kFF = 0;
-    public static final int MIN_OUTPUT = 0;
-    public static final int MAX_OUTPUT = GEAR_RATIO * 42;
-    public static final double TOLERANCE = 0;
+    // public static final int kIZone = 0;
+    // public static final int kFF = 0;
+    // public static final int MIN_OUTPUT = 0;
+    // public static final int MAX_OUTPUT = GEAR_RATIO * 42;
+    public static final double TOLERANCE = 0.1;
     
     // Setpoints
     public enum TestSetpoint {
@@ -287,12 +287,12 @@ public class RobotMap {
       private double degrees;
       private double gearRatio;
 
-      // This assumes the resolution of a NEO which is 42 ticks per rev
+      // Is the resolution of a NEO 42 ticks per rev?
       TestSetpoint(double degrees, int gearRatio) { 
         this.degrees = degrees;
         this.gearRatio = gearRatio;
         // (Resolution * gearRatio) / full rotation in degrees === ticks per degree with given gear ratio
-        this.encoderValue = this.degrees * (this.gearRatio * 42.0 / 360.0);
+        this.encoderValue = this.degrees * (this.gearRatio * 4096.0 / 360.0);
       }
 
       public double getSetpointInDegrees() {
@@ -305,5 +305,6 @@ public class RobotMap {
 
     }
   }
+  
   
 }
