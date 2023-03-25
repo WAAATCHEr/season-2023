@@ -161,30 +161,6 @@ public class Swerve extends SubsystemBase {
         : Rotation2d.fromDegrees(gyro.getYaw());
   }
 
-  public Command compensateDrift(double yawGoal) {
-    PIDController compensatePID = new PIDController(DriveMap.DRIVE_KP, DriveMap.DRIVE_KI, DriveMap.DRIVE_KD);
-
-    return new FunctionalCommand(
-        () -> { // init
-          compensatePID.setTolerance(5); // +/- 5 degrees
-        },
-        () -> { // execute
-          this.drive(ChassisSpeeds.fromFieldRelativeSpeeds(0, 0,
-              (int) (compensatePID.calculate(yawGoal - this.getYaw().getDegrees())), this.getYaw()), false);
-
-        },
-        (interrupted) -> { // end
-          // Do Nothing
-          compensatePID.close();
-        },
-        () -> { // isFinished
-          if (compensatePID.atSetpoint())
-            return true;
-          return false;
-        },
-        this);
-  }
-
   public Command followTrajectoryCommand(String path, HashMap<String, Command> eventMap,
       boolean isFirstPath) {
     PathPlannerTrajectory traj = PathPlanner.loadPath(path, PPMap.MAX_VELOCITY, PPMap.MAX_ACCELERATION);
@@ -230,7 +206,7 @@ public class Swerve extends SubsystemBase {
     return new SequentialCommandGroup(
         new InstantCommand(
             () -> {
-              // Reset odometry for the first path you rubn during auto
+              // Reset odometry for the first path you run during auto
               if (isFirstPath) {
                 odometry.resetPosition(
                     getYaw(), getModulePositions(), traj.getInitialHolonomicPose());
@@ -256,7 +232,7 @@ public class Swerve extends SubsystemBase {
               new PathPoint(new Translation2d(currentPos.getX() + offset.getX(), 0), Rotation2d.fromDegrees(0),
                   currentPos.getRotation().plus(offset.getRotation())), // position, heading(direction of travel),
                                                                         // holonomic rotation
-              new PathPoint(new Translation2d(5.0, currentPos.getY() + offset.getY()), Rotation2d.fromDegrees(0),
+              new PathPoint(new Translation2d(5.0, currentPos.getY() + offset.getY()), getYaw(),
                   Rotation2d.fromDegrees(0))); // position, heading(direction of travel), holonomic rotation
         }, false));
   }
