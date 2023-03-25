@@ -8,8 +8,10 @@ import java.util.HashMap;
 import java.util.function.Supplier;
 
 import com.ctre.phoenix.sensors.WPI_Pigeon2;
+import com.pathplanner.lib.PathConstraints;
 import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.PathPlannerTrajectory;
+import com.pathplanner.lib.PathPoint;
 import com.pathplanner.lib.commands.FollowPathWithEvents;
 import com.pathplanner.lib.commands.PPSwerveControllerCommand;
 
@@ -169,30 +171,6 @@ public class Swerve extends SubsystemBase {
         : Rotation2d.fromDegrees(gyro.getYaw());
   }
 
-  public Command compensateDrift(double yawGoal) {
-    PIDController compensatePID = new PIDController(DriveMap.DRIVE_KP, DriveMap.DRIVE_KI, DriveMap.DRIVE_KD);
-
-    return new FunctionalCommand(
-        () -> { // init
-          compensatePID.setTolerance(5); // +/- 5 degrees
-        },
-        () -> { // execute
-          this.drive(ChassisSpeeds.fromFieldRelativeSpeeds(0, 0,
-              (int) (compensatePID.calculate(yawGoal - this.getYaw().getDegrees())), this.getYaw()), false);
-
-        },
-        (interrupted) -> { // end
-          // Do Nothing
-          compensatePID.close();
-        },
-        () -> { // isFinished
-          if (compensatePID.atSetpoint())
-            return true;
-          return false;
-        },
-        this);
-  }
-
   public Command followTrajectoryCommand(String path, HashMap<String, Command> eventMap,
       boolean isFirstPath) {
     PathPlannerTrajectory traj = PathPlanner.loadPath(path, PPMap.MAX_VELOCITY, PPMap.MAX_ACCELERATION);
@@ -202,7 +180,7 @@ public class Swerve extends SubsystemBase {
         eventMap);
   }
 
-  private SequentialCommandGroup followTrajectoryCommand(PathPlannerTrajectory traj,
+  private Command followTrajectoryCommand(PathPlannerTrajectory traj,
       boolean isFirstPath) {
 
     // Create PIDControllers for each movement (and set default values)
@@ -229,7 +207,7 @@ public class Swerve extends SubsystemBase {
             traj, this::getPose, xPID, yPID, thetaPID, speeds -> drive(speeds, true), this));// KEEP IT OPEN LOOP
   }
 
-  public SequentialCommandGroup followTrajectoryCommand(String path, boolean isFirstPath) {
+  public Command followTrajectoryCommand(String path, boolean isFirstPath) {
     PathPlannerTrajectory traj = PathPlanner.loadPath(path, 2, 2);
     PIDController xPID = new PIDController(5.0, 0.0, 0.0);
     PIDController yPID = new PIDController(5.0, 0.0, 0.0);
@@ -246,6 +224,13 @@ public class Swerve extends SubsystemBase {
             }),
         new PPSwerveControllerCommand(traj, this::getPose, xPID, yPID, thetaPID, speeds -> drive(speeds, true), this));
   }
+
+  private PathPlannerTrajectory generateDirectPath(Translation2d startPoint, Translation2d endPoint) {
+    return PathPlanner.generatePath(
+      new PathConstraints(4, 2), 
+      new PathPoint(startPoint, getYaw()), 
+      new PathPoint(endPoint, getYaw()));
+  } 
 
   public Command chargingStationCommand() {
     PIDController pid = new PIDController(ChargingStationMap.kP, ChargingStationMap.kI, ChargingStationMap.kD);
