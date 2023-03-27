@@ -17,7 +17,7 @@ import frc.robot.auto.modes.TestAutoPath;
 
 public interface AutoModeList {
   public enum AutoModeListRed {
-    DO_NOTHING(new DoNothing()),
+    DO_NOTHING(new DoNothing())/*,
     TEST_AUTO_PATH(new TestAutoPath()),
     BARRIER_TO_CS(new RedBarrierToCS()),
     BARRIER_TO_LZ(new RedBumperToLZ()),
@@ -25,7 +25,7 @@ public interface AutoModeList {
     MID_TO_CS_OUT_COMMUNITY(new RedMidToCSOutCommunity()),
     BUMPER_TO_CS(new RedBumperToCS()),
     BUMPER_TO_LZ(new RedBumperToLZ()),
-    BUMPER_TO_GROUND_PIECE(new RedBumperToGroundPiece());
+    BUMPER_TO_GROUND_PIECE(new RedBumperToGroundPiece())*/;
 
     private final SequentialCommandGroup autoCommand;
 
@@ -40,7 +40,7 @@ public interface AutoModeList {
   }
 
   public enum AutoModeListBlue {
-    DO_NOTHING(new DoNothing()),
+    DO_NOTHING(new DoNothing())/*,
     TEST_AUTO_PATH(new TestAutoPath()),
     BARRIER_TO_CS(new BlueBumperToCS()),
     BARRIER_TO_LZ(new BlueBumperToLZ()),
@@ -48,7 +48,7 @@ public interface AutoModeList {
     MID_TO_CS_OUT_COMMUNITY(new BlueMidToCSOutCommunity()),
     BUMPER_TO_CS(new BlueBumperToCS()),
     BUMPER_TO_LZ(new BlueBumperToLZ()),
-    BUMPER_TO_GROUND_PIECE(new BlueBumperToGroundPiece());
+    BUMPER_TO_GROUND_PIECE(new BlueBumperToGroundPiece())*/;
 
     private final SequentialCommandGroup autoCommand;
 

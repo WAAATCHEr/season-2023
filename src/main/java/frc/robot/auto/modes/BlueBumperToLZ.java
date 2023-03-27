@@ -6,6 +6,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.subsystems.ElevatorArm;
+import frc.robot.RobotMap.ElevatorMap;
 import frc.robot.subsystems.MotorIntake;
 import frc.robot.subsystems.Swerve;
 
@@ -18,15 +19,15 @@ public class BlueBumperToLZ extends SequentialCommandGroup{
         var elevatorArm = ElevatorArm.getInstance();
         var motorIntake = MotorIntake.getInstance();
         addCommands(
-            elevatorArm.movePivotCommand(() -> ElevatorArm.PivotPosition.TOP),
+            elevatorArm.movePivotCommand(() -> ElevatorMap.PivotPosition.TOP),
             new RunCommand(() -> elevatorArm.moveElevator(0.7))
                         .until(() -> elevatorArm.getTopSwitch()),
             new RunCommand(() -> motorIntake.autoMoveIntake(false)).withTimeout(1.0),
             new InstantCommand(() -> motorIntake.setSpeed(0)),
-            elevatorArm.movePivotCommand(() -> ElevatorArm.PivotPosition.SUBSTATION)
+            elevatorArm.movePivotCommand(() -> ElevatorMap.PivotPosition.SUBSTATION)
                         .alongWith(new RunCommand(() -> elevatorArm.moveElevator(-0.7))
                                     .until(() -> elevatorArm.getBottomSwitch())),
-            elevatorArm.movePivotCommand(() -> ElevatorArm.PivotPosition.DEFAULT),
+            elevatorArm.movePivotCommand(() -> ElevatorMap.PivotPosition.DEFAULT),
             swerve.followTrajectoryCommand(path, eventMap, true)
             );
     }

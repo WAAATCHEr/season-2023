@@ -15,35 +15,35 @@ public abstract class OperatorMap extends CommandMap {
     super(controller);
   }
 
-  public abstract JoystickButton getIntakeSwitchModeButton();
+  abstract JoystickButton getIntakeSwitchModeButton();
 
-  // public abstract JoystickButton getStowButton();
+  // abstract JoystickButton getStowButton();
 
-  // public abstract JoystickButton getSingleSubstationButton();
+  // abstract JoystickButton getSingleSubstationButton();
 
-  // public abstract JoystickButton getMiddleScoreButton();
+  // abstract JoystickButton getMiddleScoreButton();
 
-  // public abstract JoystickButton getTopScoreButton();
+  // abstract JoystickButton getTopScoreButton();
 
-  // public abstract JoystickButton getGroundButton();
+  // abstract JoystickButton getGroundButton();
 
-  // public abstract JoystickButton getDefaultButton();
+  // abstract JoystickButton getDefaultButton();
 
-  public abstract double getForwardIntakeValue();
+  abstract double getForwardIntakeValue();
 
-  public abstract double getReverseIntakeValue();
+  abstract double getReverseIntakeValue();
 
-  public abstract double getLeftXAxis();
+  abstract double getLeftXAxis();
 
-  public abstract double getLeftYAxis();
+  abstract double getLeftYAxis();
 
-  public abstract double getRightXAxis();
+  abstract double getRightXAxis();
 
-  public abstract double getRightYAxis();
+  abstract double getRightYAxis();
 
-  public abstract JoystickButton getElevatorResetButton();
+  abstract JoystickButton getElevatorResetButton();
 
-  void registerElevatorArm() {
+  private void registerElevatorArm() {
     ElevatorArm elevatorArm = ElevatorArm.getInstance();
 
     elevatorArm.setDefaultCommand(
@@ -62,7 +62,7 @@ public abstract class OperatorMap extends CommandMap {
     // SetPoint.DEFAULT));
   }
 
-  void registerMotorIntake() {
+  private void registerMotorIntake() {
     MotorIntake motorIntake = MotorIntake.getInstance();
     motorIntake.setDefaultCommand(
         new RepeatCommand(new RunCommand(() -> motorIntake.moveIntake(getForwardIntakeValue(), getReverseIntakeValue()),
@@ -72,12 +72,10 @@ public abstract class OperatorMap extends CommandMap {
   @Override
   public void registerCommands() {
 
-    if (Config.Subsystems.INTAKE_MOTOR_ENABLED) {
+    if (Config.Subsystems.INTAKE_MOTOR_ENABLED)
       registerMotorIntake();
-    }
 
-    if (Config.Subsystems.ELEVATOR_ARM_ENABLED) {
+    if (Config.Subsystems.ELEVATOR_ARM_ENABLED)
       registerElevatorArm();
-    }
   }
 }

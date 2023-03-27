@@ -178,11 +178,133 @@ public class RobotMap {
     public static final double ELEVATOR_KG = 0;
     public static final double ELEVATOR_KV = 0;
     public static final double ELEVATOR_KA = 0;
+
+
+    public enum SetPoint {
+      GROUND(ElevatorPosition.GROUND, PivotPosition.GROUND),
+      MIDDLE(ElevatorPosition.MID, PivotPosition.MID),
+      SINGLE_SUBSTATION(ElevatorPosition.SUBSTATION, PivotPosition.SUBSTATION),
+      STOW(ElevatorPosition.STOW, PivotPosition.STOW),
+      TOP(ElevatorPosition.TOP, PivotPosition.TOP),
+      DEFAULT(ElevatorPosition.DEFAULT, PivotPosition.DEFAULT);
+
+      private final ElevatorPosition elevatorPosition;
+      private final PivotPosition pivotPosition;
+
+      SetPoint(ElevatorPosition ePos, PivotPosition pPos) {
+          this.elevatorPosition = ePos;
+          this.pivotPosition = pPos;
+      }
+
+      public ElevatorPosition getElevatorPosition() {
+          return elevatorPosition;
+      }
+
+      public PivotPosition getPivotPosition() {
+          return pivotPosition;
+      }
+
+    }
+
+    public enum ElevatorPosition {
+      TOP(95.1),
+      MID(60.0),
+      GROUND(22.6),
+      SUBSTATION(40.45),
+      STOW(40.05),
+      DEFAULT(0);
+
+      private final double encoderValue;
+
+      ElevatorPosition(double encoderValue) {
+          this.encoderValue = encoderValue;
+      }
+
+      public double getEncoderPos() {
+          return encoderValue;
+      }
+    }
+
+    public enum PivotPosition {
+      TOP(-20),
+      MID(-18.5),
+      GROUND(-49),
+      SUBSTATION(-10),
+      STOW(5.2),
+      DEFAULT(0);
+
+      private final double encoderValue;
+
+      PivotPosition(double encoderValue) {
+          this.encoderValue = encoderValue;
+      }
+
+      public double getEncoderPos() {
+          return encoderValue;
+      }
+    }
   }
 
   public static class PPMap {
     public static final int MAX_VELOCITY = 5;
     public static final int MAX_ACCELERATION = 4;
   }
+
+  public static class MotionProfileMap {
+    //MOTOR IDs
+    public static final int TEST_MOTOR_ID = 1;
+
+    // Gear Ratio
+    public static final int GEAR_RATIO = 12;
+    
+    // Feed Forward
+    // public static final double kS = 0;
+    // public static final double kV = 1.5;
+
+    // Profile Constants
+    public static final double MAX_VELOCITY = 100;
+    public static final double MAX_ACCELERATION = 60;
+    public static final double kDt = 0.02;
+
+    // PID
+    public static final double kP = 0.01;
+    public static final int kI = 0;
+    public static final int kD = 0;
+    // public static final int kIZone = 0;
+    // public static final int kFF = 0;
+    // public static final int MIN_OUTPUT = 0;
+    // public static final int MAX_OUTPUT = GEAR_RATIO * 42;
+    public static final double TOLERANCE = 0.1;
+    
+    // Setpoints
+    public enum TestSetpoint {
+      ZERO(0, GEAR_RATIO),
+      HALF(180, GEAR_RATIO),
+      FULL(360, GEAR_RATIO);
+
+
+      private double encoderValue;
+      private double degrees;
+      private double gearRatio;
+
+      // Is the resolution of a NEO 42 ticks per rev?
+      TestSetpoint(double degrees, int gearRatio) { 
+        this.degrees = degrees;
+        this.gearRatio = gearRatio;
+        // (Resolution * gearRatio) / full rotation in degrees === ticks per degree with given gear ratio
+        this.encoderValue = this.degrees * (this.gearRatio * 4096.0 / 360.0);
+      }
+
+      public double getSetpointInDegrees() {
+        return this.degrees;
+      }
+
+      public double getSetpoint() {
+        return this.encoderValue;
+      }
+
+    }
+  }
+  
   
 }
