@@ -81,17 +81,20 @@ public class MotionProfile extends SubsystemBase {
         },
 
         () -> { // execute
-          System.out.println(testMotor.getEncoder().getPosition() + " and " + testMotor.getEncoder().getPosition() * (360.0/(42 * MotionProfileMap.GEAR_RATIO))); //Encoder value AND Encoder Value *(degrees per encoder tick)
-          testMotor.set(controller.calculate(current.position, current.velocity));
+          //System.out.println(testMotor.getEncoder().getPosition() + " and " + testMotor.getEncoder().getPosition() * (360.0/(42 * MotionProfileMap.GEAR_RATIO))); //Encoder value AND Encoder Value *(degrees per encoder tick)
+          testMotor.set(controller.calculate(testMotor.getEncoder().getVelocity(), current.velocity));
         },
 
-        (interrupted) -> {}, // end
+        (interrupted) -> {
+          testMotor.set(0);
+        }, // end
 
         () -> { // isFinished
-          // var profileFinished = calculateProfile(target);
-          var pidFinished = controller.atSetpoint();
+          boolean profileFinished = calculateProfile(target);
+          // var pidFinished = controller.atSetpoint();
           // System.out.println("Profile Finished: " + profileFinished + "\nPID at Setpoint: " + pidFinished);
-          return pidFinished;
+          System.out.println(profileFinished);
+          return profileFinished;
         },
         this);
   }
@@ -101,10 +104,10 @@ public class MotionProfile extends SubsystemBase {
     SmartDashboard.putNumber("Resolution",testMotor.getEncoder().getCountsPerRevolution());
     SmartDashboard.putNumber("Total Position", tempTarget.get().getSetpoint()-testMotor.getEncoder().getPosition());
     SmartDashboard.putNumber("Velocity", testMotor.getEncoder().getVelocity());
+    SmartDashboard.putNumber("Velocity Setpoint",  current.velocity);
     SmartDashboard.putNumber("Position",  testMotor.getEncoder().getPosition());
     SmartDashboard.putNumber("Velocity Error",  (current.velocity - testMotor.getEncoder().getVelocity()));
     SmartDashboard.putNumber("Position Error",  (current.position - testMotor.getEncoder().getPosition()));
-    SmartDashboard.putNumber("Velocity Setpoint",  current.velocity);
     SmartDashboard.putNumber("Total Position Setpoint", tempTarget.get().getSetpoint());
     SmartDashboard.putNumber("Position Setpoint", current.position);
   }

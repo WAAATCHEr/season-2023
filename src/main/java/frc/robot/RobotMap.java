@@ -255,32 +255,32 @@ public class RobotMap {
     public static final int TEST_MOTOR_ID = 1;
 
     // Gear Ratio
-    public static final int GEAR_RATIO = 12;
+    public static final int GEAR_RATIO = 1;
     
     // Feed Forward
     // public static final double kS = 0;
     // public static final double kV = 1.5;
 
     // Profile Constants
-    public static final double MAX_VELOCITY = 100;
-    public static final double MAX_ACCELERATION = 60;
+    public static final double MAX_VELOCITY = 10000;
+    public static final double MAX_ACCELERATION = 5000;
     public static final double kDt = 0.02;
 
     // PID
-    public static final double kP = 0.01;
-    public static final int kI = 0;
-    public static final int kD = 0;
+    public static final double kP = 0.0002;
+    public static final double kI = 0.0001;
+    public static final double kD = 0;
     // public static final int kIZone = 0;
     // public static final int kFF = 0;
     // public static final int MIN_OUTPUT = 0;
     // public static final int MAX_OUTPUT = GEAR_RATIO * 42;
-    public static final double TOLERANCE = 0.1;
+    public static final double TOLERANCE = 1.0;
     
     // Setpoints
     public enum TestSetpoint {
       ZERO(0, GEAR_RATIO),
-      HALF(180, GEAR_RATIO),
-      FULL(360, GEAR_RATIO);
+      HALF(4096/2, GEAR_RATIO),
+      FULL(80000, GEAR_RATIO);
 
 
       private double encoderValue;
@@ -292,7 +292,7 @@ public class RobotMap {
         this.degrees = degrees;
         this.gearRatio = gearRatio;
         // (Resolution * gearRatio) / full rotation in degrees === ticks per degree with given gear ratio
-        this.encoderValue = this.degrees * (this.gearRatio * 4096.0 / 360.0);
+        this.encoderValue = this.degrees /* * (this.gearRatio * 42 / 360.0)*/;
       }
 
       public double getSetpointInDegrees() {

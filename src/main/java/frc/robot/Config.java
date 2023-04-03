@@ -28,7 +28,7 @@ public class Config {
   }
 
   public static ButtonMap getTesterController() {
-    return new Logitech(Version.REVERSED_TRIGGER_AND_STICK);
+    return new Xbox();
   }
 
 }
