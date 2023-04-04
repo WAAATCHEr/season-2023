@@ -50,7 +50,6 @@ public abstract class OperatorMap extends CommandMap {
         new RepeatCommand(
             new RunCommand(() -> elevatorArm.moveElevatorAndPivot(-getLeftYAxis() * 0.5, -getRightYAxis() * 0.35),
                 elevatorArm)));
-    getElevatorResetButton().onTrue(elevatorArm.resetElevatorMotor());
     // getStowButton().onTrue(elevatorArm.moveToSetPoint(() -> SetPoint.STOW));
     // getSingleSubstationButton().onTrue(elevatorArm.moveToSetPoint(() ->
     // SetPoint.SINGLE_SUBSTATION));

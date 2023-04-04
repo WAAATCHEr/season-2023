@@ -9,7 +9,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.subsystems.Swerve;
 import frc.robot.subsystems.ElevatorArm;
-import frc.robot.RobotMap.ElevatorMap;
+import frc.robot.RobotMap.ElevatorPivotMap;
 import frc.robot.subsystems.MotorIntake;
 
 @SuppressWarnings("all") // May be useful to remove this when uncommenting elevaotr and pivot code

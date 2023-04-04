@@ -6,6 +6,7 @@ import frc.robot.RobotMap;
 import frc.robot.subsystems.Swerve;
 import frc.robot.util.controllers.ButtonMap.Axis;
 import frc.robot.util.controllers.ButtonMap.Button;
+import frc.robot.util.controllers.ButtonMap.Trigger;
 import frc.robot.util.controllers.GameController;
 
 public class TwoJoyStickTesterMap extends TesterMap {
@@ -38,7 +39,12 @@ public class TwoJoyStickTesterMap extends TesterMap {
   public JoystickButton getZeroButton() {
     return controller.getButton(Button.BUTTON_X);
   }
-  
+
+  @Override
+  public double getOnButton(){
+    return controller.getTrigger(Trigger.BUTTON_RIGHT_TRIGGER);
+  }
+
   @Override
   public void registerCommands() {
     super.registerCommands();

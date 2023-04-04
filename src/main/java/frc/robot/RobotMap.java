@@ -158,89 +158,72 @@ public class RobotMap {
     public static final int MOTOR_ID = 2;
   }
 
-  public static class ElevatorMap {
+  public static class ElevatorPivotMap {
+    // Motor IDs
     public static final int ELEVATOR_MOTOR_ID = 1;
-    public static final int BOTTOM_PORT = 0;
-    public static final int TOP_PORT = 1;
-    public static final double MIDPOINT1 = 20;
-
     public static final int PIVOT_MOTOR_ID = 3;
-    public static final double PIVOT_BOTTOM = 10;
-    public static final double PIVOT_TOP = 20;
-    public static final double MIDPOINT2 = 15;
 
-    public static final double PIVOT_KS = 0;
-    public static final double PIVOT_KG = 0;
-    public static final double PIVOT_KV = 0;
-    public static final double PIVOT_KA = 0;
+    // L + Gear Ratio
+    public static final int ELEVATOR_RATIO = 12;
+    public static final double PIVOT_RATIO = 562.5;
 
-    public static final double ELEVATOR_KS = 0;
-    public static final double ELEVATOR_KG = 0;
-    public static final double ELEVATOR_KV = 0;
-    public static final double ELEVATOR_KA = 0;
+    // Profile Constants
+    public static final double MAX_VELOCITY = 4;
+    public static final double MAX_ACCELERATION = 1;
+    public static final double kDt = 0.02;
 
-
+    // PID
+    public static final double kP = 0.051;
+    public static final double kI = 0.0000;
+    public static final double kD = 0.0000;
+    public static final double TOLERANCE = 0.5;
+    
+    // Setpoints
     public enum SetPoint {
-      GROUND(ElevatorPosition.GROUND, PivotPosition.GROUND),
-      MIDDLE(ElevatorPosition.MID, PivotPosition.MID),
-      SINGLE_SUBSTATION(ElevatorPosition.SUBSTATION, PivotPosition.SUBSTATION),
-      STOW(ElevatorPosition.STOW, PivotPosition.STOW),
-      TOP(ElevatorPosition.TOP, PivotPosition.TOP),
-      DEFAULT(ElevatorPosition.DEFAULT, PivotPosition.DEFAULT);
+      ZERO(ElevPoint.STOW, PivotPoint.STOW);
 
-      private final ElevatorPosition elevatorPosition;
-      private final PivotPosition pivotPosition;
+      private ElevPoint elev;
+      private PivotPoint pivot;
 
-      SetPoint(ElevatorPosition ePos, PivotPosition pPos) {
-          this.elevatorPosition = ePos;
-          this.pivotPosition = pPos;
+      SetPoint(ElevPoint elev, PivotPoint pivot) { 
+        this.elev = elev;
+        this.pivot = pivot;
       }
 
-      public ElevatorPosition getElevatorPosition() {
-          return elevatorPosition;
+      public ElevPoint getElev() {
+        return this.elev;
       }
 
-      public PivotPosition getPivotPosition() {
-          return pivotPosition;
-      }
-
-    }
-
-    public enum ElevatorPosition {
-      TOP(95.1),
-      MID(60.0),
-      GROUND(22.6),
-      SUBSTATION(40.45),
-      STOW(40.05),
-      DEFAULT(0);
-
-      private final double encoderValue;
-
-      ElevatorPosition(double encoderValue) {
-          this.encoderValue = encoderValue;
-      }
-
-      public double getEncoderPos() {
-          return encoderValue;
+      public PivotPoint getPivot() {
+        return this.pivot;
       }
     }
 
-    public enum PivotPosition {
-      TOP(-20),
-      MID(-18.5),
-      GROUND(-49),
-      SUBSTATION(-10),
-      STOW(5.2),
-      DEFAULT(0);
+    public enum ElevPoint {
+      STOW(0);
 
-      private final double encoderValue;
+      private double encoderValue;
 
-      PivotPosition(double encoderValue) {
-          this.encoderValue = encoderValue;
+      ElevPoint(double encoderValue) { 
+        this.encoderValue = encoderValue;
       }
 
-      public double getEncoderPos() {
-          return encoderValue;
+      public double getSetpoint() {
+        return this.encoderValue;
+      }
+    }
+
+    public enum PivotPoint {
+      STOW(0);
+
+      private double encoderValue;
+
+      PivotPoint(double encoderValue) { 
+        this.encoderValue = encoderValue;
+      }
+
+      public double getSetpoint() {
+        return this.encoderValue;
       }
     }
   }
@@ -262,25 +245,28 @@ public class RobotMap {
     // public static final double kV = 1.5;
 
     // Profile Constants
-    public static final double MAX_VELOCITY = 4;
-    public static final double MAX_ACCELERATION = 1;
+    public static final double MAX_VELOCITY = 500;
+    public static final double MAX_ACCELERATION = 100;
     public static final double kDt = 0.02;
 
     // PID
-    public static final double kP = 0.051;
+    public static final double kP = 0.1;
     public static final double kI = 0.0000;
+
     public static final double kD = 0.0000;
     // public static final int kIZone = 0;
     // public static final int kFF = 0;
     // public static final int MIN_OUTPUT = 0;
     // public static final int MAX_OUTPUT = GEAR_RATIO * 42;
-    public static final double TOLERANCE = 0.5;
+    public static final double TOLERANCE = 10;
     
     // Setpoints
     public enum TestSetpoint {
       ZERO(0, GEAR_RATIO),
-      HALF(100, GEAR_RATIO),
-      FULL(4, GEAR_RATIO);
+      HALF(125*4.5/6, GEAR_RATIO),
+      FULL(125*4.5/3, GEAR_RATIO),
+      NEGHALF(-125*4.5/6, GEAR_RATIO),
+      NEGFULL(-125*4.5/3, GEAR_RATIO);
 
 
       private double encoderValue;
@@ -292,7 +278,7 @@ public class RobotMap {
         this.degrees = degrees;
         this.gearRatio = gearRatio;
         // (Resolution * gearRatio) / full rotation in degrees === ticks per degree with given gear ratio
-        this.encoderValue = this.degrees /* * (this.gearRatio * 42 / 360.0)*/;
+        this.encoderValue = this.degrees;
       }
 
       public double getSetpointInDegrees() {
