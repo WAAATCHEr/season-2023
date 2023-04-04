@@ -1,6 +1,8 @@
 package frc.robot.layout;
 
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj2.command.RepeatCommand;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.Config;
 import frc.robot.subsystems.MotionProfile;
@@ -23,6 +25,8 @@ public abstract class TesterMap extends CommandMap {
 
   abstract JoystickButton getZeroButton();
 
+  abstract double getOnButton();
+
   private void registerSwerve() {
     var swerve = Swerve.getInstance();
     swerve.setDefaultCommand(swerve.driveCommand(this::getChassisSpeeds));
@@ -30,12 +34,13 @@ public abstract class TesterMap extends CommandMap {
 
   private void registerMotionProfileTest() {
     var motionProfile = MotionProfile.getInstance();
-    getFullButton().onTrue(motionProfile.moveMotorToSetpoint(() -> TestSetpoint.FULL));
+    getFullButton().onTrue(motionProfile.moveMotorToSetpoint(() -> TestSetpoint.NEGFULL));
     getHalfButton().onTrue(motionProfile.moveMotorToSetpoint(() -> TestSetpoint.HALF));
     getZeroButton().onTrue(motionProfile.moveMotorToSetpoint(() -> TestSetpoint.ZERO));
+
+    motionProfile.setDefaultCommand(new RunCommand(() -> motionProfile.moveMotor(getOnButton()), motionProfile));
   }
   
-
   @Override
   public void registerCommands() {
 
