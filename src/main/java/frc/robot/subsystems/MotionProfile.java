@@ -32,10 +32,8 @@ public class MotionProfile extends SubsystemBase {
   // Motor Controllers
   private CANSparkMax testMotor;
 
-  // PID and FF
-  // private SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(MotionProfileMap.kS, MotionProfileMap.kV);
+  // PID
   private PIDController controller = new PIDController(MotionProfileMap.kP, MotionProfileMap.kI, MotionProfileMap.kD);
-  // private SparkMaxPIDController sparkController;
 
   // Trapezoid Profile
   private TrapezoidProfile.Constraints constraints = new TrapezoidProfile.Constraints(MotionProfileMap.MAX_VELOCITY, MotionProfileMap.MAX_ACCELERATION);
@@ -46,12 +44,6 @@ public class MotionProfile extends SubsystemBase {
 
   private MotionProfile() {
     testMotor = new CANSparkMax(MotionProfileMap.TEST_MOTOR_ID, MotorType.kBrushless);
-    // sparkController = testMotor.getPIDController();
-
-    // sparkController.setP(MotionProfileMap.kP);
-    // sparkController.setI(MotionProfileMap.kI);
-    // sparkController.setD(MotionProfileMap.kD);
-    // sparkController.setOutputRange(MotionProfileMap.MIN_OUTPUT, MotionProfileMap.MAX_OUTPUT);
 
     controller.setTolerance(MotionProfileMap.TOLERANCE);
 
@@ -82,7 +74,7 @@ public class MotionProfile extends SubsystemBase {
 
         () -> { // execute
           //System.out.println(testMotor.getEncoder().getPosition() + " and " + testMotor.getEncoder().getPosition() * (360.0/(42 * MotionProfileMap.GEAR_RATIO))); //Encoder value AND Encoder Value *(degrees per encoder tick)
-          testMotor.set(controller.calculate(testMotor.getEncoder().getVelocity(), current.velocity));
+          testMotor.set(controller.calculate(testMotor.getEncoder().getPosition(), current.position));
         },
 
         (interrupted) -> {
@@ -91,10 +83,10 @@ public class MotionProfile extends SubsystemBase {
 
         () -> { // isFinished
           boolean profileFinished = calculateProfile(target);
-          // var pidFinished = controller.atSetpoint();
+          boolean pidFinished = controller.atSetpoint();
           // System.out.println("Profile Finished: " + profileFinished + "\nPID at Setpoint: " + pidFinished);
-          System.out.println(profileFinished);
-          return profileFinished;
+          System.out.println(profileFinished && pidFinished);
+          return profileFinished && pidFinished;
         },
         this);
   }

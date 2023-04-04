@@ -262,25 +262,25 @@ public class RobotMap {
     // public static final double kV = 1.5;
 
     // Profile Constants
-    public static final double MAX_VELOCITY = 10000;
-    public static final double MAX_ACCELERATION = 5000;
+    public static final double MAX_VELOCITY = 4;
+    public static final double MAX_ACCELERATION = 1;
     public static final double kDt = 0.02;
 
     // PID
-    public static final double kP = 0.0002;
-    public static final double kI = 0.0001;
-    public static final double kD = 0;
+    public static final double kP = 0.051;
+    public static final double kI = 0.0000;
+    public static final double kD = 0.0000;
     // public static final int kIZone = 0;
     // public static final int kFF = 0;
     // public static final int MIN_OUTPUT = 0;
     // public static final int MAX_OUTPUT = GEAR_RATIO * 42;
-    public static final double TOLERANCE = 1.0;
+    public static final double TOLERANCE = 0.5;
     
     // Setpoints
     public enum TestSetpoint {
       ZERO(0, GEAR_RATIO),
-      HALF(4096/2, GEAR_RATIO),
-      FULL(80000, GEAR_RATIO);
+      HALF(100, GEAR_RATIO),
+      FULL(4, GEAR_RATIO);
 
 
       private double encoderValue;
