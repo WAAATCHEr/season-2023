@@ -26,7 +26,7 @@ public class TwoJoyStickTesterMap extends TesterMap {
   }
 
   @Override
-  public JoystickButton getFullButton() {
+  public JoystickButton getTopButton() {
     return controller.getButton(Button.BUTTON_B);
   }
 
@@ -41,8 +41,18 @@ public class TwoJoyStickTesterMap extends TesterMap {
   }
 
   @Override
-  public double getOnButton(){
+  public double getOnButton() {
     return controller.getTrigger(Trigger.BUTTON_RIGHT_TRIGGER);
+  }
+  
+  @Override
+  public double getLeftYAxis() {
+    return controller.getAxis(Axis.AXIS_LEFT_Y);
+  }
+
+  @Override
+  public double getRightYAxis() {
+    return controller.getAxis(Axis.AXIS_RIGHT_Y);
   }
 
   @Override

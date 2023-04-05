@@ -18,68 +18,66 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
+import frc.robot.RobotMap.ElevatorPivotMap;
 import frc.robot.RobotMap.MotionProfileMap;
 
 public class MotionProfile extends SubsystemBase {
-  private static MotionProfile instance;
-
-  public static MotionProfile getInstance() {
-    if (instance == null)
-      instance = new MotionProfile();
-    return instance;
-  }
-
-
+  
   // Motor Controllers
-  private CANSparkMax testMotor;
+  private CANSparkMax motor;
+  
+  //Booleans
+  private boolean isElevator;
 
   // PID
-  private PIDController controller = new PIDController(MotionProfileMap.kP, MotionProfileMap.kI, MotionProfileMap.kD);
+  private PIDController controller;
+  private double kDt;
 
   // Trapezoid Profile
-  private TrapezoidProfile.Constraints constraints = new TrapezoidProfile.Constraints(MotionProfileMap.MAX_VELOCITY, MotionProfileMap.MAX_ACCELERATION);
+  private TrapezoidProfile.Constraints constraints;
   private TrapezoidProfile.State goal = new TrapezoidProfile.State(0, 0);
   private TrapezoidProfile.State current = new TrapezoidProfile.State(0, 0);
 
-  private Supplier<MotionProfileMap.TestSetpoint> tempTarget = () -> MotionProfileMap.TestSetpoint.ZERO;
+  private Supplier<ElevatorPivotMap.ElevPoint> tempTarget = () -> ElevatorPivotMap.ElevPoint.STOW;
+  
+  public MotionProfile(CANSparkMax motor, boolean isElevator, double maxVelocity, double maxAcceleration,
+      PIDController pid, double tolerance, double kDt) {
+      
+    this.motor = motor;
+    this.isElevator = isElevator;
+    this.kDt = kDt;
+    constraints = new TrapezoidProfile.Constraints(maxVelocity, maxAcceleration);
 
-  private MotionProfile() {
-    testMotor = new CANSparkMax(MotionProfileMap.TEST_MOTOR_ID, MotorType.kBrushless);
+    controller = pid;
+    controller.setTolerance(tolerance);
 
-    controller.setTolerance(MotionProfileMap.TOLERANCE);
-
-    resetEncoder();
   }
 
-  private void resetEncoder() {
-    testMotor.getEncoder().setPosition(0);
-
-  }
-
-  private boolean calculateProfile(Supplier<MotionProfileMap.TestSetpoint> target) {
-    goal = new TrapezoidProfile.State(target.get().getSetpoint(), 0);
+  private boolean calculateProfile(Supplier<ElevatorPivotMap.SetPoint> target) {
+    goal = (isElevator) ? new TrapezoidProfile.State(target.get().getElev().getSetpoint(), 0)
+    : new TrapezoidProfile.State(target.get().getPivot().getSetpoint(), 0);
     var profile = new TrapezoidProfile(constraints, goal, current);
 
     if (profile.isFinished(0))
       return true;
-    current = profile.calculate(MotionProfileMap.kDt);
+    current = profile.calculate(kDt);
     return false;
   }
 
-  public Command moveMotorToSetpoint(Supplier<MotionProfileMap.TestSetpoint> target) {
+  public Command moveMotorToSetpoint(Supplier<ElevatorPivotMap.SetPoint> target) {
     return new FunctionalCommand(
         () -> { // init
-          tempTarget = target;
+          tempTarget = () -> target.get().getElev();
           calculateProfile(target);
         },
 
         () -> { // execute
           //System.out.println(testMotor.getEncoder().getPosition() + " and " + testMotor.getEncoder().getPosition() * (360.0/(42 * MotionProfileMap.GEAR_RATIO))); //Encoder value AND Encoder Value *(degrees per encoder tick)
-          testMotor.set(controller.calculate(testMotor.getEncoder().getPosition(), current.position));
+          motor.set(controller.calculate(motor.getEncoder().getPosition(), current.position));
         },
 
         (interrupted) -> {
-          testMotor.set(0);
+          motor.set(0);
         }, // end
 
         () -> { // isFinished
@@ -92,19 +90,15 @@ public class MotionProfile extends SubsystemBase {
         this);
   }
 
-  public Command moveMotor(double speed){
-    return new InstantCommand(() -> testMotor.set(speed));
-  }
-
   @Override
   public void periodic() {
-    SmartDashboard.putNumber("Resolution",testMotor.getEncoder().getCountsPerRevolution());
-    SmartDashboard.putNumber("Total Position", tempTarget.get().getSetpoint()-testMotor.getEncoder().getPosition());
-    SmartDashboard.putNumber("Velocity", testMotor.getEncoder().getVelocity());
+    SmartDashboard.putNumber("Resolution",motor.getEncoder().getCountsPerRevolution());
+    SmartDashboard.putNumber("Total Position", tempTarget.get().getSetpoint()-motor.getEncoder().getPosition());
+    SmartDashboard.putNumber("Velocity", motor.getEncoder().getVelocity());
     SmartDashboard.putNumber("Velocity Setpoint",  current.velocity);
-    SmartDashboard.putNumber("Position",  testMotor.getEncoder().getPosition());
-    SmartDashboard.putNumber("Velocity Error",  (current.velocity - testMotor.getEncoder().getVelocity()));
-    SmartDashboard.putNumber("Position Error",  (current.position - testMotor.getEncoder().getPosition()));
+    SmartDashboard.putNumber("Position",  motor.getEncoder().getPosition());
+    SmartDashboard.putNumber("Velocity Error",  (current.velocity - motor.getEncoder().getVelocity()));
+    SmartDashboard.putNumber("Position Error",  (current.position - motor.getEncoder().getPosition()));
     SmartDashboard.putNumber("Total Position Setpoint", tempTarget.get().getSetpoint());
     SmartDashboard.putNumber("Position Setpoint", current.position);
   }
