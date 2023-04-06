@@ -23,6 +23,9 @@ import frc.robot.RobotMap.MotionProfileMap;
 
 public class MotionProfile extends SubsystemBase {
 
+  //Profile Name
+  String profileName;
+
   // Motor Controllers
   private CANSparkMax motor;
 
@@ -40,9 +43,10 @@ public class MotionProfile extends SubsystemBase {
 
   private Supplier<ElevatorPivotMap.ElevPoint> tempTarget = () -> ElevatorPivotMap.ElevPoint.STOW;
 
-  public MotionProfile(CANSparkMax motor, boolean isElevator, double maxVelocity, double maxAcceleration,
+  public MotionProfile(String profileName, CANSparkMax motor, boolean isElevator, double maxVelocity, double maxAcceleration,
       PIDController pid, double tolerance, double kDt) {
 
+    this.profileName = profileName;
     this.motor = motor;
     this.isElevator = isElevator;
     this.kDt = kDt;
@@ -101,15 +105,15 @@ public class MotionProfile extends SubsystemBase {
 
   @Override
   public void periodic() {
-    SmartDashboard.putNumber("Resolution", motor.getEncoder().getCountsPerRevolution());
-    SmartDashboard.putNumber("Total Position", tempTarget.get().getSetpoint() - motor.getEncoder().getPosition());
-    SmartDashboard.putNumber("Velocity", motor.getEncoder().getVelocity());
-    SmartDashboard.putNumber("Velocity Setpoint", current.velocity);
-    SmartDashboard.putNumber("Position", motor.getEncoder().getPosition());
-    SmartDashboard.putNumber("Velocity Error", (current.velocity - motor.getEncoder().getVelocity()));
-    SmartDashboard.putNumber("Position Error", (current.position - motor.getEncoder().getPosition()));
-    SmartDashboard.putNumber("Total Position Setpoint", tempTarget.get().getSetpoint());
-    SmartDashboard.putNumber("Position Setpoint", current.position);
+    SmartDashboard.putNumber(profileName + "Resolution", motor.getEncoder().getCountsPerRevolution());
+    SmartDashboard.putNumber(profileName + "Total Position", tempTarget.get().getSetpoint() - motor.getEncoder().getPosition());
+    SmartDashboard.putNumber(profileName + "Velocity", motor.getEncoder().getVelocity());
+    SmartDashboard.putNumber(profileName + "Velocity Setpoint", current.velocity);
+    SmartDashboard.putNumber(profileName + "Position", motor.getEncoder().getPosition());
+    SmartDashboard.putNumber(profileName + "Velocity Error", (current.velocity - motor.getEncoder().getVelocity()));
+    SmartDashboard.putNumber(profileName + "Position Error", (current.position - motor.getEncoder().getPosition()));
+    SmartDashboard.putNumber(profileName + "Total Position Setpoint", tempTarget.get().getSetpoint());
+    SmartDashboard.putNumber(profileName + "Position Setpoint", current.position);
   }
 
 }

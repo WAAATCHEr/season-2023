@@ -63,13 +63,13 @@ public class ElevatorArm extends SubsystemBase {
         reverseLimit = elevatorMotor.getReverseLimitSwitch(SparkMaxLimitSwitch.Type.kNormallyOpen);
         reverseLimit.enableLimitSwitch(true);
 
-        elevatorProfile = new MotionProfile(elevatorMotor, true, ElevatorPivotMap.ELEVATOR_MAX_VELOCITY,
+        elevatorProfile = new MotionProfile("Elevator", elevatorMotor, true, ElevatorPivotMap.ELEVATOR_MAX_VELOCITY,
                 ElevatorPivotMap.ELEVATOR_MAX_ACCELERATION,
                 new PIDController(ElevatorPivotMap.ELEVATOR_kP, ElevatorPivotMap.ELEVATOR_kI,
                         ElevatorPivotMap.ELEVATOR_kD),
                 ElevatorPivotMap.ELEVATOR_TOLERANCE, ElevatorPivotMap.ELEVATOR_kDt);
 
-        pivotProfile = new MotionProfile(pivotMotor, false, ElevatorPivotMap.PIVOT_MAX_VELOCITY,
+        pivotProfile = new MotionProfile("Pivot", pivotMotor, false, ElevatorPivotMap.PIVOT_MAX_VELOCITY,
                 ElevatorPivotMap.PIVOT_MAX_ACCELERATION,
                 new PIDController(ElevatorPivotMap.PIVOT_kP, ElevatorPivotMap.PIVOT_kI,
                         ElevatorPivotMap.PIVOT_kD),
