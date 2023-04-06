@@ -45,8 +45,7 @@ public class MotionProfile extends SubsystemBase {
   private TrapezoidProfile.State goal = new TrapezoidProfile.State(0, 0);
   private TrapezoidProfile.State current = new TrapezoidProfile.State(0, 0);
 
-  private Supplier<ElevatorPivotMap.ElevPoint> tempTarget = () -> ElevatorPivotMap.ElevPoint.STOW;
-
+  
   public MotionProfile(String profileName, CANSparkMax motor, boolean isElevator, double maxVelocity, double maxAcceleration,
       PIDController pid, double tolerance, double kDt) {
 
@@ -77,8 +76,7 @@ public class MotionProfile extends SubsystemBase {
   }
 
   private boolean calculateProfile(Supplier<ElevatorPivotMap.SetPoint> target) {
-    goal = (isElevator) ? new TrapezoidProfile.State(target.get().getElev().getSetpoint(), 0)
-        : new TrapezoidProfile.State(target.get().getPivot().getSetpoint(), 0);
+    goal = new TrapezoidProfile.State(target.get().getSetpoint(), 0);
     var profile = new TrapezoidProfile(constraints, goal, current);
 
     if (profile.isFinished(0))
@@ -90,16 +88,11 @@ public class MotionProfile extends SubsystemBase {
   public Command moveMotorToSetpoint(Supplier<ElevatorPivotMap.SetPoint> target) {
     return new FunctionalCommand(
         () -> { // init
-          tempTarget = () -> target.get().getElev();
           updateCurrentPosition();
           calculateProfile(target);
         },
 
         () -> { // execute
-          // System.out.println(testMotor.getEncoder().getPosition() + " and " +
-          // testMotor.getEncoder().getPosition() * (360.0/(42 *
-          // MotionProfileMap.GEAR_RATIO))); //Encoder value AND Encoder Value *(degrees
-          // per encoder tick)
           motor.set(controller.calculate(altEncoder != null ? altEncoder.getPosition() : motor.getEncoder().getPosition(), current.position));
         },
 
@@ -110,9 +103,7 @@ public class MotionProfile extends SubsystemBase {
         () -> { // isFinished
           boolean profileFinished = calculateProfile(target);
           boolean pidFinished = controller.atSetpoint();
-          // System.out.println("Profile Finished: " + profileFinished + "\nPID at
-          // Setpoint: " + pidFinished);
-          System.out.println(profileFinished && pidFinished);
+          // System.out.println(profileFinished && pidFinished);
           return profileFinished && pidFinished;
         },
         this);
@@ -125,13 +116,11 @@ public class MotionProfile extends SubsystemBase {
   @Override
   public void periodic() {
     SmartDashboard.putNumber(profileName + "Resolution", motor.getEncoder().getCountsPerRevolution());
-    SmartDashboard.putNumber(profileName + "Total Position", tempTarget.get().getSetpoint() - motor.getEncoder().getPosition());
     SmartDashboard.putNumber(profileName + "Velocity", motor.getEncoder().getVelocity());
     SmartDashboard.putNumber(profileName + "Velocity Setpoint", current.velocity);
     SmartDashboard.putNumber(profileName + "Position", motor.getEncoder().getPosition());
     SmartDashboard.putNumber(profileName + "Velocity Error", (current.velocity - motor.getEncoder().getVelocity()));
     SmartDashboard.putNumber(profileName + "Position Error", (current.position - motor.getEncoder().getPosition()));
-    SmartDashboard.putNumber(profileName + "Total Position Setpoint", tempTarget.get().getSetpoint());
     SmartDashboard.putNumber(profileName + "Position Setpoint", current.position);
   }
 

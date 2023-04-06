@@ -6,6 +6,7 @@ import frc.robot.RobotMap;
 import frc.robot.subsystems.Swerve;
 import frc.robot.util.controllers.ButtonMap.Axis;
 import frc.robot.util.controllers.ButtonMap.Button;
+import frc.robot.util.controllers.ButtonMap.Dpad;
 import frc.robot.util.controllers.ButtonMap.Trigger;
 import frc.robot.util.controllers.GameController;
 
@@ -26,23 +27,33 @@ public class TwoJoyStickTesterMap extends TesterMap {
   }
 
   @Override
-  public JoystickButton getTopButton() {
+  public JoystickButton getStowButton() {
     return controller.getButton(Button.BUTTON_B);
   }
 
   @Override
-  public JoystickButton getHalfButton() {
+  public JoystickButton getGroundButton() {
     return controller.getButton(Button.BUTTON_A);
   }
 
   @Override
-  public JoystickButton getZeroButton() {
+  public JoystickButton getMiddleButton() {
     return controller.getButton(Button.BUTTON_X);
   }
 
   @Override
-  public double getOnButton() {
-    return controller.getTrigger(Trigger.BUTTON_RIGHT_TRIGGER);
+  public JoystickButton getTopButton() {
+    return controller.getButton(Button.BUTTON_Y);
+  }
+  
+  @Override
+  public JoystickButton getSingleButton() {
+    return controller.getDpad(Dpad.DPAD_DOWN);
+  }
+  
+  @Override
+  public JoystickButton getDoubleButton() {
+    return controller.getDpad(Dpad.DPAD_UP);
   }
   
   @Override

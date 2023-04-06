@@ -4,24 +4,18 @@ import java.util.function.Supplier;
 
 import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.CANSparkMax;
-import com.revrobotics.RelativeEncoder;
-import com.revrobotics.CANSparkMax.ControlType;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.revrobotics.SparkMaxLimitSwitch;
 
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 
 import com.revrobotics.SparkMaxAbsoluteEncoder.Type;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RobotMap.ElevatorPivotMap;
-import frc.robot.RobotMap.MotionProfileMap;
-import frc.robot.subsystems.MotionProfile;
+import frc.robot.RobotMap.ElevatorPivotMap.PivotPoint;
 
 public class ElevatorArm extends SubsystemBase {
     private static ElevatorArm instance;
@@ -86,7 +80,7 @@ public class ElevatorArm extends SubsystemBase {
         elevatorMotor.set(input);
     }
 
-    public Command moveElevator(Supplier<ElevatorPivotMap.SetPoint>setpoint) {
+    public Command moveElevator(Supplier<ElevatorPivotMap.SetPoint> setpoint) {
         return elevatorProfile.moveMotorToSetpoint(setpoint);
     }
     
@@ -103,10 +97,11 @@ public class ElevatorArm extends SubsystemBase {
         movePivot(pivotInput);
     }
 
-    public Command moveElevatorAndPivot(Supplier<ElevatorPivotMap.SetPoint> setpoint) {
+    public Command moveElevatorAndPivot(Supplier<ElevatorPivotMap.ElevPivotPoint> setpoint) {
         return new SequentialCommandGroup(
-            moveElevator(setpoint),
-            movePivot(setpoint)
+            movePivot(() -> PivotPoint.SAFE),
+            moveElevator(() -> setpoint.get().getElev()),
+            movePivot(() -> setpoint.get().getPivot())
         );
     }
 

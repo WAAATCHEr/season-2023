@@ -192,30 +192,39 @@ public class RobotMap {
     public static final double PIVOT_TOLERANCE = 0.5;
     
     // Setpoints
-    public enum SetPoint {
-      ZERO(ElevPoint.STOW, PivotPoint.STOW),
-      TOP(ElevPoint.TOP, PivotPoint.TOP);
+    public interface SetPoint {
+      public double getSetpoint();
+    }
+
+    public enum ElevPivotPoint {
+      STOW(ElevPoint.STOW, PivotPoint.STOW),
+      GROUND(ElevPoint.GROUND, PivotPoint.GROUND),
+      MIDDLE(ElevPoint.MIDDLE, PivotPoint.MIDDLE),
+      TOP(ElevPoint.TOP, PivotPoint.TOP),
+      SINGLE(ElevPoint.SINGLE, PivotPoint.SINGLE),
+      DOUBLE(ElevPoint.DOUBLE, PivotPoint.DOUBLE);
 
       private ElevPoint elev;
       private PivotPoint pivot;
 
-      SetPoint(ElevPoint elev, PivotPoint pivot) { 
+      ElevPivotPoint(ElevPoint elev, PivotPoint pivot) { 
         this.elev = elev;
         this.pivot = pivot;
       }
 
-      public ElevPoint getElev() {
-        return this.elev;
-      }
+      public ElevPoint getElev() { return elev; }
+      
+      public PivotPoint getPivot() { return pivot; }
 
-      public PivotPoint getPivot() {
-        return this.pivot;
-      }
     }
 
-    public enum ElevPoint {
+    public enum ElevPoint implements SetPoint {
       STOW(0),
-      TOP(50);
+      GROUND(20),
+      MIDDLE(30),
+      TOP(50),
+      SINGLE(18),
+      DOUBLE(50);
 
       private double encoderValue;
 
@@ -223,14 +232,20 @@ public class RobotMap {
         this.encoderValue = encoderValue;
       }
 
+      @Override
       public double getSetpoint() {
         return this.encoderValue;
       }
     }
 
-    public enum PivotPoint {
+    public enum PivotPoint implements SetPoint {
       STOW(0),
-      TOP(-1);
+      GROUND(0.6),
+      MIDDLE(0.3),
+      TOP(0.2),
+      SINGLE(0.1),
+      DOUBLE(0.15),
+      SAFE(0.22);
 
       private double encoderValue;
 
@@ -238,6 +253,7 @@ public class RobotMap {
         this.encoderValue = encoderValue;
       }
 
+      @Override
       public double getSetpoint() {
         return this.encoderValue;
       }

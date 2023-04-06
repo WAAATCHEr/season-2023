@@ -6,12 +6,11 @@ import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.Config;
 import frc.robot.subsystems.ElevatorArm;
-import frc.robot.subsystems.MotionProfile;
 import frc.robot.subsystems.Swerve;
 import frc.robot.util.controllers.CommandMap;
 import frc.robot.util.controllers.GameController;
 import frc.robot.RobotMap.ElevatorPivotMap;
-import frc.robot.RobotMap.MotionProfileMap.TestSetpoint;
+import frc.robot.RobotMap.ElevatorPivotMap.ElevPivotPoint;
 
 public abstract class TesterMap extends CommandMap {
 
@@ -20,14 +19,18 @@ public abstract class TesterMap extends CommandMap {
   }
 
   abstract ChassisSpeeds getChassisSpeeds();
+  
+  abstract JoystickButton getStowButton();
 
+  abstract JoystickButton getGroundButton();
+
+  abstract JoystickButton getMiddleButton();
+  
   abstract JoystickButton getTopButton();
 
-  abstract JoystickButton getHalfButton();
+  abstract JoystickButton getSingleButton();
 
-  abstract JoystickButton getZeroButton();
-
-  abstract double getOnButton();
+  abstract JoystickButton getDoubleButton();
 
   abstract double getLeftYAxis();
 
@@ -44,8 +47,12 @@ public abstract class TesterMap extends CommandMap {
       new RepeatCommand(
           new RunCommand(() -> elevatorArm.moveElevatorAndPivot(-getLeftYAxis() * 0.5, -getRightYAxis() * 0.35),
                 elevatorArm)));
-    getTopButton().onTrue(elevatorArm.moveElevatorAndPivot(() -> ElevatorPivotMap.SetPoint.TOP));
-    getZeroButton().onTrue(elevatorArm.moveElevatorAndPivot(() -> ElevatorPivotMap.SetPoint.ZERO));
+    getStowButton().onTrue(elevatorArm.moveElevatorAndPivot(() -> ElevPivotPoint.STOW));
+    getGroundButton().onTrue(elevatorArm.moveElevatorAndPivot(() -> ElevPivotPoint.GROUND));
+    getMiddleButton().onTrue(elevatorArm.moveElevatorAndPivot(() -> ElevPivotPoint.MIDDLE));
+    getTopButton().onTrue(elevatorArm.moveElevatorAndPivot(() -> ElevPivotPoint.TOP));
+    getSingleButton().onTrue(elevatorArm.moveElevatorAndPivot(() -> ElevPivotPoint.SINGLE));
+    getDoubleButton().onTrue(elevatorArm.moveElevatorAndPivot(() -> ElevPivotPoint.DOUBLE));
   }
   
   @Override

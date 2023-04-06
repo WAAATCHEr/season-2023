@@ -22,9 +22,9 @@ public class BumperStart extends SequentialCommandGroup {
         var elevatorArm = ElevatorArm.getInstance();
         var motorIntake = MotorIntake.getInstance();
 
-        eventMap.put("Raise", elevatorArm.moveElevatorAndPivot(() -> ElevatorPivotMap.SetPoint.TOP));
+        eventMap.put("Raise", elevatorArm.moveElevatorAndPivot(() -> ElevatorPivotMap.ElevPivotPoint.TOP));
         eventMap.put("Score", motorIntake.autoMoveIntake(false));
-        eventMap.put("Retract", elevatorArm.moveElevatorAndPivot(() -> ElevatorPivotMap.SetPoint.ZERO));
+        eventMap.put("Retract", elevatorArm.moveElevatorAndPivot(() -> ElevatorPivotMap.ElevPivotPoint.STOW));
 
         addCommands(
             swerve.followTrajectoryCommand(path, eventMap, true)
