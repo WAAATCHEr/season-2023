@@ -26,7 +26,7 @@ public interface AutoModeList {
     DO_NOTHING(new DoNothing()),
     BARRIER_START(new BarrierStart("BLUE")),
     MID_START(new MidStart("BLUE")),
-    BUMPER_START(new BumperStart(""))
+    BUMPER_START(new BumperStart(""));
 
     private final SequentialCommandGroup autoCommand;
 
