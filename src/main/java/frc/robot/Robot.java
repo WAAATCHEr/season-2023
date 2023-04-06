@@ -31,8 +31,8 @@ public class Robot extends TimedRobot {
   @Override
   public void robotInit() {
     ctreConfigs = new CTREConfigs();
-    compressor = new Compressor(1, PneumaticsModuleType.REVPH);
-    compressor.enableDigital();
+    // compressor = new Compressor(1, PneumaticsModuleType.REVPH);
+    // compressor.enableDigital();
     var autoModeSelector = AutoModeSelector.getInstance();
 
     var autoTab = Shuffleboard.getTab("Autonomous");

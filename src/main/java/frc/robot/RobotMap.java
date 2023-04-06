@@ -2,8 +2,11 @@ package frc.robot;
 
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.util.Units;
 import frc.robot.util.COTSFalconSwerveConstants;
@@ -155,12 +158,13 @@ public class RobotMap {
   }
 
   public static class MotorIntakeMap {
-    public static final int MOTOR_ID = 2;
+    public static final int MOTOR_ID = 4;
   }
 
   public static class ElevatorPivotMap {
     // Motor IDs
     public static final int ELEVATOR_MOTOR_ID = 1;
+    public static final int ELEVAOTR_MOTOR2_ID = 2;
     public static final int PIVOT_MOTOR_ID = 3;
 
     // L + Gear Ratio
@@ -168,19 +172,29 @@ public class RobotMap {
     public static final double PIVOT_RATIO = 562.5;
 
     // Profile Constants
-    public static final double MAX_VELOCITY = 4;
-    public static final double MAX_ACCELERATION = 1;
-    public static final double kDt = 0.02;
+    public static final double ELEVATOR_MAX_VELOCITY = 10;
+    public static final double ELEVATOR_MAX_ACCELERATION = 3;
+    public static final double ELEVATOR_kDt = 0.02;
+
+    public static final double PIVOT_MAX_VELOCITY = 10;
+    public static final double PIVOT_MAX_ACCELERATION = 3;
+    public static final double PIVOT_kDt = 0.02;
 
     // PID
-    public static final double kP = 0.051;
-    public static final double kI = 0.0000;
-    public static final double kD = 0.0000;
-    public static final double TOLERANCE = 0.5;
+    public static final double ELEVATOR_kP = 0.051;
+    public static final double ELEVATOR_kI = 0.0000;
+    public static final double ELEVATOR_kD = 0.0000;
+    public static final double ELEVATOR_TOLERANCE = 0.5;
+
+    public static final double PIVOT_kP = 0.051;
+    public static final double PIVOT_kI = 0.0000;
+    public static final double PIVOT_kD = 0.0000;
+    public static final double PIVOT_TOLERANCE = 0.5;
     
     // Setpoints
     public enum SetPoint {
-      ZERO(ElevPoint.STOW, PivotPoint.STOW);
+      ZERO(ElevPoint.STOW, PivotPoint.STOW),
+      TOP(ElevPoint.TOP, PivotPoint.TOP);
 
       private ElevPoint elev;
       private PivotPoint pivot;
@@ -200,7 +214,8 @@ public class RobotMap {
     }
 
     public enum ElevPoint {
-      STOW(0);
+      STOW(0),
+      TOP(50);
 
       private double encoderValue;
 
@@ -214,7 +229,8 @@ public class RobotMap {
     }
 
     public enum PivotPoint {
-      STOW(0);
+      STOW(0),
+      TOP(-1);
 
       private double encoderValue;
 
@@ -292,5 +308,14 @@ public class RobotMap {
     }
   }
   
-  
+  public static class LimelightMap {
+    public static final Pose3d ROBOT_SPACE_POSE = new Pose3d(
+      new Translation3d(0.5, 0.5, 0.5),
+      new Rotation3d(0, 0, 0)
+    );
+
+    public static final double OFFSET_FROM_TAG = 0.8; //In meters
+
+  }
+
 }

@@ -9,15 +9,19 @@ import com.revrobotics.CANSparkMax.ControlType;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.revrobotics.SparkMaxLimitSwitch;
 
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+
 import com.revrobotics.SparkMaxAbsoluteEncoder.Type;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RobotMap.ElevatorPivotMap;
 import frc.robot.RobotMap.MotionProfileMap;
+import frc.robot.subsystems.MotionProfile;
 
 public class ElevatorArm extends SubsystemBase {
     private static ElevatorArm instance;
@@ -30,23 +34,26 @@ public class ElevatorArm extends SubsystemBase {
     }
 
     // Motor Controllers
-    private CANSparkMax elevatorMotor, pivotMotor;
+    private CANSparkMax elevatorMotor, elevatorMotor2, pivotMotor;
 
     // Sensors
     private AbsoluteEncoder pivotEncoder;
     private SparkMaxLimitSwitch forwardLimit, reverseLimit;
 
-    // Trapezoid Profile
-    private TrapezoidProfile.Constraints constraints = new TrapezoidProfile.Constraints(MotionProfileMap.MAX_VELOCITY, MotionProfileMap.MAX_ACCELERATION);
-    private TrapezoidProfile.State goal = new TrapezoidProfile.State(0, 0);
-    private TrapezoidProfile.State current = new TrapezoidProfile.State(0, 0);
+    //Motion Profiles
+    private MotionProfile elevatorProfile, pivotProfile;
 
     private ElevatorArm() {
 
         elevatorMotor = new CANSparkMax(ElevatorPivotMap.ELEVATOR_MOTOR_ID, MotorType.kBrushless);
+        elevatorMotor = new CANSparkMax(ElevatorPivotMap.ELEVAOTR_MOTOR2_ID, MotorType.kBrushless);
         pivotMotor = new CANSparkMax(ElevatorPivotMap.PIVOT_MOTOR_ID, MotorType.kBrushless);
 
+        elevatorMotor.setInverted(true);
+        elevatorMotor2.follow(elevatorMotor, true);
+
         elevatorMotor.restoreFactoryDefaults();
+        elevatorMotor2.restoreFactoryDefaults();
         pivotMotor.restoreFactoryDefaults();
 
         pivotEncoder = pivotMotor.getAbsoluteEncoder(Type.kDutyCycle);
@@ -56,7 +63,20 @@ public class ElevatorArm extends SubsystemBase {
         reverseLimit = elevatorMotor.getReverseLimitSwitch(SparkMaxLimitSwitch.Type.kNormallyOpen);
         reverseLimit.enableLimitSwitch(true);
 
+        elevatorProfile = new MotionProfile("Elevator", elevatorMotor, true, ElevatorPivotMap.ELEVATOR_MAX_VELOCITY,
+                ElevatorPivotMap.ELEVATOR_MAX_ACCELERATION,
+                new PIDController(ElevatorPivotMap.ELEVATOR_kP, ElevatorPivotMap.ELEVATOR_kI,
+                        ElevatorPivotMap.ELEVATOR_kD),
+                ElevatorPivotMap.ELEVATOR_TOLERANCE, ElevatorPivotMap.ELEVATOR_kDt);
+
+        pivotProfile = new MotionProfile("Pivot", pivotMotor, false, ElevatorPivotMap.PIVOT_MAX_VELOCITY,
+                ElevatorPivotMap.PIVOT_MAX_ACCELERATION,
+                new PIDController(ElevatorPivotMap.PIVOT_kP, ElevatorPivotMap.PIVOT_kI,
+                        ElevatorPivotMap.PIVOT_kD),
+                ElevatorPivotMap.PIVOT_TOLERANCE, ElevatorPivotMap.PIVOT_kDt);
+
         elevatorMotor.burnFlash();
+        elevatorMotor2.burnFlash();
         pivotMotor.burnFlash();
 
     }
@@ -66,13 +86,28 @@ public class ElevatorArm extends SubsystemBase {
         elevatorMotor.set(input);
     }
 
+    public Command moveElevator(Supplier<ElevatorPivotMap.SetPoint>setpoint) {
+        return elevatorProfile.moveMotorToSetpoint(setpoint);
+    }
+    
     public void movePivot(double input) {
         pivotMotor.set(input);
+    }
+
+    public Command movePivot(Supplier<ElevatorPivotMap.SetPoint> setpoint){
+        return pivotProfile.moveMotorToSetpoint(setpoint);
     }
 
     public void moveElevatorAndPivot(double elevatorInput, double pivotInput) {
         moveElevator(elevatorInput);
         movePivot(pivotInput);
+    }
+
+    public Command moveElevatorAndPivot(Supplier<ElevatorPivotMap.SetPoint> setpoint) {
+        return new SequentialCommandGroup(
+            moveElevator(setpoint),
+            movePivot(setpoint)
+        );
     }
 
     public boolean getTopSwitch() {
