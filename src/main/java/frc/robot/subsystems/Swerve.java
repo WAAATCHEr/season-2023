@@ -17,6 +17,7 @@ import com.pathplanner.lib.commands.PPSwerveControllerCommand;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -30,6 +31,7 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.RepeatCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
@@ -52,10 +54,13 @@ public class Swerve extends SubsystemBase {
   private SwerveModule[] modules;
   private WPI_Pigeon2 gyro;
 
+  private Vision limelight;
+
   // Camera
   PIDController speedController = new PIDController(0.0001, 0, 0);
 
   private Swerve() {
+    limelight = Vision.getInstance();
     gyro = new WPI_Pigeon2(DriveMap.PIGEON_ID);
     gyro.configFactoryDefault();
     zeroGyro();
@@ -216,7 +221,7 @@ public class Swerve extends SubsystemBase {
     return new SequentialCommandGroup(
         new InstantCommand(
             () -> {
-              // Reset odometry for the first path you rubn during auto
+              // Reset odometry for the first path you run during auto
               if (isFirstPath) {
                 odometry.resetPosition(
                     getYaw(), getModulePositions(), traj.getInitialHolonomicPose());
@@ -231,6 +236,28 @@ public class Swerve extends SubsystemBase {
       new PathPoint(startPoint, getYaw()), 
       new PathPoint(endPoint, getYaw()));
   } 
+
+  public Command followTrajectoryCommand(Supplier<PathPlannerTrajectory> pathSupplier,
+      boolean isFirstPath) {
+    return followTrajectoryCommand(pathSupplier.get(), isFirstPath);
+  }
+
+  public SequentialCommandGroup alignWithGridCommand(Vision.Position pos) {
+    return new SequentialCommandGroup(
+        new InstantCommand(
+            () -> odometry.resetPosition(getYaw(), getModulePositions(), limelight.getCurrentPose().toPose2d())),
+        followTrajectoryCommand(() -> {
+          Pose2d currentPos = odometry.getPoseMeters();
+          Pose2d offset = limelight.getTargetTranslation(pos);
+          return PathPlanner.generatePath(
+              new PathConstraints(2, 1),
+              new PathPoint(new Translation2d(currentPos.getX() + offset.getX(), 0), Rotation2d.fromDegrees(0),
+                  currentPos.getRotation().plus(offset.getRotation())), // position, heading(direction of travel),
+                                                                        // holonomic rotation
+              new PathPoint(new Translation2d(5.0, currentPos.getY() + offset.getY()), getYaw(),
+                  Rotation2d.fromDegrees(0))); // position, heading(direction of travel), holonomic rotation
+        }, false));
+  }
 
   public Command chargingStationCommand() {
     PIDController pid = new PIDController(ChargingStationMap.kP, ChargingStationMap.kI, ChargingStationMap.kD);

@@ -2,8 +2,11 @@ package frc.robot;
 
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.util.Units;
 import frc.robot.util.COTSFalconSwerveConstants;
@@ -305,5 +308,14 @@ public class RobotMap {
     }
   }
   
-  
+  public static class LimelightMap {
+    public static final Pose3d ROBOT_SPACE_POSE = new Pose3d(
+      new Translation3d(0.5, 0.5, 0.5),
+      new Rotation3d(0, 0, 0)
+    );
+
+    public static final double OFFSET_FROM_TAG = 0.8; //In meters
+
+  }
+
 }
