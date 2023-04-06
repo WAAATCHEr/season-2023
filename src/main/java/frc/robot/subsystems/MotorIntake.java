@@ -1,6 +1,7 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
@@ -39,12 +40,19 @@ public class MotorIntake extends SubsystemBase {
         }
     }
     
-    public void autoMoveIntake(boolean isIntake) {
-        if (isIntake) {
-            intakeMotor.set(-MOTOR_SPEED_FAST);
-        } else if (!isIntake) {
-            intakeMotor.set(MOTOR_SPEED_SLOW);
-        }
+    public StartEndCommand autoMoveIntake(boolean isIntake) {
+        return new StartEndCommand(
+                () -> {
+                    if (isIntake)
+                        intakeMotor.set(MOTOR_SPEED_FAST);
+                    else if (!isIntake)
+                        intakeMotor.set(-MOTOR_SPEED_SLOW);
+                },
+                () -> {
+                    intakeMotor.set(0);
+                },
+                this
+        );
     }
     
 }
