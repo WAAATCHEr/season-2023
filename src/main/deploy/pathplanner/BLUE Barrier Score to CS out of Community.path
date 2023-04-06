@@ -17,12 +17,13 @@
       "isStopPoint": false,
       "stopEvent": {
         "names": [
+          "Raise",
           "Score",
           "Retract"
         ],
         "executionBehavior": "sequential",
-        "waitBehavior": "none",
-        "waitTime": 0
+        "waitBehavior": "deadline",
+        "waitTime": 4.0
       }
     },
     {
@@ -63,7 +64,7 @@
         "x": 4.604298499288203,
         "y": 2.7
       },
-      "holonomicAngle": 0,
+      "holonomicAngle": 180.0,
       "isReversal": false,
       "velOverride": null,
       "isLocked": false,
@@ -85,7 +86,7 @@
         "y": 2.6999999999999886
       },
       "nextControl": null,
-      "holonomicAngle": 0,
+      "holonomicAngle": 180.0,
       "isReversal": false,
       "velOverride": null,
       "isLocked": false,

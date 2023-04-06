@@ -5,6 +5,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
+import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.SparkMaxPIDController;
 import com.revrobotics.CANSparkMax.ControlType;
@@ -29,6 +30,9 @@ public class MotionProfile extends SubsystemBase {
   // Motor Controllers
   private CANSparkMax motor;
 
+  // Alternate Encoders
+  private AbsoluteEncoder altEncoder;
+
   // Booleans
   private boolean isElevator;
 
@@ -48,6 +52,21 @@ public class MotionProfile extends SubsystemBase {
 
     this.profileName = profileName;
     this.motor = motor;
+    this.isElevator = isElevator;
+    this.kDt = kDt;
+    constraints = new TrapezoidProfile.Constraints(maxVelocity, maxAcceleration);
+
+    controller = pid;
+    controller.setTolerance(tolerance);
+
+  }
+
+  public MotionProfile(String profileName, CANSparkMax motor, AbsoluteEncoder encoder, boolean isElevator, double maxVelocity, double maxAcceleration,
+      PIDController pid, double tolerance, double kDt) {
+
+    this.profileName = profileName;
+    this.motor = motor;
+    this.altEncoder = encoder;
     this.isElevator = isElevator;
     this.kDt = kDt;
     constraints = new TrapezoidProfile.Constraints(maxVelocity, maxAcceleration);
@@ -81,7 +100,7 @@ public class MotionProfile extends SubsystemBase {
           // testMotor.getEncoder().getPosition() * (360.0/(42 *
           // MotionProfileMap.GEAR_RATIO))); //Encoder value AND Encoder Value *(degrees
           // per encoder tick)
-          motor.set(controller.calculate(motor.getEncoder().getPosition(), current.position));
+          motor.set(controller.calculate(altEncoder != null ? altEncoder.getPosition() : motor.getEncoder().getPosition(), current.position));
         },
 
         (interrupted) -> {

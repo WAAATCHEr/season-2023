@@ -17,12 +17,13 @@
       "isStopPoint": false,
       "stopEvent": {
         "names": [
+          "Raise",
           "Score",
           "Retract"
         ],
         "executionBehavior": "sequential",
-        "waitBehavior": "none",
-        "waitTime": 0
+        "waitBehavior": "deadline",
+        "waitTime": 4.0
       }
     },
     {
