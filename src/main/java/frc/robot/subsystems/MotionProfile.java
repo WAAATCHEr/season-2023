@@ -1,30 +1,21 @@
 package frc.robot.subsystems;
 
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
-
-import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
 import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.CANSparkMax;
-import com.revrobotics.SparkMaxPIDController;
-import com.revrobotics.CANSparkMax.ControlType;
-import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.math.trajectory.TrapezoidProfile;
-import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.controller.SimpleMotorFeedforward;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RobotMap.ElevatorPivotMap;
-import frc.robot.RobotMap.MotionProfileMap;
 
 public class MotionProfile extends SubsystemBase {
 
-  //Profile Name
+  // Profile Name
   String profileName;
 
   // Motor Controllers
@@ -45,8 +36,8 @@ public class MotionProfile extends SubsystemBase {
   private TrapezoidProfile.State goal = new TrapezoidProfile.State(0, 0);
   private TrapezoidProfile.State current = new TrapezoidProfile.State(0, 0);
 
-  
-  public MotionProfile(String profileName, CANSparkMax motor, boolean isElevator, double maxVelocity, double maxAcceleration,
+  public MotionProfile(String profileName, CANSparkMax motor, boolean isElevator, double maxVelocity,
+      double maxAcceleration,
       PIDController pid, double tolerance, double kDt) {
 
     this.profileName = profileName;
@@ -60,7 +51,8 @@ public class MotionProfile extends SubsystemBase {
 
   }
 
-  public MotionProfile(String profileName, CANSparkMax motor, AbsoluteEncoder encoder, boolean isElevator, double maxVelocity, double maxAcceleration,
+  public MotionProfile(String profileName, CANSparkMax motor, AbsoluteEncoder encoder, boolean isElevator,
+      double maxVelocity, double maxAcceleration,
       PIDController pid, double tolerance, double kDt) {
 
     this.profileName = profileName;
@@ -93,7 +85,8 @@ public class MotionProfile extends SubsystemBase {
         },
 
         () -> { // execute
-          motor.set(controller.calculate(altEncoder != null ? altEncoder.getPosition() : motor.getEncoder().getPosition(), current.position));
+          motor.set(controller.calculate(
+              altEncoder != null ? altEncoder.getPosition() : motor.getEncoder().getPosition(), current.position));
         },
 
         (interrupted) -> {

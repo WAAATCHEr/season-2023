@@ -7,7 +7,6 @@ import frc.robot.subsystems.Swerve;
 import frc.robot.util.controllers.ButtonMap.Axis;
 import frc.robot.util.controllers.ButtonMap.Button;
 import frc.robot.util.controllers.ButtonMap.Dpad;
-import frc.robot.util.controllers.ButtonMap.Trigger;
 import frc.robot.util.controllers.GameController;
 
 public class TwoJoyStickTesterMap extends TesterMap {
@@ -18,7 +17,7 @@ public class TwoJoyStickTesterMap extends TesterMap {
 
   @Override
   public ChassisSpeeds getChassisSpeeds() {
-    var x = controller.getAxis(Axis.AXIS_LEFT_X) * RobotMap.DriveMap.MAX_VELOCITY ;
+    var x = controller.getAxis(Axis.AXIS_LEFT_X) * RobotMap.DriveMap.MAX_VELOCITY;
     var y = controller.getAxis(Axis.AXIS_LEFT_Y) * RobotMap.DriveMap.MAX_VELOCITY;
     var rot = controller.getAxis(Axis.AXIS_RIGHT_X) * RobotMap.DriveMap.MAX_ANGULAR_VELOCITY;
 
@@ -45,17 +44,17 @@ public class TwoJoyStickTesterMap extends TesterMap {
   public JoystickButton getTopButton() {
     return controller.getButton(Button.BUTTON_Y);
   }
-  
+
   @Override
   public JoystickButton getSingleButton() {
     return controller.getDpad(Dpad.DPAD_DOWN);
   }
-  
+
   @Override
   public JoystickButton getDoubleButton() {
     return controller.getDpad(Dpad.DPAD_UP);
   }
-  
+
   @Override
   public double getLeftYAxis() {
     return controller.getAxis(Axis.AXIS_LEFT_Y);

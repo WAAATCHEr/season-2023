@@ -14,6 +14,11 @@ import frc.robot.util.SwerveModuleConstants;
 
 public class RobotMap {
 
+  public static final class IntakeMap {
+    public static final double MOTOR_SPEED_FAST = 0.8;
+    public static final double MOTOR_SPEED_SLOW = 0.15;
+  }
+
   public static final class DriveMap {
     public static final int PIGEON_ID = 9;
     public static final boolean INVERT_GYRO = false; // Always ensure Gyro is CCW+ CW-
@@ -169,7 +174,7 @@ public class RobotMap {
 
     // L + Gear Ratio
     public static final int ELEVATOR_RATIO = 12;
-    public static final double PIVOT_RATIO = 562.5;
+    public static final double PIVOT_RATIO = 500;
 
     // Profile Constants
     public static final double ELEVATOR_MAX_VELOCITY = 10;
@@ -190,7 +195,7 @@ public class RobotMap {
     public static final double PIVOT_kI = 0.0000;
     public static final double PIVOT_kD = 0.0000;
     public static final double PIVOT_TOLERANCE = 0.5;
-    
+
     // Setpoints
     public interface SetPoint {
       public double getSetpoint();
@@ -207,14 +212,18 @@ public class RobotMap {
       private ElevPoint elev;
       private PivotPoint pivot;
 
-      ElevPivotPoint(ElevPoint elev, PivotPoint pivot) { 
+      ElevPivotPoint(ElevPoint elev, PivotPoint pivot) {
         this.elev = elev;
         this.pivot = pivot;
       }
 
-      public ElevPoint getElev() { return elev; }
-      
-      public PivotPoint getPivot() { return pivot; }
+      public ElevPoint getElev() {
+        return elev;
+      }
+
+      public PivotPoint getPivot() {
+        return pivot;
+      }
 
     }
 
@@ -228,7 +237,7 @@ public class RobotMap {
 
       private double encoderValue;
 
-      ElevPoint(double encoderValue) { 
+      ElevPoint(double encoderValue) {
         this.encoderValue = encoderValue;
       }
 
@@ -249,7 +258,7 @@ public class RobotMap {
 
       private double encoderValue;
 
-      PivotPoint(double encoderValue) { 
+      PivotPoint(double encoderValue) {
         this.encoderValue = encoderValue;
       }
 
@@ -266,12 +275,12 @@ public class RobotMap {
   }
 
   public static class MotionProfileMap {
-    //MOTOR IDs
+    // MOTOR IDs
     public static final int TEST_MOTOR_ID = 1;
 
     // Gear Ratio
     public static final int GEAR_RATIO = 1;
-    
+
     // Feed Forward
     // public static final double kS = 0;
     // public static final double kV = 1.5;
@@ -291,25 +300,25 @@ public class RobotMap {
     // public static final int MIN_OUTPUT = 0;
     // public static final int MAX_OUTPUT = GEAR_RATIO * 42;
     public static final double TOLERANCE = 10;
-    
+
     // Setpoints
     public enum TestSetpoint {
       ZERO(0, GEAR_RATIO),
-      HALF(125*4.5/6, GEAR_RATIO),
-      FULL(125*4.5/3, GEAR_RATIO),
-      NEGHALF(-125*4.5/6, GEAR_RATIO),
-      NEGFULL(-125*4.5/3, GEAR_RATIO);
-
+      HALF(125 * 4.5 / 6, GEAR_RATIO),
+      FULL(125 * 4.5 / 3, GEAR_RATIO),
+      NEGHALF(-125 * 4.5 / 6, GEAR_RATIO),
+      NEGFULL(-125 * 4.5 / 3, GEAR_RATIO);
 
       private double encoderValue;
       private double degrees;
       private double gearRatio;
 
       // Is the resolution of a NEO 42 ticks per rev?
-      TestSetpoint(double degrees, int gearRatio) { 
+      TestSetpoint(double degrees, int gearRatio) {
         this.degrees = degrees;
         this.gearRatio = gearRatio;
-        // (Resolution * gearRatio) / full rotation in degrees === ticks per degree with given gear ratio
+        // (Resolution * gearRatio) / full rotation in degrees === ticks per degree with
+        // given gear ratio
         this.encoderValue = this.degrees;
       }
 
@@ -323,14 +332,13 @@ public class RobotMap {
 
     }
   }
-  
+
   public static class LimelightMap {
     public static final Pose3d ROBOT_SPACE_POSE = new Pose3d(
-      new Translation3d(0.5, 0.5, 0.5),
-      new Rotation3d(0, 0, 0)
-    );
+        new Translation3d(0.5, 0.5, 0.5),
+        new Rotation3d(0, 0, 0));
 
-    public static final double OFFSET_FROM_TAG = 0.8; //In meters
+    public static final double OFFSET_FROM_TAG = 0.8; // In meters
 
   }
 
