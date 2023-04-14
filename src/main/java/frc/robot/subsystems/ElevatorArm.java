@@ -2,20 +2,16 @@ package frc.robot.subsystems;
 
 import java.util.function.Supplier;
 
-import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkMaxAlternateEncoder;
-import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.revrobotics.SparkMaxLimitSwitch;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-
-import com.revrobotics.SparkMaxAbsoluteEncoder.Type;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RobotMap.ElevatorPivotMap;
 import frc.robot.RobotMap.ElevatorPivotMap.PivotPoint;
@@ -55,7 +51,6 @@ public class ElevatorArm extends SubsystemBase {
         pivotEncoder = pivotMotor.getAlternateEncoder(SparkMaxAlternateEncoder.Type.kQuadrature, 8192);
         pivotEncoder.setInverted(true);
 
-        // forwardLimit =
         // elevatorMotor.getForwardLimitSwitch(SparkMaxLimitSwitch.Type.kNormallyOpen);
         // forwardLimit.enableLimitSwitch(true);
         reverseLimit = elevatorMotor.getReverseLimitSwitch(SparkMaxLimitSwitch.Type.kNormallyOpen);
@@ -85,13 +80,10 @@ public class ElevatorArm extends SubsystemBase {
         // elevatorTab.addBoolean("Bottom Switch", () -> getBottomSwitch());
         elevatorTab.addDouble("Pivot Encoder", () -> pivotMotor.getEncoder().getPosition());
         elevatorTab.addDouble("Elevator Encoder", () -> elevatorMotor.getEncoder().getPosition());
-
     }
 
     // Elevator Functionality
     public void moveElevator(double input) {
-        if ((getBottomSwitch() && input < 0) || (getTopSwitch() && input > 0))
-            input = 0;
         elevatorMotor.set(input);
     }
 
@@ -136,7 +128,5 @@ public class ElevatorArm extends SubsystemBase {
         if (getBottomSwitch()) {
             elevatorMotor.getEncoder().setPosition(0);
         }
-        var elevatorTab = Shuffleboard.getTab("Elevator");
-
     }
 }
