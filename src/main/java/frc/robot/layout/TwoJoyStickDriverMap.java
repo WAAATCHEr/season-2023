@@ -14,8 +14,8 @@ public class TwoJoyStickDriverMap extends DriverMap {
 
   @Override
   public ChassisSpeeds getChassisSpeeds() {
-    var x = controller.getAxis(Axis.AXIS_LEFT_X) * RobotMap.DriveMap.MAX_VELOCITY ;
-    var y = controller.getAxis(Axis.AXIS_LEFT_Y) * RobotMap.DriveMap.MAX_VELOCITY;
+    var x = Math.signum(controller.getAxis(Axis.AXIS_LEFT_X)) * Math.pow(controller.getAxis(Axis.AXIS_LEFT_X), 2) * RobotMap.DriveMap.MAX_VELOCITY;
+    var y = Math.signum(controller.getAxis(Axis.AXIS_LEFT_Y)) * Math.pow(controller.getAxis(Axis.AXIS_LEFT_Y), 2) * RobotMap.DriveMap.MAX_VELOCITY;
     var rot = controller.getAxis(Axis.AXIS_RIGHT_X) * RobotMap.DriveMap.MAX_ANGULAR_VELOCITY;
 
     var swerve = Swerve.getInstance();

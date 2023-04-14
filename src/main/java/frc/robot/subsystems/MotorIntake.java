@@ -21,7 +21,7 @@ public class MotorIntake extends SubsystemBase {
  
 
   private MotorIntake() {
-    intakeMotor = new CANSparkMax(RobotMap.MotorIntakeMap.MOTOR_ID, MotorType.kBrushless);
+    intakeMotor = new CANSparkMax(RobotMap.IntakeMap.MOTOR_ID, MotorType.kBrushless);
   }
 
   public void setSpeed(double speed) {
@@ -42,9 +42,9 @@ public class MotorIntake extends SubsystemBase {
     return new StartEndCommand(
         () -> {
           if (isIntake)
-            intakeMotor.set(IntakeMap.MOTOR_SPEED_FAST);
+            intakeMotor.set(-IntakeMap.MOTOR_SPEED_FAST);
           else if (!isIntake)
-            intakeMotor.set(-IntakeMap.MOTOR_SPEED_SLOW);
+            intakeMotor.set(IntakeMap.MOTOR_SPEED_SLOW);
         },
         () -> {
           intakeMotor.set(0);

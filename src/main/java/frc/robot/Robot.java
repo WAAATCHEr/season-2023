@@ -82,14 +82,15 @@ public class Robot extends TimedRobot {
     CommandScheduler.getInstance().cancelAll();
     Command autonomousCommand = null;
     var allianceColor = DriverStation.getAlliance();
-    if (allianceColor.equals(DriverStation.Alliance.Red)) {
-      autonomousCommand = AutoModeSelector.getInstance().getRedChooser().getSelected();
-    } else if (allianceColor.equals(DriverStation.Alliance.Blue)) {
-      autonomousCommand = AutoModeSelector.getInstance().getBlueChooser().getSelected();
-    }
 
     Shuffleboard.getTab("Autonomous").add("Auto Mode", autonomousCommand);
     Shuffleboard.getTab("Autonomous").add("Alliance", allianceColor);
+
+    autonomousCommand = (allianceColor.equals(DriverStation.Alliance.Red))
+        ? AutoModeSelector.getInstance().getRedChooser().getSelected()
+        : AutoModeSelector.getInstance().getBlueChooser().getSelected();
+
+
 
     if (autonomousCommand != null) {
       autonomousCommand.schedule();

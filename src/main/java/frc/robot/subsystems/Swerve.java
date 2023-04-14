@@ -242,19 +242,20 @@ public class Swerve extends SubsystemBase {
     return followTrajectoryCommand(pathSupplier.get(), isFirstPath);
   }
 
-  public SequentialCommandGroup alignWithGridCommand(Vision.Position pos) {
+  public SequentialCommandGroup alignWithGridCommand(Supplier<Vision.Position> pos) {
     return new SequentialCommandGroup(
         new InstantCommand(
             () -> odometry.resetPosition(getYaw(), getModulePositions(), limelight.getCurrentPose().toPose2d())),
+
         followTrajectoryCommand(() -> {
           Pose2d currentPos = odometry.getPoseMeters();
-          Pose2d offset = limelight.getTargetTranslation(pos);
+          Pose2d offset = limelight.getTargetTranslation(pos.get());
           return PathPlanner.generatePath(
               new PathConstraints(2, 1),
-              new PathPoint(new Translation2d(currentPos.getX() + offset.getX(), 0), Rotation2d.fromDegrees(0),
+              new PathPoint(new Translation2d(currentPos.getX() + offset.getX(), currentPos.getY()), Rotation2d.fromDegrees(0),
                   currentPos.getRotation().plus(offset.getRotation())), // position, heading(direction of travel),
                                                                         // holonomic rotation
-              new PathPoint(new Translation2d(5.0, currentPos.getY() + offset.getY()), getYaw(),
+              new PathPoint(new Translation2d(odometry.getPoseMeters().getX(), currentPos.getY() + offset.getY()),
                   Rotation2d.fromDegrees(0))); // position, heading(direction of travel), holonomic rotation
         }, false));
   }

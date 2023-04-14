@@ -20,8 +20,6 @@ public abstract class TesterMap extends CommandMap {
   public TesterMap(GameController controller) {
     super(controller);
   }
-
-  abstract ChassisSpeeds getChassisSpeeds();
   
   abstract JoystickButton getStowButton();
 
@@ -45,10 +43,6 @@ public abstract class TesterMap extends CommandMap {
 
   abstract double getReverseIntakeValue();
 
-  private void registerSwerve() {
-    var swerve = Swerve.getInstance();
-    swerve.setDefaultCommand(swerve.driveCommand(this::getChassisSpeeds));
-  }
 
   private void registerElevatorArm() {
     var elevatorArm = ElevatorArm.getInstance();
@@ -61,13 +55,6 @@ public abstract class TesterMap extends CommandMap {
     getGroundButton().onTrue(elevatorArm.moveElevatorAndPivot(() -> ElevatorPivotMap.ElevPivotPoint.GROUND));
     getMiddleButton().onTrue(elevatorArm.moveElevatorAndPivot(() -> ElevatorPivotMap.ElevPivotPoint.MIDDLE));
     getTopButton().onTrue(elevatorArm.moveElevatorAndPivot(() -> ElevatorPivotMap.ElevPivotPoint.TOP));
-
-    // getStowButton().onTrue(elevatorArm.movePivot(() -> ElevatorPivotMap.PivotPoint.STOW));
-    // getGroundButton().onTrue(elevatorArm.movePivot(() -> ElevatorPivotMap.PivotPoint.GROUND));
-    // getMiddleButton().onTrue(elevatorArm.movePivot(() -> ElevatorPivotMap.PivotPoint.MIDDLE));
-    // getTopButton().onTrue(elevatorArm.movePivot(() -> ElevatorPivotMap.PivotPoint.TOP));
-    // getSingleButton().onTrue(elevatorArm.moveElevatorAndPivot(() -> ElevPivotPoint.SINGLE));
-    // getDoubleButton().onTrue(elevatorArm.moveElevatorAndPivot(() -> ElevPivotPoint.DOUBLE));
     getResetPivotButton().onTrue(new InstantCommand(elevatorArm::resetPivotEncoder));
 
   }
@@ -82,8 +69,6 @@ public abstract class TesterMap extends CommandMap {
   @Override
   public void registerCommands() {
 
-    if (Config.Subsystems.SWERVE_ENABLED)
-      registerSwerve();
     if (Config.Subsystems.ELEVATOR_ARM_ENABLED){
       registerElevatorArm();
     }

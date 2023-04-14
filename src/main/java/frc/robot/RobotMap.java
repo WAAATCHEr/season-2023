@@ -14,10 +14,6 @@ import frc.robot.util.SwerveModuleConstants;
 
 public class RobotMap {
 
-  public static final class IntakeMap {
-    public static final double MOTOR_SPEED_FAST = 0.8;
-    public static final double MOTOR_SPEED_SLOW = 0.15;
-  }
 
   public static final class DriveMap {
     public static final int PIGEON_ID = 9;
@@ -162,7 +158,10 @@ public class RobotMap {
     public static final double MAX_VELOCITY = 2;
   }
 
-  public static class MotorIntakeMap {
+
+  public static final class IntakeMap {
+    public static final double MOTOR_SPEED_FAST = 0.8;
+    public static final double MOTOR_SPEED_SLOW = 0.15;
     public static final int MOTOR_ID = 4;
   }
 
