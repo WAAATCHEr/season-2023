@@ -37,7 +37,7 @@ public class ElevatorArm extends SubsystemBase {
     private RelativeEncoder pivotEncoder;
     private SparkMaxLimitSwitch forwardLimit, reverseLimit;
 
-    //Motion Profiles
+    // Motion Profiles
     private MotionProfile elevatorProfile, pivotProfile;
 
     private ElevatorArm() {
@@ -55,18 +55,21 @@ public class ElevatorArm extends SubsystemBase {
         pivotEncoder = pivotMotor.getAlternateEncoder(SparkMaxAlternateEncoder.Type.kQuadrature, 8192);
         pivotEncoder.setInverted(true);
 
-        // forwardLimit = elevatorMotor.getForwardLimitSwitch(SparkMaxLimitSwitch.Type.kNormallyOpen);
+        // forwardLimit =
+        // elevatorMotor.getForwardLimitSwitch(SparkMaxLimitSwitch.Type.kNormallyOpen);
         // forwardLimit.enableLimitSwitch(true);
         reverseLimit = elevatorMotor.getReverseLimitSwitch(SparkMaxLimitSwitch.Type.kNormallyOpen);
         reverseLimit.enableLimitSwitch(true);
 
-        elevatorProfile = new MotionProfile("Elevator", elevatorMotor, ElevatorPivotMap.ELEVATOR_RATIO, ElevatorPivotMap.ELEVATOR_MAX_VELOCITY,
+        elevatorProfile = new MotionProfile("Elevator", elevatorMotor, ElevatorPivotMap.ELEVATOR_RATIO,
+                ElevatorPivotMap.ELEVATOR_MAX_VELOCITY,
                 ElevatorPivotMap.ELEVATOR_MAX_ACCELERATION,
                 new PIDController(ElevatorPivotMap.ELEVATOR_kP, ElevatorPivotMap.ELEVATOR_kI,
                         ElevatorPivotMap.ELEVATOR_kD),
                 ElevatorPivotMap.ELEVATOR_TOLERANCE, ElevatorPivotMap.ELEVATOR_kDt);
 
-        pivotProfile = new MotionProfile("Pivot", pivotMotor, pivotEncoder, ElevatorPivotMap.PIVOT_RATIO, ElevatorPivotMap.PIVOT_MAX_VELOCITY,
+        pivotProfile = new MotionProfile("Pivot", pivotMotor, pivotEncoder, ElevatorPivotMap.PIVOT_RATIO,
+                ElevatorPivotMap.PIVOT_MAX_VELOCITY,
                 ElevatorPivotMap.PIVOT_MAX_ACCELERATION,
                 new PIDController(ElevatorPivotMap.PIVOT_kP, ElevatorPivotMap.PIVOT_kI,
                         ElevatorPivotMap.PIVOT_kD),
@@ -78,28 +81,29 @@ public class ElevatorArm extends SubsystemBase {
 
         var elevatorTab = Shuffleboard.getTab("Elevator");
 
-        //   elevatorTab.addBoolean("Top Switch", () -> getTopSwitch());
+        // elevatorTab.addBoolean("Top Switch", () -> getTopSwitch());
         // elevatorTab.addBoolean("Bottom Switch", () -> getBottomSwitch());
         elevatorTab.addDouble("Pivot Encoder", () -> pivotMotor.getEncoder().getPosition());
         elevatorTab.addDouble("Elevator Encoder", () -> elevatorMotor.getEncoder().getPosition());
-    
 
     }
 
     // Elevator Functionality
     public void moveElevator(double input) {
+        if ((getBottomSwitch() && input < 0) || (getTopSwitch() && input > 0))
+            input = 0;
         elevatorMotor.set(input);
     }
 
     public Command moveElevator(Supplier<ElevatorPivotMap.SetPoint> setpoint) {
         return elevatorProfile.moveMotorToSetpoint(setpoint);
     }
-    
+
     public void movePivot(double input) {
         pivotMotor.set(input);
     }
 
-    public Command movePivot(Supplier<ElevatorPivotMap.SetPoint> setpoint){
+    public Command movePivot(Supplier<ElevatorPivotMap.SetPoint> setpoint) {
         return pivotProfile.moveMotorToSetpoint(setpoint);
     }
 
@@ -110,10 +114,9 @@ public class ElevatorArm extends SubsystemBase {
 
     public Command moveElevatorAndPivot(Supplier<ElevatorPivotMap.ElevPivotPoint> setpoint) {
         return new SequentialCommandGroup(
-            movePivot(() -> PivotPoint.SAFE),
-            moveElevator(() -> setpoint.get().getElev()),
-            movePivot(() -> setpoint.get().getPivot())
-        );
+                movePivot(() -> PivotPoint.SAFE),
+                moveElevator(() -> setpoint.get().getElev()),
+                movePivot(() -> setpoint.get().getPivot()));
     }
 
     public boolean getTopSwitch() {
@@ -124,16 +127,16 @@ public class ElevatorArm extends SubsystemBase {
         return reverseLimit.isPressed();
     }
 
-    public void resetPivotEncoder(){
+    public void resetPivotEncoder() {
         pivotEncoder.setPosition(0);
     }
 
     @Override
     public void periodic() {
-        if(getBottomSwitch()){
+        if (getBottomSwitch()) {
             elevatorMotor.getEncoder().setPosition(0);
         }
         var elevatorTab = Shuffleboard.getTab("Elevator");
 
-       }
+    }
 }
