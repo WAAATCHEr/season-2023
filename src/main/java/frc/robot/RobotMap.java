@@ -173,28 +173,28 @@ public class RobotMap {
     public static final int PIVOT_MOTOR_ID = 3;
 
     // L + Gear Ratio
-    public static final int ELEVATOR_RATIO = 12;
+    public static final double ELEVATOR_RATIO = 12;
     public static final double PIVOT_RATIO = 500;
 
     // Profile Constants
-    public static final double ELEVATOR_MAX_VELOCITY = 10;
-    public static final double ELEVATOR_MAX_ACCELERATION = 3;
+    public static final double ELEVATOR_MAX_VELOCITY = 60;
+    public static final double ELEVATOR_MAX_ACCELERATION = 100;
     public static final double ELEVATOR_kDt = 0.02;
 
-    public static final double PIVOT_MAX_VELOCITY = 10;
-    public static final double PIVOT_MAX_ACCELERATION = 3;
+    public static final double PIVOT_MAX_VELOCITY = 26;
+    public static final double PIVOT_MAX_ACCELERATION = 30;
     public static final double PIVOT_kDt = 0.02;
 
     // PID
-    public static final double ELEVATOR_kP = 0.051;
+    public static final double ELEVATOR_kP = 0.13;
     public static final double ELEVATOR_kI = 0.0000;
     public static final double ELEVATOR_kD = 0.0000;
-    public static final double ELEVATOR_TOLERANCE = 0.5;
+    public static final double ELEVATOR_TOLERANCE = 0.3;
 
-    public static final double PIVOT_kP = 0.051;
+    public static final double PIVOT_kP = 12.0;
     public static final double PIVOT_kI = 0.0000;
     public static final double PIVOT_kD = 0.0000;
-    public static final double PIVOT_TOLERANCE = 0.5;
+    public static final double PIVOT_TOLERANCE = 0.01;
 
     // Setpoints
     public interface SetPoint {
@@ -229,9 +229,9 @@ public class RobotMap {
 
     public enum ElevPoint implements SetPoint {
       STOW(0),
-      GROUND(20),
-      MIDDLE(30),
-      TOP(50),
+      GROUND(5),
+      MIDDLE(25),
+      TOP(55),
       SINGLE(18),
       DOUBLE(50);
 
@@ -248,13 +248,13 @@ public class RobotMap {
     }
 
     public enum PivotPoint implements SetPoint {
-      STOW(0),
-      GROUND(0.6),
-      MIDDLE(0.3),
-      TOP(0.2),
-      SINGLE(0.1),
-      DOUBLE(0.15),
-      SAFE(0.22);
+      STOW(-0.0586),
+      GROUND(-0.25),
+      MIDDLE(-0.17),
+      TOP(-0.229),
+      SINGLE(-0.17),
+      DOUBLE(-0.15),
+      SAFE(-0.0586);
 
       private double encoderValue;
 

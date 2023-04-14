@@ -8,9 +8,9 @@ import frc.robot.util.controllers.Logitech.Version;
 public class Config {
   public class Subsystems {
     public static final boolean SWERVE_ENABLED = false;
-    public static final boolean INTAKE_MOTOR_ENABLED = false;
-    public static final boolean ELEVATOR_ARM_ENABLED = false;
-    public static final boolean MOTION_PROFILE_ENABLED = true;
+    public static final boolean INTAKE_MOTOR_ENABLED = true;
+    public static final boolean ELEVATOR_ARM_ENABLED = true;
+    public static final boolean MOTION_PROFILE_ENABLED = false;
   }
 
   public class Controllers {

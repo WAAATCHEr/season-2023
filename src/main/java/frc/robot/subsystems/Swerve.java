@@ -87,7 +87,7 @@ public class Swerve extends SubsystemBase {
     }
 
     // won't update for now
-    swerveTab.add("Pose", getPose());
+    // swerveTab.add("Pose", getPose());
   }
 
   public void resetModulesToAbsolute() {

@@ -4,6 +4,7 @@ import java.util.function.Supplier;
 
 import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.RelativeEncoder;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
@@ -22,10 +23,13 @@ public class MotionProfile extends SubsystemBase {
   private CANSparkMax motor;
 
   // Alternate Encoders
-  private AbsoluteEncoder altEncoder;
+  private RelativeEncoder altEncoder = null;
 
   // Booleans
   private boolean isElevator;
+
+  // Gear Ratio
+  private double gearRatio;
 
   // PID
   private PIDController controller;
@@ -36,13 +40,13 @@ public class MotionProfile extends SubsystemBase {
   private TrapezoidProfile.State goal = new TrapezoidProfile.State(0, 0);
   private TrapezoidProfile.State current = new TrapezoidProfile.State(0, 0);
 
-  public MotionProfile(String profileName, CANSparkMax motor, boolean isElevator, double maxVelocity,
+  public MotionProfile(String profileName, CANSparkMax motor, double gearRatio, double maxVelocity,
       double maxAcceleration,
       PIDController pid, double tolerance, double kDt) {
 
     this.profileName = profileName;
     this.motor = motor;
-    this.isElevator = isElevator;
+    this.gearRatio = gearRatio;
     this.kDt = kDt;
     constraints = new TrapezoidProfile.Constraints(maxVelocity, maxAcceleration);
 
@@ -51,14 +55,14 @@ public class MotionProfile extends SubsystemBase {
 
   }
 
-  public MotionProfile(String profileName, CANSparkMax motor, AbsoluteEncoder encoder, boolean isElevator,
+  public MotionProfile(String profileName, CANSparkMax motor, RelativeEncoder encoder, double gearRatio,
       double maxVelocity, double maxAcceleration,
       PIDController pid, double tolerance, double kDt) {
 
     this.profileName = profileName;
     this.motor = motor;
     this.altEncoder = encoder;
-    this.isElevator = isElevator;
+    this.gearRatio = gearRatio;
     this.kDt = kDt;
     constraints = new TrapezoidProfile.Constraints(maxVelocity, maxAcceleration);
 
@@ -82,6 +86,7 @@ public class MotionProfile extends SubsystemBase {
         () -> { // init
           updateCurrentPosition();
           calculateProfile(target);
+          
         },
 
         () -> { // execute
@@ -90,6 +95,7 @@ public class MotionProfile extends SubsystemBase {
         },
 
         (interrupted) -> {
+          System.out.println(altEncoder != null);
           motor.set(0);
         }, // end
 
@@ -103,7 +109,7 @@ public class MotionProfile extends SubsystemBase {
   }
 
   private void updateCurrentPosition() {
-    current.position = motor.getEncoder().getPosition();
+    current.position = (altEncoder != null) ? altEncoder.getPosition() : motor.getEncoder().getPosition();
   }
 
   @Override
@@ -112,6 +118,7 @@ public class MotionProfile extends SubsystemBase {
     SmartDashboard.putNumber(profileName + "Velocity", motor.getEncoder().getVelocity());
     SmartDashboard.putNumber(profileName + "Velocity Setpoint", current.velocity);
     SmartDashboard.putNumber(profileName + "Position", motor.getEncoder().getPosition());
+    if( altEncoder != null) SmartDashboard.putNumber(profileName + "AltPosition", altEncoder.getPosition());
     SmartDashboard.putNumber(profileName + "Velocity Error", (current.velocity - motor.getEncoder().getVelocity()));
     SmartDashboard.putNumber(profileName + "Position Error", (current.position - motor.getEncoder().getPosition()));
     SmartDashboard.putNumber(profileName + "Position Setpoint", current.position);

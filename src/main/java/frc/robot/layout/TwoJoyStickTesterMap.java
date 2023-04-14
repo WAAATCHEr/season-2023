@@ -7,6 +7,7 @@ import frc.robot.subsystems.Swerve;
 import frc.robot.util.controllers.ButtonMap.Axis;
 import frc.robot.util.controllers.ButtonMap.Button;
 import frc.robot.util.controllers.ButtonMap.Dpad;
+import frc.robot.util.controllers.ButtonMap.Trigger;
 import frc.robot.util.controllers.GameController;
 
 public class TwoJoyStickTesterMap extends TesterMap {
@@ -56,8 +57,23 @@ public class TwoJoyStickTesterMap extends TesterMap {
   }
 
   @Override
+  public JoystickButton getResetPivotButton(){
+    return controller.getButton(Button.BUTTON_START);
+  }
+
+  @Override
   public double getLeftYAxis() {
     return controller.getAxis(Axis.AXIS_LEFT_Y);
+  }
+
+  @Override
+  public double getForwardIntakeValue() {
+      return controller.getTrigger(Trigger.BUTTON_LEFT_TRIGGER);
+  }
+
+  @Override
+  public double getReverseIntakeValue() {
+      return controller.getTrigger(Trigger.BUTTON_RIGHT_TRIGGER);
   }
 
   @Override
