@@ -244,14 +244,16 @@ public class Swerve extends SubsystemBase {
         followTrajectoryCommand(() -> {
           Pose2d currentPos = odometry.getPoseMeters();
           Pose2d offset = limelight.getTargetTranslation(pos.get());
+          System.out.println("THROUGH THE JUNGLE " + offset);
           return PathPlanner.generatePath(
-              new PathConstraints(2, 1),
-              new PathPoint(new Translation2d(currentPos.getX() + offset.getX(), currentPos.getY()),
-                  Rotation2d.fromDegrees(0),
-                  currentPos.getRotation().plus(offset.getRotation())), // position, heading(direction of travel),
+              new PathConstraints(2, 2),
+              new PathPoint(new Translation2d(currentPos.getX(), currentPos.getY()),
+                  Rotation2d.fromDegrees(0)), // position, heading(direction of travel),
                                                                         // holonomic rotation
-              new PathPoint(new Translation2d(odometry.getPoseMeters().getX(), currentPos.getY() + offset.getY()),
-                  Rotation2d.fromDegrees(0))); // position, heading(direction of travel), holonomic rotation
+              new PathPoint(new Translation2d(currentPos.getX(), currentPos.getY() - offset.getX()),
+                  Rotation2d.fromDegrees(0), currentPos.getRotation().plus(offset.getRotation())), // position, heading(direction of travel), holonomic rotation
+              new PathPoint(new Translation2d(currentPos.getX() + offset.getY(), currentPos.getY() - offset.getX()),
+                  Rotation2d.fromDegrees(0)));
         }, false));
   }
 

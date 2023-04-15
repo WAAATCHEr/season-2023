@@ -22,10 +22,14 @@ public abstract class DriverMap extends CommandMap {
 
   abstract JoystickButton getRightConeButton();
 
+  abstract double getRightTrigger();
+
   private void registerSwerve() {
     var swerve = Swerve.getInstance();
     swerve.setDefaultCommand(swerve.driveCommand(this::getChassisSpeeds));
-    // getCubeButton().onTrue(swerve.alignWithGridCommand(() -> Vision.Position.CUBE));
+    getCubeButton().onTrue(swerve.alignWithGridCommand(() -> Vision.Position.CUBE));
+    getLeftConeButton().onTrue(swerve.alignWithGridCommand(() -> Vision.Position.LEFT_CONE));
+    getRightConeButton().onTrue(swerve.alignWithGridCommand(() -> Vision.Position.RIGHT_CONE));
   }
 
   @Override

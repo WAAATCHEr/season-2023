@@ -4,9 +4,11 @@ import java.util.function.Supplier;
 
 import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.revrobotics.SparkMaxAbsoluteEncoder;
 import com.revrobotics.SparkMaxLimitSwitch;
+import com.revrobotics.CANSparkMax.IdleMode;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -30,7 +32,7 @@ public class ElevatorArm extends SubsystemBase {
     private CANSparkMax elevatorMotor, elevatorMotor2, pivotMotor;
 
     // Sensors
-    private AbsoluteEncoder pivotEncoder;
+    private RelativeEncoder pivotEncoder;
     private SparkMaxLimitSwitch forwardLimit, reverseLimit;
 
     // Motion Profiles
@@ -48,7 +50,7 @@ public class ElevatorArm extends SubsystemBase {
         elevatorMotor.setInverted(true);
         elevatorMotor2.follow(elevatorMotor, true);
 
-        pivotEncoder = pivotMotor.getAbsoluteEncoder(SparkMaxAbsoluteEncoder.Type.kDutyCycle);
+        pivotEncoder = pivotMotor.getEncoder(SparkMax);
         pivotEncoder.setInverted(true);
 
         forwardLimit = elevatorMotor.getForwardLimitSwitch(SparkMaxLimitSwitch.Type.kNormallyOpen);
@@ -70,6 +72,7 @@ public class ElevatorArm extends SubsystemBase {
                         ElevatorPivotMap.PIVOT_kD),
                 ElevatorPivotMap.PIVOT_TOLERANCE, ElevatorPivotMap.PIVOT_kDt);
 
+        pivotMotor.setIdleMode(IdleMode.kBrake);
         elevatorMotor.burnFlash();
         elevatorMotor2.burnFlash();
         pivotMotor.burnFlash();

@@ -7,6 +7,7 @@ import com.revrobotics.CANSparkMax;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import frc.robot.RobotMap.ElevatorPivotMap;
@@ -50,6 +51,9 @@ public class MotionProfile {
     controller = pid;
     controller.setTolerance(tolerance);
 
+    Shuffleboard.getTab("Elv Setpoint").addNumber("Position", () -> motor.getEncoder().getPosition());
+    Shuffleboard.getTab("Elv Setpoint").addNumber("Setpoint", () -> current.position);
+
   }
 
   public MotionProfile(String profileName, CANSparkMax motor, AbsoluteEncoder encoder, double gearRatio,
@@ -65,6 +69,15 @@ public class MotionProfile {
 
     controller = pid;
     controller.setTolerance(tolerance);
+
+  //   SmartDashboard.putNumber(profileName + "Velocity", motor.getEncoder().getVelocity());
+  //   SmartDashboard.putNumber(profileName + "Velocity Setpoint", current.velocity);
+    Shuffleboard.getTab("Pivot Setpoint").addNumber("Position", () -> altEncoder.getPosition());
+    Shuffleboard.getTab("Pivot Setpoint").addNumber("Setpoint", () -> current.position);
+  //   if( altEncoder != null) SmartDashboard.putNumber(profileName + "AltPosition", altEncoder.getPosition());
+  //   SmartDashboard.putNumber(profileName + "Velocity Error", (current.velocity - motor.getEncoder().getVelocity()));
+  //   SmartDashboard.putNumber(profileName + "Position Error", (current.position - motor.getEncoder().getPosition()));
+  //   SmartDashboard.putNumber(profileName + "Position Setpoint", current.position);
 
   }
 

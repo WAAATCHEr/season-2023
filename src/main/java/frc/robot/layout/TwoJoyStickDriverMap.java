@@ -6,6 +6,7 @@ import frc.robot.RobotMap;
 import frc.robot.subsystems.Swerve;
 import frc.robot.util.controllers.ButtonMap.Axis;
 import frc.robot.util.controllers.ButtonMap.Button;
+import frc.robot.util.controllers.ButtonMap.Trigger;
 import frc.robot.util.controllers.GameController;
 
 public class TwoJoyStickDriverMap extends DriverMap {
@@ -16,9 +17,10 @@ public class TwoJoyStickDriverMap extends DriverMap {
 
   @Override
   public ChassisSpeeds getChassisSpeeds() {
-    var x = Math.signum(controller.getAxis(Axis.AXIS_LEFT_X)) * Math.pow(controller.getAxis(Axis.AXIS_LEFT_X), 2) * RobotMap.DriveMap.MAX_VELOCITY;
-    var y = Math.signum(controller.getAxis(Axis.AXIS_LEFT_Y)) * Math.pow(controller.getAxis(Axis.AXIS_LEFT_Y), 2) * RobotMap.DriveMap.MAX_VELOCITY;
-    var rot = controller.getAxis(Axis.AXIS_RIGHT_X) * RobotMap.DriveMap.MAX_ANGULAR_VELOCITY;
+    var multiplier = (getRightTrigger() > 0 ) ? 0.3 : 1;
+    var x = Math.pow(controller.getAxis(Axis.AXIS_LEFT_X), 1) * RobotMap.DriveMap.MAX_VELOCITY * multiplier;
+    var y = Math.pow(controller.getAxis(Axis.AXIS_LEFT_Y), 1) * RobotMap.DriveMap.MAX_VELOCITY * multiplier;
+    var rot = controller.getAxis(Axis.AXIS_RIGHT_X) * RobotMap.DriveMap.MAX_ANGULAR_VELOCITY * 0.7 * multiplier;
 
     var swerve = Swerve.getInstance();
     return ChassisSpeeds.fromFieldRelativeSpeeds(-y, -x, -rot, swerve.getYaw());
@@ -26,17 +28,22 @@ public class TwoJoyStickDriverMap extends DriverMap {
 
   @Override
   public JoystickButton getLeftConeButton(){
-    return controller.getButton(Button.BUTTON_A);
+    return controller.getButton(Button.BUTTON_X);
   }
 
   @Override
   public JoystickButton getCubeButton(){
-    return controller.getButton(Button.BUTTON_B);
+    return controller.getButton(Button.BUTTON_Y);
   }
 
   @Override
   public JoystickButton getRightConeButton(){
-    return controller.getButton(Button.BUTTON_X);
+    return controller.getButton(Button.BUTTON_B);
+  }
+
+  @Override
+  public double getRightTrigger(){
+    return controller.getAxis(Axis.AXIS_RIGHT_TRIGGER);
   }
 
   @Override

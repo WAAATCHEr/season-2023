@@ -28,9 +28,9 @@ public class Vision extends SubsystemBase {
     }
 
     public enum Position {
-        LEFT_CONE( new Pose2d(0.5, 1, new Rotation2d())),
-        CUBE(new Pose2d(0, 1, new Rotation2d())),
-        RIGHT_CONE(new Pose2d(-0.5, 1, new Rotation2d()));
+        LEFT_CONE( new Pose2d(0.5, 0, new Rotation2d())),
+        CUBE(new Pose2d(0, 0, new Rotation2d())),
+        RIGHT_CONE(new Pose2d(-0.5, 0, new Rotation2d()));
 
         private final Pose2d offset;
 
@@ -109,6 +109,9 @@ public class Vision extends SubsystemBase {
         if (numAprilTags > 0) {
             LimelightTarget_Fiducial targetTag = getClosestTarget(llresults.targetingResults.targets_Fiducials);
             tempOffset = targetTag.getTargetPose_RobotSpace();
+            System.out.println("SIN CITY " + tempOffset);
+            tempOffset = tempOffset.plus(LimelightMap.ROBOT_SPACE_POSE);
+            System.out.println("THATS TOO EASY " + tempOffset);
             switch (pos) {
                 case LEFT_CONE:
                     offset = addGridOffset(tempOffset, Position.LEFT_CONE.getOffset());
@@ -123,8 +126,8 @@ public class Vision extends SubsystemBase {
 
     public Pose2d addGridOffset(Pose3d originalOffset, Pose2d gridOffset) {
         return new Pose2d(
-                originalOffset.getX() + gridOffset.getX(),
-                originalOffset.getZ() + gridOffset.getY() + LimelightMap.OFFSET_FROM_TAG,
+                originalOffset.getX(),
+                originalOffset.getZ(),
                 originalOffset.getRotation().toRotation2d());
     }
     
