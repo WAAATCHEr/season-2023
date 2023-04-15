@@ -55,6 +55,7 @@ public abstract class TesterMap extends CommandMap {
     getGroundButton().onTrue(elevatorArm.moveElevatorAndPivot(() -> ElevatorPivotMap.ElevPivotPoint.GROUND));
     getMiddleButton().onTrue(elevatorArm.moveElevatorAndPivot(() -> ElevatorPivotMap.ElevPivotPoint.MIDDLE));
     getTopButton().onTrue(elevatorArm.moveElevatorAndPivot(() -> ElevatorPivotMap.ElevPivotPoint.TOP));
+    getDoubleButton().onTrue(elevatorArm.moveElevatorAndPivot(() -> ElevatorPivotMap.ElevPivotPoint.DOUBLE));
     getResetPivotButton().onTrue(new InstantCommand(elevatorArm::resetPivotEncoder));
 
   }

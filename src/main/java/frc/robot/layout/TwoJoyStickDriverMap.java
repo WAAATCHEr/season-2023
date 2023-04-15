@@ -1,9 +1,11 @@
 package frc.robot.layout;
 
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.RobotMap;
 import frc.robot.subsystems.Swerve;
 import frc.robot.util.controllers.ButtonMap.Axis;
+import frc.robot.util.controllers.ButtonMap.Button;
 import frc.robot.util.controllers.GameController;
 
 public class TwoJoyStickDriverMap extends DriverMap {
@@ -20,6 +22,21 @@ public class TwoJoyStickDriverMap extends DriverMap {
 
     var swerve = Swerve.getInstance();
     return ChassisSpeeds.fromFieldRelativeSpeeds(-y, -x, -rot, swerve.getYaw());
+  }
+
+  @Override
+  public JoystickButton getLeftConeButton(){
+    return controller.getButton(Button.BUTTON_A);
+  }
+
+  @Override
+  public JoystickButton getCubeButton(){
+    return controller.getButton(Button.BUTTON_B);
+  }
+
+  @Override
+  public JoystickButton getRightConeButton(){
+    return controller.getButton(Button.BUTTON_X);
   }
 
   @Override

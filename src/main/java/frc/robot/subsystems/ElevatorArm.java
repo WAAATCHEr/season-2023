@@ -51,8 +51,8 @@ public class ElevatorArm extends SubsystemBase {
         pivotEncoder = pivotMotor.getAlternateEncoder(SparkMaxAlternateEncoder.Type.kQuadrature, 8192);
         pivotEncoder.setInverted(true);
 
-        // elevatorMotor.getForwardLimitSwitch(SparkMaxLimitSwitch.Type.kNormallyOpen);
-        // forwardLimit.enableLimitSwitch(true);
+        forwardLimit = elevatorMotor.getForwardLimitSwitch(SparkMaxLimitSwitch.Type.kNormallyOpen);
+        forwardLimit.enableLimitSwitch(true);
         reverseLimit = elevatorMotor.getReverseLimitSwitch(SparkMaxLimitSwitch.Type.kNormallyOpen);
         reverseLimit.enableLimitSwitch(true);
 
@@ -76,8 +76,8 @@ public class ElevatorArm extends SubsystemBase {
 
         var elevatorTab = Shuffleboard.getTab("Elevator");
 
-        // elevatorTab.addBoolean("Top Switch", () -> getTopSwitch());
-        // elevatorTab.addBoolean("Bottom Switch", () -> getBottomSwitch());
+        elevatorTab.addBoolean("Top Switch", () -> getTopSwitch());
+        elevatorTab.addBoolean("Bottom Switch", () -> getBottomSwitch());
         elevatorTab.addDouble("Pivot Encoder", () -> pivotMotor.getEncoder().getPosition());
         elevatorTab.addDouble("Elevator Encoder", () -> elevatorMotor.getEncoder().getPosition());
     }
@@ -125,8 +125,8 @@ public class ElevatorArm extends SubsystemBase {
 
     @Override
     public void periodic() {
-        if (getBottomSwitch()) {
-            elevatorMotor.getEncoder().setPosition(0);
-        }
+        // if (getBottomSwitch()) {
+        //     elevatorMotor.getEncoder().setPosition(0);
+        // }
     }
 }

@@ -23,20 +23,21 @@ public class MidStart extends SequentialCommandGroup {
         var elevatorArm = ElevatorArm.getInstance();
         var motorIntake = MotorIntake.getInstance();
 
-        eventMap.put("Raise", elevatorArm.moveElevatorAndPivot(() -> ElevatorPivotMap.ElevPivotPoint.TOP));
-        eventMap.put("Score", motorIntake.autoMoveIntake(false));
-        eventMap.put("Retract", new ParallelCommandGroup(
-            elevatorArm.moveElevatorAndPivot(() -> ElevatorPivotMap.ElevPivotPoint.STOW),
-            motorIntake.autoMoveIntake(false)));
+        // eventMap.put("Raise", elevatorArm.moveElevatorAndPivot(() -> ElevatorPivotMap.ElevPivotPoint.TOP));
+        // eventMap.put("Score", motorIntake.autoMoveIntake(false));
+        // eventMap.put("Retract", new ParallelCommandGroup(
+        //     elevatorArm.moveElevatorAndPivot(() -> ElevatorPivotMap.ElevPivotPoint.STOW),
+        //     motorIntake.autoMoveIntake(false)));
 
         addCommands(
-            // elevatorArm.moveElevatorAndPivot(() -> ElevatorPivotMap.ElevPivotPoint.TOP).withTimeout(3),
-            // new ParallelCommandGroup(
-            //     elevatorArm.moveElevatorAndPivot(() -> ElevatorPivotMap.ElevPivotPoint.TOP),
-            //     motorIntake.autoMoveIntake(false).withTimeout(3)
-            //     ).withTimeout(5),
-            swerve.followTrajectoryCommand(path, eventMap, true),
-            swerve.chargingStationCommand()
+            elevatorArm.moveElevatorAndPivot(() -> ElevatorPivotMap.ElevPivotPoint.TOP),
+            motorIntake.autoMoveIntake(false).withTimeout(1),
+            new ParallelCommandGroup(
+                elevatorArm.moveElevatorAndPivot(() -> ElevatorPivotMap.ElevPivotPoint.STOW),
+                motorIntake.autoMoveIntake(false).withTimeout(3)
+                ).withTimeout(5),
+            swerve.followTrajectoryCommand(path, eventMap, true)
+            // swerve.chargingStationCommand()
         );
 
     }

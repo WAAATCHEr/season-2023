@@ -77,9 +77,9 @@ public class Vision extends SubsystemBase {
 
         var visionTab = Shuffleboard.getTab("Vision");
 
-        visionTab.add("LimelightX", currentX);
-        visionTab.add("LimelightY", currentY);
-        visionTab.add("LimelightArea", currentA);
+        // visionTab.add("LimelightX", tx);
+        // visionTab.add("LimelightY", ty);
+        // visionTab.add("LimelightArea", ta);
 
     }
 

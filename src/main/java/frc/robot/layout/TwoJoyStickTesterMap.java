@@ -45,7 +45,7 @@ public class TwoJoyStickTesterMap extends TesterMap {
 
   @Override
   public JoystickButton getDoubleButton() {
-    return controller.getDpad(Dpad.DPAD_UP);
+    return controller.getButton(Button.BUTTON_RIGHT_BUMPER);
   }
 
   @Override

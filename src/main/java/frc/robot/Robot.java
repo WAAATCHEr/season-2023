@@ -85,8 +85,8 @@ public class Robot extends TimedRobot {
         ? AutoModeSelector.getInstance().getRedChooser().getSelected()
         : AutoModeSelector.getInstance().getBlueChooser().getSelected();
 
-    Shuffleboard.getTab("Autonomous").add("Auto Mode", autonomousCommand);
-    Shuffleboard.getTab("Autonomous").add("Alliance", allianceColor);
+    // Shuffleboard.getTab("Autonomous").add("Auto Mode", autonomousCommand);
+    //Shuffleboard.getTab("Autonomous").add("Alliance", allianceColor);
 
     if (autonomousCommand != null) {
       autonomousCommand.schedule();

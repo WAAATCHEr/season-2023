@@ -180,12 +180,12 @@ public class Swerve extends SubsystemBase {
       boolean isFirstPath) {
     PathPlannerTrajectory traj = PathPlanner.loadPath(path, PPMap.MAX_VELOCITY, PPMap.MAX_ACCELERATION);
     return new FollowPathWithEvents(
-        followTrajectoryCommand(traj, isFirstPath),
+        followTrajectoryCommand(() -> traj, isFirstPath),
         traj.getMarkers(),
         eventMap);
   }
 
-  private Command followTrajectoryCommand(PathPlannerTrajectory traj,
+  private Command followTrajectoryCommand(Supplier<PathPlannerTrajectory> traj,
       boolean isFirstPath) {
 
     // Create PIDControllers for each movement (and set default values)
@@ -205,11 +205,11 @@ public class Swerve extends SubsystemBase {
               // Reset odometry for the first path you run during auto
               if (isFirstPath) {
                 odometry.resetPosition(
-                    getYaw(), getModulePositions(), traj.getInitialHolonomicPose());
+                    getYaw(), getModulePositions(), traj.get().getInitialHolonomicPose());
               }
             }),
         new PPSwerveControllerCommand(
-            traj, this::getPose, xPID, yPID, thetaPID, speeds -> drive(speeds, true), this));// KEEP IT OPEN LOOP
+         traj.get(), this::getPose, xPID, yPID, thetaPID, speeds -> drive(speeds, true), this));// KEEP IT OPEN LOOP
   }
 
   public Command followTrajectoryCommand(String path, boolean isFirstPath) {
@@ -236,11 +236,6 @@ public class Swerve extends SubsystemBase {
       new PathPoint(startPoint, getYaw()), 
       new PathPoint(endPoint, getYaw()));
   } 
-
-  public Command followTrajectoryCommand(Supplier<PathPlannerTrajectory> pathSupplier,
-      boolean isFirstPath) {
-    return followTrajectoryCommand(pathSupplier.get(), isFirstPath);
-  }
 
   public SequentialCommandGroup alignWithGridCommand(Supplier<Vision.Position> pos) {
     return new SequentialCommandGroup(
