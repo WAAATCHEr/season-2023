@@ -4,17 +4,14 @@ import java.util.function.Supplier;
 
 import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.CANSparkMax;
-import com.revrobotics.RelativeEncoder;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RobotMap.ElevatorPivotMap;
 
-public class MotionProfile  {
+public class MotionProfile {
 
   // Profile Name
   String profileName;
@@ -23,7 +20,7 @@ public class MotionProfile  {
   private CANSparkMax motor;
 
   // Alternate Encoders
-  private RelativeEncoder altEncoder = null;
+  private AbsoluteEncoder altEncoder = null;
 
   // Booleans
   private boolean isElevator;
@@ -55,7 +52,7 @@ public class MotionProfile  {
 
   }
 
-  public MotionProfile(String profileName, CANSparkMax motor, RelativeEncoder encoder, double gearRatio,
+  public MotionProfile(String profileName, CANSparkMax motor, AbsoluteEncoder encoder, double gearRatio,
       double maxVelocity, double maxAcceleration,
       PIDController pid, double tolerance, double kDt) {
 
@@ -86,7 +83,7 @@ public class MotionProfile  {
         () -> { // init
           updateCurrentPosition();
           calculateProfile(target);
-          
+
         },
 
         () -> { // execute
@@ -114,14 +111,22 @@ public class MotionProfile  {
 
   // @Override
   // public void periodic() {
-  //   SmartDashboard.putNumber(profileName + "Resolution", motor.getEncoder().getCountsPerRevolution());
-  //   SmartDashboard.putNumber(profileName + "Velocity", motor.getEncoder().getVelocity());
-  //   SmartDashboard.putNumber(profileName + "Velocity Setpoint", current.velocity);
-  //   SmartDashboard.putNumber(profileName + "Position", motor.getEncoder().getPosition());
-  //   if( altEncoder != null) SmartDashboard.putNumber(profileName + "AltPosition", altEncoder.getPosition());
-  //   SmartDashboard.putNumber(profileName + "Velocity Error", (current.velocity - motor.getEncoder().getVelocity()));
-  //   SmartDashboard.putNumber(profileName + "Position Error", (current.position - motor.getEncoder().getPosition()));
-  //   SmartDashboard.putNumber(profileName + "Position Setpoint", current.position);
+  // SmartDashboard.putNumber(profileName + "Resolution",
+  // motor.getEncoder().getCountsPerRevolution());
+  // SmartDashboard.putNumber(profileName + "Velocity",
+  // motor.getEncoder().getVelocity());
+  // SmartDashboard.putNumber(profileName + "Velocity Setpoint",
+  // current.velocity);
+  // SmartDashboard.putNumber(profileName + "Position",
+  // motor.getEncoder().getPosition());
+  // if( altEncoder != null) SmartDashboard.putNumber(profileName + "AltPosition",
+  // altEncoder.getPosition());
+  // SmartDashboard.putNumber(profileName + "Velocity Error", (current.velocity -
+  // motor.getEncoder().getVelocity()));
+  // SmartDashboard.putNumber(profileName + "Position Error", (current.position -
+  // motor.getEncoder().getPosition()));
+  // SmartDashboard.putNumber(profileName + "Position Setpoint",
+  // current.position);
   // }
 
 }

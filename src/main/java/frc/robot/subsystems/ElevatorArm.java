@@ -2,10 +2,10 @@ package frc.robot.subsystems;
 
 import java.util.function.Supplier;
 
+import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
-import com.revrobotics.RelativeEncoder;
-import com.revrobotics.SparkMaxAlternateEncoder;
+import com.revrobotics.SparkMaxAbsoluteEncoder;
 import com.revrobotics.SparkMaxLimitSwitch;
 
 import edu.wpi.first.math.controller.PIDController;
@@ -30,7 +30,7 @@ public class ElevatorArm extends SubsystemBase {
     private CANSparkMax elevatorMotor, elevatorMotor2, pivotMotor;
 
     // Sensors
-    private RelativeEncoder pivotEncoder;
+    private AbsoluteEncoder pivotEncoder;
     private SparkMaxLimitSwitch forwardLimit, reverseLimit;
 
     // Motion Profiles
@@ -48,7 +48,7 @@ public class ElevatorArm extends SubsystemBase {
         elevatorMotor.setInverted(true);
         elevatorMotor2.follow(elevatorMotor, true);
 
-        pivotEncoder = pivotMotor.getAlternateEncoder(SparkMaxAlternateEncoder.Type.kQuadrature, 8192);
+        pivotEncoder = pivotMotor.getAbsoluteEncoder(SparkMaxAbsoluteEncoder.Type.kDutyCycle);
         pivotEncoder.setInverted(true);
 
         forwardLimit = elevatorMotor.getForwardLimitSwitch(SparkMaxLimitSwitch.Type.kNormallyOpen);
@@ -120,13 +120,13 @@ public class ElevatorArm extends SubsystemBase {
     }
 
     public void resetPivotEncoder() {
-        pivotEncoder.setPosition(0);
+        pivotEncoder.setZeroOffset(pivotEncoder.getPosition());
     }
 
     @Override
     public void periodic() {
         // if (getBottomSwitch()) {
-        //     elevatorMotor.getEncoder().setPosition(0);
+        // elevatorMotor.getEncoder().setPosition(0);
         // }
     }
 }
