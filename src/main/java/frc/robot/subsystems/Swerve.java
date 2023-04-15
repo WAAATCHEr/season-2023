@@ -17,7 +17,6 @@ import com.pathplanner.lib.commands.PPSwerveControllerCommand;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -31,7 +30,7 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.PrintCommand;
+import edu.wpi.first.wpilibj2.command.ProxyCommand;
 import edu.wpi.first.wpilibj2.command.RepeatCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
@@ -208,8 +207,8 @@ public class Swerve extends SubsystemBase {
                     getYaw(), getModulePositions(), traj.get().getInitialHolonomicPose());
               }
             }),
-        new PPSwerveControllerCommand(
-         traj.get(), this::getPose, xPID, yPID, thetaPID, speeds -> drive(speeds, true), this));// KEEP IT OPEN LOOP
+        new ProxyCommand(() -> new PPSwerveControllerCommand(
+            traj.get(), this::getPose, xPID, yPID, thetaPID, speeds -> drive(speeds, true), this)));// KEEP IT OPEN LOOP
   }
 
   public Command followTrajectoryCommand(String path, boolean isFirstPath) {
@@ -232,10 +231,10 @@ public class Swerve extends SubsystemBase {
 
   private PathPlannerTrajectory generateDirectPath(Translation2d startPoint, Translation2d endPoint) {
     return PathPlanner.generatePath(
-      new PathConstraints(4, 2), 
-      new PathPoint(startPoint, getYaw()), 
-      new PathPoint(endPoint, getYaw()));
-  } 
+        new PathConstraints(4, 2),
+        new PathPoint(startPoint, getYaw()),
+        new PathPoint(endPoint, getYaw()));
+  }
 
   public SequentialCommandGroup alignWithGridCommand(Supplier<Vision.Position> pos) {
     return new SequentialCommandGroup(
@@ -247,7 +246,8 @@ public class Swerve extends SubsystemBase {
           Pose2d offset = limelight.getTargetTranslation(pos.get());
           return PathPlanner.generatePath(
               new PathConstraints(2, 1),
-              new PathPoint(new Translation2d(currentPos.getX() + offset.getX(), currentPos.getY()), Rotation2d.fromDegrees(0),
+              new PathPoint(new Translation2d(currentPos.getX() + offset.getX(), currentPos.getY()),
+                  Rotation2d.fromDegrees(0),
                   currentPos.getRotation().plus(offset.getRotation())), // position, heading(direction of travel),
                                                                         // holonomic rotation
               new PathPoint(new Translation2d(odometry.getPoseMeters().getX(), currentPos.getY() + offset.getY()),
