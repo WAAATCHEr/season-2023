@@ -208,8 +208,8 @@ public class Swerve extends SubsystemBase {
                     getYaw(), getModulePositions(), traj.get().getInitialHolonomicPose());
               }
             }),
-        new ProxyCommand(() -> new PPSwerveControllerCommand(
-            traj.get(), this::getPose, xPID, yPID, thetaPID, speeds -> drive(speeds, true), this)));// KEEP IT OPEN LOOP
+        new PPSwerveControllerCommand(
+            traj.get(), this::getPose, xPID, yPID, thetaPID, speeds -> drive(speeds, true), this)).asProxy();// KEEP IT OPEN LOOP
   }
 
   public Command followTrajectoryCommand(String path, boolean isFirstPath) {
