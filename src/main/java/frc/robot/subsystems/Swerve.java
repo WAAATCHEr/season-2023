@@ -250,12 +250,15 @@ public class Swerve extends SubsystemBase {
               new PathConstraints(2, 2),
               new PathPoint(new Translation2d(currentPos.getX(), currentPos.getY()),
                   Rotation2d.fromDegrees(0)), // position, heading(direction of travel),
-                                                                        // holonomic rotation
+                                              // holonomic rotation
               new PathPoint(new Translation2d(currentPos.getX(), currentPos.getY() - offset.getX()),
-                  Rotation2d.fromDegrees(0), currentPos.getRotation().plus(offset.getRotation())), // position, heading(direction of travel), holonomic rotation
+                  Rotation2d.fromDegrees(0), currentPos.getRotation().plus(offset.getRotation())), // position,
+                                                                                                   // heading(direction
+                                                                                                   // of travel),
+                                                                                                   // holonomic rotation
               new PathPoint(new Translation2d(currentPos.getX() + offset.getY(), currentPos.getY() - offset.getX()),
                   Rotation2d.fromDegrees(0)));
-        }, false)).unless(limelight::getHasTarget);
+        }, false)).unless(() -> !limelight.getHasTarget());
 
   }
 
