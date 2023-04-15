@@ -28,6 +28,7 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ProxyCommand;
@@ -236,7 +237,7 @@ public class Swerve extends SubsystemBase {
         new PathPoint(endPoint, getYaw()));
   }
 
-  public SequentialCommandGroup alignWithGridCommand(Supplier<Vision.Position> pos) {
+  public ConditionalCommand alignWithGridCommand(Supplier<Vision.Position> pos) {
     return new SequentialCommandGroup(
         new InstantCommand(
             () -> odometry.resetPosition(getYaw(), getModulePositions(), limelight.getCurrentPose().toPose2d())),
@@ -254,7 +255,7 @@ public class Swerve extends SubsystemBase {
                   Rotation2d.fromDegrees(0), currentPos.getRotation().plus(offset.getRotation())), // position, heading(direction of travel), holonomic rotation
               new PathPoint(new Translation2d(currentPos.getX() + offset.getY(), currentPos.getY() - offset.getX()),
                   Rotation2d.fromDegrees(0)));
-        }, false).unless(limelight::getHasTarget));
+        }, false)).unless(limelight::getHasTarget);
 
   }
 
