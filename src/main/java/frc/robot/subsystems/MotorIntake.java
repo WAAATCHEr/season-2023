@@ -1,6 +1,7 @@
 package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
@@ -18,10 +19,13 @@ public class MotorIntake extends SubsystemBase {
   }
 
   private CANSparkMax intakeMotor;
- 
 
   private MotorIntake() {
     intakeMotor = new CANSparkMax(RobotMap.IntakeMap.MOTOR_ID, MotorType.kBrushless);
+
+    intakeMotor.restoreFactoryDefaults();
+    intakeMotor.setIdleMode(IdleMode.kBrake);
+    intakeMotor.burnFlash();
   }
 
   public void setSpeed(double speed) {

@@ -254,7 +254,8 @@ public class Swerve extends SubsystemBase {
                   Rotation2d.fromDegrees(0), currentPos.getRotation().plus(offset.getRotation())), // position, heading(direction of travel), holonomic rotation
               new PathPoint(new Translation2d(currentPos.getX() + offset.getY(), currentPos.getY() - offset.getX()),
                   Rotation2d.fromDegrees(0)));
-        }, false));
+        }, false).unless(limelight::getHasTarget));
+
   }
 
   public Command chargingStationCommand() {
@@ -289,6 +290,5 @@ public class Swerve extends SubsystemBase {
     }
 
     odometry.update(getYaw(), getModulePositions());
-
   }
 }

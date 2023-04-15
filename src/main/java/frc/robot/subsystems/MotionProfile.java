@@ -2,8 +2,8 @@ package frc.robot.subsystems;
 
 import java.util.function.Supplier;
 
-import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.RelativeEncoder;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
@@ -21,7 +21,7 @@ public class MotionProfile {
   private CANSparkMax motor;
 
   // Alternate Encoders
-  private AbsoluteEncoder altEncoder = null;
+  private RelativeEncoder altEncoder = null;
 
   // Booleans
   private boolean isElevator;
@@ -56,7 +56,7 @@ public class MotionProfile {
 
   }
 
-  public MotionProfile(String profileName, CANSparkMax motor, AbsoluteEncoder encoder, double gearRatio,
+  public MotionProfile(String profileName, CANSparkMax motor, RelativeEncoder encoder, double gearRatio,
       double maxVelocity, double maxAcceleration,
       PIDController pid, double tolerance, double kDt) {
 
@@ -70,14 +70,20 @@ public class MotionProfile {
     controller = pid;
     controller.setTolerance(tolerance);
 
-  //   SmartDashboard.putNumber(profileName + "Velocity", motor.getEncoder().getVelocity());
-  //   SmartDashboard.putNumber(profileName + "Velocity Setpoint", current.velocity);
+    // SmartDashboard.putNumber(profileName + "Velocity",
+    // motor.getEncoder().getVelocity());
+    // SmartDashboard.putNumber(profileName + "Velocity Setpoint",
+    // current.velocity);
     Shuffleboard.getTab("Pivot Setpoint").addNumber("Position", () -> altEncoder.getPosition());
     Shuffleboard.getTab("Pivot Setpoint").addNumber("Setpoint", () -> current.position);
-  //   if( altEncoder != null) SmartDashboard.putNumber(profileName + "AltPosition", altEncoder.getPosition());
-  //   SmartDashboard.putNumber(profileName + "Velocity Error", (current.velocity - motor.getEncoder().getVelocity()));
-  //   SmartDashboard.putNumber(profileName + "Position Error", (current.position - motor.getEncoder().getPosition()));
-  //   SmartDashboard.putNumber(profileName + "Position Setpoint", current.position);
+    // if( altEncoder != null) SmartDashboard.putNumber(profileName + "AltPosition",
+    // altEncoder.getPosition());
+    // SmartDashboard.putNumber(profileName + "Velocity Error", (current.velocity -
+    // motor.getEncoder().getVelocity()));
+    // SmartDashboard.putNumber(profileName + "Position Error", (current.position -
+    // motor.getEncoder().getPosition()));
+    // SmartDashboard.putNumber(profileName + "Position Setpoint",
+    // current.position);
 
   }
 
