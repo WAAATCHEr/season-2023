@@ -36,8 +36,8 @@ public class MidStart extends SequentialCommandGroup {
                 elevatorArm.moveElevatorAndPivot(() -> ElevatorPivotMap.ElevPivotPoint.STOW),
                 motorIntake.autoMoveIntake(false).withTimeout(3)
                 ).withTimeout(5),
-            swerve.followTrajectoryCommand(path, eventMap, true)
-            // swerve.chargingStationCommand()
+            swerve.followTrajectoryCommand(path, eventMap, true),
+            swerve.chargingStationCommand()
         );
 
     }

@@ -30,11 +30,12 @@ public class BarrierStart extends SequentialCommandGroup {
             motorIntake.autoMoveIntake(false)));
 
         addCommands(
-            // elevatorArm.moveElevatorAndPivot(() -> ElevatorPivotMap.ElevPivotPoint.TOP).withTimeout(3),
-            // new ParallelCommandGroup(
-            //     elevatorArm.moveElevatorAndPivot(() -> ElevatorPivotMap.ElevPivotPoint.TOP),
-            //     motorIntake.autoMoveIntake(false).withTimeout(3)
-            //     ).withTimeout(5),
+            elevatorArm.moveElevatorAndPivot(() -> ElevatorPivotMap.ElevPivotPoint.TOP),
+            motorIntake.autoMoveIntake(false).withTimeout(1),
+            new ParallelCommandGroup(
+                elevatorArm.moveElevatorAndPivot(() -> ElevatorPivotMap.ElevPivotPoint.STOW),
+                motorIntake.autoMoveIntake(false).withTimeout(3)
+                ).withTimeout(5),
             swerve.followTrajectoryCommand(path, eventMap, true),
             swerve.chargingStationCommand()
         );
