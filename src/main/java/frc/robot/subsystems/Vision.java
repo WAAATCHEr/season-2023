@@ -24,9 +24,9 @@ public class Vision extends SubsystemBase {
     }
 
     public enum Position {
-        LEFT_CONE(new Pose2d(0.5, 0, new Rotation2d())),
+        LEFT_CONE(new Pose2d(0.53, 0, new Rotation2d())),
         CUBE(new Pose2d(0, 0, new Rotation2d())),
-        RIGHT_CONE(new Pose2d(-0.5, 0, new Rotation2d()));
+        RIGHT_CONE(new Pose2d(-0.55, 0, new Rotation2d()));
 
         private final Pose2d offset;
 
@@ -112,21 +112,15 @@ public class Vision extends SubsystemBase {
             System.out.println("SIN CITY " + tempOffset);
             tempOffset = tempOffset.plus(LimelightMap.ROBOT_SPACE_POSE);
             System.out.println("THATS TOO EASY " + tempOffset);
-            switch (pos) {
-                case LEFT_CONE:
-                    offset = addGridOffset(tempOffset, Position.LEFT_CONE.getOffset());
-                case CUBE:
-                    offset = addGridOffset(tempOffset, Position.CUBE.getOffset());
-                case RIGHT_CONE:
-                    offset = addGridOffset(tempOffset, Position.RIGHT_CONE.getOffset());
-            }
+            offset = addGridOffset(tempOffset, pos.getOffset());
+            
         }
         return offset;
     }
 
     public Pose2d addGridOffset(Pose3d originalOffset, Pose2d gridOffset) {
         return new Pose2d(
-                originalOffset.getX(),
+                originalOffset.getX() + gridOffset.getX(),
                 originalOffset.getZ(),
                 originalOffset.getRotation().toRotation2d());
     }
