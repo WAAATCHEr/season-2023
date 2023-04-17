@@ -16,8 +16,8 @@ public class Config {
 
   public class Controllers {
     public static final boolean DRIVER_ENABLED = true;
-    public static final boolean OPERATOR_ENABLED = false;
-    public static final boolean TESTER_ENABLED = true;
+    public static final boolean OPERATOR_ENABLED = true;
+    public static final boolean TESTER_ENABLED = false;
   }
 
   public static ButtonMap getDriverController() {

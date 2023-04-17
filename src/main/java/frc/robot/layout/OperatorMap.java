@@ -1,5 +1,7 @@
 package frc.robot.layout;
 
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.RepeatCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
@@ -8,6 +10,7 @@ import frc.robot.subsystems.ElevatorArm;
 import frc.robot.subsystems.MotorIntake;
 import frc.robot.util.controllers.CommandMap;
 import frc.robot.util.controllers.GameController;
+import frc.robot.RobotMap.ElevatorPivotMap;
 
 public abstract class OperatorMap extends CommandMap {
 
@@ -15,52 +18,46 @@ public abstract class OperatorMap extends CommandMap {
     super(controller);
   }
 
-  abstract JoystickButton getIntakeSwitchModeButton();
+  abstract JoystickButton getStowButton();
 
-  // abstract JoystickButton getStowButton();
+  abstract JoystickButton getGroundButton();
 
-  // abstract JoystickButton getSingleSubstationButton();
+  abstract JoystickButton getMiddleButton();
+  
+  abstract JoystickButton getTopButton();
 
-  // abstract JoystickButton getMiddleScoreButton();
+  abstract JoystickButton getSingleButton();
 
-  // abstract JoystickButton getTopScoreButton();
+  abstract JoystickButton getDoubleButton();
 
-  // abstract JoystickButton getGroundButton();
+  abstract JoystickButton getResetPivotButton();
 
-  // abstract JoystickButton getDefaultButton();
+  abstract JoystickButton getResetElevatorButton();
+
+  abstract double getLeftYAxis();
+
+  abstract double getRightYAxis();
 
   abstract double getForwardIntakeValue();
 
   abstract double getReverseIntakeValue();
 
-  abstract double getLeftXAxis();
-
-  abstract double getLeftYAxis();
-
-  abstract double getRightXAxis();
-
-  abstract double getRightYAxis();
-
-  abstract JoystickButton getElevatorResetButton();
-
   private void registerElevatorArm() {
-    ElevatorArm elevatorArm = ElevatorArm.getInstance();
-
+    var elevatorArm = ElevatorArm.getInstance();
     elevatorArm.setDefaultCommand(
-        new RepeatCommand(
-            new RunCommand(() -> elevatorArm.moveElevatorAndPivot(-getLeftYAxis() * 0.5, -getRightYAxis() * 0.35),
+      new RepeatCommand(
+          new RunCommand(() -> elevatorArm.moveElevatorAndPivot(-getLeftYAxis() * 0.5, -getRightYAxis() * 0.7),
                 elevatorArm)));
-    // getStowButton().onTrue(elevatorArm.moveToSetPoint(() -> SetPoint.STOW));
-    // getSingleSubstationButton().onTrue(elevatorArm.moveToSetPoint(() ->
-    // SetPoint.SINGLE_SUBSTATION));
-    // getMiddleScoreButton().onTrue(elevatorArm.moveToSetPoint(() ->
-    // SetPoint.MIDDLE));
-    // getTopScoreButton().onTrue(elevatorArm.moveToSetPoint(() -> SetPoint.TOP));
-    // getGroundButton().onTrue(elevatorArm.moveToSetPoint(() -> SetPoint.GROUND));
-    // getDefaultButton().onTrue(elevatorArm.moveToSetPoint(() ->
-    // SetPoint.DEFAULT));
-  }
 
+    getStowButton().onTrue(elevatorArm.moveElevatorAndPivot(() -> ElevatorPivotMap.ElevPivotPoint.STOW));
+    getGroundButton().onTrue(elevatorArm.moveElevatorAndPivot(() -> ElevatorPivotMap.ElevPivotPoint.GROUND));
+    getMiddleButton().onTrue(elevatorArm.moveElevatorAndPivot(() -> ElevatorPivotMap.ElevPivotPoint.MIDDLE));
+    getTopButton().onTrue(elevatorArm.moveElevatorAndPivot(() -> ElevatorPivotMap.ElevPivotPoint.TOP));
+    getDoubleButton().onTrue(elevatorArm.moveElevatorAndPivot(() -> ElevatorPivotMap.ElevPivotPoint.DOUBLE));
+    getResetPivotButton().onTrue(new InstantCommand(elevatorArm::resetPivotEncoder));
+    getResetElevatorButton().onTrue(new InstantCommand(elevatorArm::resetElevatorEncoder));
+
+  }
   private void registerMotorIntake() {
     MotorIntake motorIntake = MotorIntake.getInstance();
     motorIntake.setDefaultCommand(
