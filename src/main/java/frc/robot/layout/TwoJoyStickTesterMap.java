@@ -50,6 +50,11 @@ public class TwoJoyStickTesterMap extends TesterMap {
 
   @Override
   public JoystickButton getResetPivotButton(){
+    return controller.getButton(Button.BUTTON_SHARE);
+  }
+
+  @Override
+  public JoystickButton getResetElevatorButton(){
     return controller.getButton(Button.BUTTON_START);
   }
 

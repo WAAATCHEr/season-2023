@@ -75,6 +75,10 @@ public class ElevatorArm extends SubsystemBase {
         elevatorMotor.setIdleMode(IdleMode.kBrake);
         elevatorMotor2.setIdleMode(IdleMode.kBrake);
 
+        pivotMotor.setSmartCurrentLimit(40);
+        elevatorMotor.setSmartCurrentLimit(40);
+        elevatorMotor2.setSmartCurrentLimit(40);
+
         elevatorMotor.burnFlash();
         elevatorMotor2.burnFlash();
         pivotMotor.burnFlash();
@@ -126,6 +130,11 @@ public class ElevatorArm extends SubsystemBase {
 
     public void resetPivotEncoder() {
         pivotEncoder.setPosition(0);
+        
+    }
+
+    public void resetElevatorEncoder(){
+        elevatorMotor.getEncoder().setPosition(0);
     }
 
     @Override

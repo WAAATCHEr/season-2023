@@ -35,6 +35,8 @@ public abstract class TesterMap extends CommandMap {
 
   abstract JoystickButton getResetPivotButton();
 
+  abstract JoystickButton getResetElevatorButton();
+
   abstract double getLeftYAxis();
 
   abstract double getRightYAxis();
@@ -57,6 +59,7 @@ public abstract class TesterMap extends CommandMap {
     getTopButton().onTrue(elevatorArm.moveElevatorAndPivot(() -> ElevatorPivotMap.ElevPivotPoint.TOP));
     getDoubleButton().onTrue(elevatorArm.moveElevatorAndPivot(() -> ElevatorPivotMap.ElevPivotPoint.DOUBLE));
     getResetPivotButton().onTrue(new InstantCommand(elevatorArm::resetPivotEncoder));
+    getResetElevatorButton().onTrue(new InstantCommand(elevatorArm::resetElevatorEncoder));
 
   }
 

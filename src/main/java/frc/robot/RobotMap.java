@@ -108,7 +108,7 @@ public class RobotMap {
       public static final int DRIVE_ID = 5;
       public static final int ROTATOR_ID = 6;
       public static final int ENCODER_ID = 11;
-      public static final Rotation2d OFFSET = Rotation2d.fromDegrees(160.4);
+      public static final Rotation2d OFFSET = Rotation2d.fromDegrees(161.6);
       public static final SwerveModuleConstants CONSTANTS = new SwerveModuleConstants(DRIVE_ID, ROTATOR_ID, ENCODER_ID,
           OFFSET);
     }
@@ -118,7 +118,7 @@ public class RobotMap {
       public static final int DRIVE_ID = 3;
       public static final int ROTATOR_ID = 4;
       public static final int ENCODER_ID = 13;
-      public static final Rotation2d OFFSET = Rotation2d.fromDegrees(152.6);
+      public static final Rotation2d OFFSET = Rotation2d.fromDegrees(154.5);
       public static final SwerveModuleConstants CONSTANTS = new SwerveModuleConstants(DRIVE_ID, ROTATOR_ID, ENCODER_ID,
           OFFSET);
     }
@@ -128,7 +128,7 @@ public class RobotMap {
       public static final int DRIVE_ID = 7;
       public static final int ROTATOR_ID = 8;
       public static final int ENCODER_ID = 12;
-      public static final Rotation2d OFFSET = Rotation2d.fromDegrees(298.37);
+      public static final Rotation2d OFFSET = Rotation2d.fromDegrees(297.5);
       public static final SwerveModuleConstants CONSTANTS = new SwerveModuleConstants(DRIVE_ID, ROTATOR_ID, ENCODER_ID,
           OFFSET);
     }
@@ -138,7 +138,7 @@ public class RobotMap {
       public static final int DRIVE_ID = 1;
       public static final int ROTATOR_ID = 2;
       public static final int ENCODER_ID = 10;
-      public static final Rotation2d OFFSET = Rotation2d.fromDegrees(45.8);
+      public static final Rotation2d OFFSET = Rotation2d.fromDegrees(50.6);
       public static final SwerveModuleConstants CONSTANTS = new SwerveModuleConstants(DRIVE_ID, ROTATOR_ID, ENCODER_ID,
           OFFSET);
     }
@@ -162,7 +162,7 @@ public class RobotMap {
 
   public static final class IntakeMap {
     public static final double MOTOR_SPEED_FAST = 0.8;
-    public static final double MOTOR_SPEED_SLOW = 0.15;
+    public static final double MOTOR_SPEED_SLOW = 0.25;
     public static final int MOTOR_ID = 4;
   }
 
@@ -229,8 +229,8 @@ public class RobotMap {
 
     public enum ElevPoint implements SetPoint {
       STOW(0),
-      GROUND(10),
-      MIDDLE(25),
+      GROUND(13),
+      MIDDLE(28),
       TOP(55),
       SINGLE(18),
       DOUBLE(54);
@@ -249,11 +249,11 @@ public class RobotMap {
 
     public enum PivotPoint implements SetPoint {
       STOW(-0.0276),
-      GROUND(-0.20),
-      MIDDLE(-0.17),
+      GROUND(-0.30),
+      MIDDLE(-0.15),
       TOP(-0.229),
       SINGLE(-0.17),
-      DOUBLE(-0.26),
+      DOUBLE(-0.25),
       SAFE(-0.0506);
 
       private double encoderValue;
@@ -335,7 +335,7 @@ public class RobotMap {
 
   public static class LimelightMap {
     public static final Transform3d ROBOT_SPACE_POSE = new Transform3d(
-        new Translation3d(-0.20, 0.4318, -0.66), // Left-Right, Up/Down, Front-back
+        new Translation3d(-0.20, 0.4318, -0.60), // Left-Right, Up/Down, Front-back
         new Rotation3d(0, 0, 0));
 
     public static final double OFFSET_FROM_TAG = 0.8; // In meters

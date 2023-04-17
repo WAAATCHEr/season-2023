@@ -199,7 +199,7 @@ public class Swerve extends SubsystemBase {
     // swerveTab.add("y-input PID Controller", yPID);
     // swerveTab.add("rot PID Controller", thetaPID);
 
-    return new SequentialCommandGroup(
+    return new ProxyCommand(() -> new SequentialCommandGroup(
         new InstantCommand(
             () -> {
               // Reset odometry for the first path you run during auto
@@ -208,8 +208,8 @@ public class Swerve extends SubsystemBase {
                     getYaw(), getModulePositions(), traj.get().getInitialHolonomicPose());
               }
             }),
-        new PPSwerveControllerCommand(
-            traj.get(), this::getPose, xPID, yPID, thetaPID, speeds -> drive(speeds, true), this)).asProxy();// KEEP IT OPEN LOOP
+        new ProxyCommand(new PPSwerveControllerCommand(
+            traj.get(), this::getPose, xPID, yPID, thetaPID, speeds -> drive(speeds, true), this))));// KEEP IT OPEN LOOP
   }
 
   public Command followTrajectoryCommand(String path, boolean isFirstPath) {
@@ -238,26 +238,32 @@ public class Swerve extends SubsystemBase {
   }
 
   public ConditionalCommand alignWithGridCommand(Supplier<Vision.Position> pos) {
+    System.out.println(limelight.getHasTarget());
     return new SequentialCommandGroup(
         new InstantCommand(
             () -> odometry.resetPosition(getYaw(), getModulePositions(), limelight.getCurrentPose().toPose2d())),
 
         followTrajectoryCommand(() -> {
+          var allianceColor = DriverStation.getAlliance();
           Pose2d currentPos = odometry.getPoseMeters();
+          System.out.println("AMOGUS " + currentPos);
           Pose2d offset = limelight.getTargetTranslation(pos.get());
+          double heading = (allianceColor.equals(DriverStation.Alliance.Red)) ? 0 : 180;
+          int sign = (allianceColor.equals(DriverStation.Alliance.Red)) ? 1 : -1;
+          System.out.println(heading);
           System.out.println("THROUGH THE JUNGLE " + offset);
           return PathPlanner.generatePath(
               new PathConstraints(2, 2),
               new PathPoint(new Translation2d(currentPos.getX(), currentPos.getY()),
-                  Rotation2d.fromDegrees(0)), // position, heading(direction of travel),
+              offset.getRotation(), Rotation2d.fromDegrees(heading)), // position, heading(direction of travel),
                                               // holonomic rotation
-              new PathPoint(new Translation2d(currentPos.getX(), currentPos.getY() - offset.getX()),
-                  Rotation2d.fromDegrees(0), currentPos.getRotation().plus(offset.getRotation())), // position,
+              new PathPoint(new Translation2d(currentPos.getX(), currentPos.getY() - (sign * offset.getX())),
+                  offset.getRotation(), Rotation2d.fromDegrees(heading)), // position,
                                                                                                    // heading(direction
                                                                                                    // of travel),
                                                                                                    // holonomic rotation
-              new PathPoint(new Translation2d(currentPos.getX() + offset.getY(), currentPos.getY() - offset.getX()),
-                  Rotation2d.fromDegrees(0)));
+              new PathPoint(new Translation2d(currentPos.getX() + (sign * offset.getY()), currentPos.getY() - (sign * offset.getX())),
+              offset.getRotation(), Rotation2d.fromDegrees(heading)));
         }, false)).unless(() -> !limelight.getHasTarget());
 
   }
