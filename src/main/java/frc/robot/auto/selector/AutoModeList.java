@@ -8,7 +8,7 @@ public interface AutoModeList {
     DO_NOTHING(new DoNothing()),
     TEST_PATH(new TestAutoPath()),
     BARRIER_START(new BarrierStart("RED")),
-    MID_START(new MidStart("RED")),
+    MID_START(new MidStart("")),
     BUMPER_START(new BumperStart("RED"));
 
     private final SequentialCommandGroup autoCommand;

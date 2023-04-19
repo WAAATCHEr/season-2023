@@ -151,15 +151,18 @@ public class RobotMap {
     public static final double STICK_DEADBAND = 0.1;
   }
 
-  // not in use
   public static class ChargingStationMap {
     // TODO tune once robot complete
-    public static final double kP = 0.07;
+    public static final double kP = 0.2;
     public static final double kI = 0.0;
     public static final double kD = 0.0;
     public static final double MAX_VELOCITY = 2;
   }
-
+  
+  public static class PPMap {
+    public static final int MAX_VELOCITY = 5;
+    public static final int MAX_ACCELERATION = 4;
+  } 
 
   public static final class IntakeMap {
     public static final double MOTOR_SPEED_FAST = 0.8;
@@ -268,11 +271,6 @@ public class RobotMap {
         return this.encoderValue;
       }
     }
-  }
-
-  public static class PPMap {
-    public static final int MAX_VELOCITY = 5;
-    public static final int MAX_ACCELERATION = 4;
   }
 
   public static class MotionProfileMap {

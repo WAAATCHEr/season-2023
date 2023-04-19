@@ -13,10 +13,9 @@ import frc.robot.subsystems.ElevatorArm;
 import frc.robot.RobotMap.ElevatorPivotMap;
 import frc.robot.subsystems.MotorIntake;
 
-@SuppressWarnings("all") // May be useful to remove this when uncommenting elevaotr and pivot code
 public class MidStart extends SequentialCommandGroup {
     public MidStart(String color) {
-        String path = color + " Mid Score to CS no Leaving"; // TODO Set Alliance Colour
+        String path = "RED Mid Score to CS no Leaving"; // TODO Set Alliance Colour
         HashMap<String, Command> eventMap = new HashMap<String, Command>();
 
         var swerve = Swerve.getInstance();
