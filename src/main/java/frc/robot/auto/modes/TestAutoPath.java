@@ -15,12 +15,10 @@ import frc.robot.subsystems.MotorIntake;
 @SuppressWarnings("all") // May be useful to remove this when uncommenting elevaotr and pivot code
 public class TestAutoPath extends SequentialCommandGroup{
     public TestAutoPath() {
-        String path = "Test Path Red"; //TODO Set Alliance Colour
+        String path = "Test Path"; //TODO Set Alliance Colour
         HashMap<String, Command> eventMap = new HashMap<String, Command>();
 
         var swerve = Swerve.getInstance();
-        var elevatorArm = ElevatorArm.getInstance();
-        var motorIntake = MotorIntake.getInstance();
         addCommands(
             // elevatorArm.movePivotCommand(() -> ElevatorMap.PivotPosition.MID),
             // new RunCommand(() -> elevatorArm.moveElevator(0.7))
@@ -32,8 +30,8 @@ public class TestAutoPath extends SequentialCommandGroup{
             //                         .until(() -> elevatorArm.getBottomSwitch())),
             // elevatorArm.movePivotCommand(() -> ElevatorMap.PivotPosition.DEFAULT),
             // new WaitCommand(11),jhh
-            swerve.followTrajectoryCommand(path, eventMap, true)
-            , swerve.chargingStationCommand()
+            swerve.followTrajectoryCommand(path, eventMap, true),
+            swerve.chargingStationCommand()
         );
         
     }

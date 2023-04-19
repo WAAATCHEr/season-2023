@@ -6,6 +6,7 @@ import frc.robot.auto.modes.*;
 public interface AutoModeList {
   public enum AutoModeListRed {
     DO_NOTHING(new DoNothing()),
+    TEST_PATH(new TestAutoPath()),
     BARRIER_START(new BarrierStart("RED")),
     MID_START(new MidStart("RED")),
     BUMPER_START(new BumperStart("RED"));
@@ -24,6 +25,7 @@ public interface AutoModeList {
 
   public enum AutoModeListBlue {
     DO_NOTHING(new DoNothing()),
+    TEST_PATH(new TestAutoPath()),
     BARRIER_START(new BarrierStart("BLUE")),
     MID_START(new MidStart("BLUE")),
     BUMPER_START(new BumperStart("BLUE"));
