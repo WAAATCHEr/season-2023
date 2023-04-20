@@ -17,17 +17,10 @@ import frc.robot.subsystems.MotorIntake;
 public class BumperStart extends SequentialCommandGroup {
     public BumperStart(String color) {
         String path = color + " Bumper Score to Ground Piece"; // TODO Set Alliance Colour
-        HashMap<String, Command> eventMap = new HashMap<String, Command>();
 
         var swerve = Swerve.getInstance();
         var elevatorArm = ElevatorArm.getInstance();
         var motorIntake = MotorIntake.getInstance();
-
-        eventMap.put("Raise", elevatorArm.moveElevatorAndPivot(() -> ElevatorPivotMap.ElevPivotPoint.TOP));
-        eventMap.put("Score", motorIntake.autoMoveIntake(false));
-        eventMap.put("Retract", new ParallelCommandGroup(
-            elevatorArm.moveElevatorAndPivot(() -> ElevatorPivotMap.ElevPivotPoint.STOW),
-            motorIntake.autoMoveIntake(false)));
 
         addCommands(
             elevatorArm.moveElevatorAndPivot(() -> ElevatorPivotMap.ElevPivotPoint.TOP),
@@ -36,7 +29,7 @@ public class BumperStart extends SequentialCommandGroup {
                 elevatorArm.moveElevatorAndPivot(() -> ElevatorPivotMap.ElevPivotPoint.STOW),
                 motorIntake.autoMoveIntake(false).withTimeout(3)
                 ).withTimeout(5),
-            swerve.followTrajectoryCommand(path, eventMap, true)
+            swerve.followTrajectoryCommand(path, true)
         );
 
     }
