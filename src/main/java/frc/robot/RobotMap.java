@@ -108,7 +108,7 @@ public class RobotMap {
       public static final int DRIVE_ID = 7;
       public static final int ROTATOR_ID = 8;
       public static final int ENCODER_ID = 10;
-      public static final Rotation2d OFFSET = Rotation2d.fromDegrees(6.77);
+      public static final Rotation2d OFFSET = Rotation2d.fromDegrees(345.67);
       public static final SwerveModuleConstants CONSTANTS = new SwerveModuleConstants(DRIVE_ID, ROTATOR_ID, ENCODER_ID,
           OFFSET);
     }
@@ -118,7 +118,7 @@ public class RobotMap {
       public static final int DRIVE_ID = 1;
       public static final int ROTATOR_ID = 2;
       public static final int ENCODER_ID = 11;
-      public static final Rotation2d OFFSET = Rotation2d.fromDegrees(317.2);
+      public static final Rotation2d OFFSET = Rotation2d.fromDegrees(317.72);
       public static final SwerveModuleConstants CONSTANTS = new SwerveModuleConstants(DRIVE_ID, ROTATOR_ID, ENCODER_ID,
           OFFSET);
     }
@@ -128,7 +128,7 @@ public class RobotMap {
       public static final int DRIVE_ID = 5;
       public static final int ROTATOR_ID = 6;
       public static final int ENCODER_ID = 13;
-      public static final Rotation2d OFFSET = Rotation2d.fromDegrees(98.7);
+      public static final Rotation2d OFFSET = Rotation2d.fromDegrees(100.11);
       public static final SwerveModuleConstants CONSTANTS = new SwerveModuleConstants(DRIVE_ID, ROTATOR_ID, ENCODER_ID,
           OFFSET);
     }
@@ -138,7 +138,7 @@ public class RobotMap {
       public static final int DRIVE_ID = 3;
       public static final int ROTATOR_ID = 4;
       public static final int ENCODER_ID = 12;
-      public static final Rotation2d OFFSET = Rotation2d.fromDegrees(12.74);
+      public static final Rotation2d OFFSET = Rotation2d.fromDegrees(9.4);
       public static final SwerveModuleConstants CONSTANTS = new SwerveModuleConstants(DRIVE_ID, ROTATOR_ID, ENCODER_ID,
           OFFSET);
     }
@@ -153,10 +153,10 @@ public class RobotMap {
 
   public static class ChargingStationMap {
     // TODO tune once robot complete
-    public static final double kP = 0.05;
+    public static final double kP = 0.08;
     public static final double kI = 0.0;
     public static final double kD = 0.0;
-    public static final double MAX_VELOCITY = 2;
+    public static final double MAX_VELOCITY = 2.5;
   }
   
   public static class PPMap {

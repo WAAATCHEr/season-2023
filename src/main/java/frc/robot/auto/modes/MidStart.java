@@ -15,7 +15,7 @@ import frc.robot.subsystems.MotorIntake;
 
 public class MidStart extends SequentialCommandGroup {
     public MidStart(String color) {
-        String path = "COLOR Mid Score to CS no Leaving"; // TODO Set Alliance Colour
+        String path = "COLOR Mid Score to CS with Leaving"; // TODO Set Alliance Colour
 
         var swerve = Swerve.getInstance();
         var elevatorArm = ElevatorArm.getInstance();
@@ -24,10 +24,10 @@ public class MidStart extends SequentialCommandGroup {
         addCommands(
             elevatorArm.moveElevatorAndPivot(() -> ElevatorPivotMap.ElevPivotPoint.TOP),
             motorIntake.autoMoveIntake(false).withTimeout(1),
-            new ParallelCommandGroup(
+            // new ParallelCommandGroup(
                 elevatorArm.moveElevatorAndPivot(() -> ElevatorPivotMap.ElevPivotPoint.STOW),
-                motorIntake.autoMoveIntake(false).withTimeout(1)
-                ),
+                // motorIntake.autoMoveIntake(false).withTimeout(1)
+                // ),
             swerve.followTrajectoryCommand(path, true),
             swerve.chargingStationCommand()
         );
