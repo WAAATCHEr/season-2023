@@ -21,7 +21,7 @@ public class Config {
   }
 
   public static ButtonMap getDriverController() {
-    return new Xbox();
+    return new Playstation();
   }
 
   public static ButtonMap getOperatorController() {

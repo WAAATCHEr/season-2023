@@ -7,6 +7,8 @@ package frc.robot.subsystems;
 import java.util.HashMap;
 import java.util.function.Supplier;
 
+import javax.sound.sampled.SourceDataLine;
+
 import com.ctre.phoenix.sensors.WPI_Pigeon2;
 import com.pathplanner.lib.PathConstraints;
 import com.pathplanner.lib.PathPlanner;
@@ -227,7 +229,8 @@ public class Swerve extends SubsystemBase {
                     getYaw(), getModulePositions(), traj.getInitialHolonomicPose());
               }
             }),
-        new PPSwerveControllerCommand(traj, this::getPose, xPID, yPID, thetaPID, speeds -> drive(speeds, true), this));
+        new PPSwerveControllerCommand(traj, this::getPose, xPID, yPID, thetaPID, speeds -> drive(speeds, true), this), 
+        new InstantCommand(() -> System.out.println("END PATH")));
   }
 
   private PathPlannerTrajectory generateDirectPath(Translation2d startPoint, Translation2d endPoint) {
@@ -275,12 +278,13 @@ public class Swerve extends SubsystemBase {
     return new FunctionalCommand(
         () -> {
           // Init
+          System.out.println("Balancing");
         },
         () -> {
           if (pid.calculate(gyro.getRoll() + gyro.getPitch()) > ChargingStationMap.MAX_VELOCITY) {
-            this.drive(new ChassisSpeeds(-ChargingStationMap.MAX_VELOCITY, .0, 0), true);
+            this.drive(new ChassisSpeeds(ChargingStationMap.MAX_VELOCITY, .0, 0), true);
           } else {
-            this.drive(new ChassisSpeeds(-pid.calculate(gyro.getRoll() + gyro.getPitch(), 0.0), 0, 0), true);
+            this.drive(new ChassisSpeeds(pid.calculate(gyro.getRoll() + gyro.getPitch(), 0.0), 0, 0), true);
           }
 
         },
