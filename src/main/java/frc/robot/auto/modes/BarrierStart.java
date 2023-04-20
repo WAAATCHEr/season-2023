@@ -23,12 +23,6 @@ public class BarrierStart extends SequentialCommandGroup {
         var elevatorArm = ElevatorArm.getInstance();
         var motorIntake = MotorIntake.getInstance();
 
-        // eventMap.put("Raise", elevatorArm.moveElevatorAndPivot(() -> ElevatorPivotMap.ElevPivotPoint.TOP));
-        // eventMap.put("Score", motorIntake.autoMoveIntake(false));
-        // eventMap.put("Retract", new ParallelCommandGroup(
-        //     elevatorArm.moveElevatorAndPivot(() -> ElevatorPivotMap.ElevPivotPoint.STOW),
-        //     motorIntake.autoMoveIntake(false)));
-
         addCommands(
             elevatorArm.moveElevatorAndPivot(() -> ElevatorPivotMap.ElevPivotPoint.TOP),
             motorIntake.autoMoveIntake(false).withTimeout(1),
