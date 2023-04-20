@@ -16,7 +16,7 @@ import frc.robot.subsystems.MotorIntake;
 @SuppressWarnings("all") // May be useful to remove this when uncommenting elevaotr and pivot code
 public class BarrierStart extends SequentialCommandGroup {
     public BarrierStart(String color) {
-        String path = color + " Barrier Score to LZ prep"; // TODO Set Alliance Colour
+        String path = "COLOR Barrier Score to LZ prep"; // TODO Set Alliance Colour
         HashMap<String, Command> eventMap = new HashMap<String, Command>();
 
         var swerve = Swerve.getInstance();

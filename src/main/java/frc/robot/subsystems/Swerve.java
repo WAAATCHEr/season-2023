@@ -282,9 +282,9 @@ public class Swerve extends SubsystemBase {
         },
         () -> {
           if (pid.calculate(gyro.getRoll() + gyro.getPitch()) > ChargingStationMap.MAX_VELOCITY) {
-            this.drive(new ChassisSpeeds(ChargingStationMap.MAX_VELOCITY, .0, 0), true);
+            this.drive(new ChassisSpeeds(-ChargingStationMap.MAX_VELOCITY, .0, 0), true);
           } else {
-            this.drive(new ChassisSpeeds(pid.calculate(gyro.getRoll() + gyro.getPitch(), 0.0), 0, 0), true);
+            this.drive(new ChassisSpeeds(-pid.calculate(gyro.getRoll() + gyro.getPitch(), 0.0), 0, 0), true);
           }
 
         },

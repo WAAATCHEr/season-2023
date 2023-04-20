@@ -49,7 +49,7 @@ public class MotorIntake extends SubsystemBase {
           //   intakeMotor.set(-IntakeMap.MOTOR_SPEED_FAST);
           // else if (!isIntake)
           //   intakeMotor.set(IntakeMap.MOTOR_SPEED_FAST);
-          intakeMotor.set(-IntakeMap.MOTOR_SPEED_FAST);
+          intakeMotor.set(-0.6);
         },
         () -> {
           intakeMotor.set(0);
