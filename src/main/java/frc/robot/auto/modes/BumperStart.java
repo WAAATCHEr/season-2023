@@ -16,7 +16,7 @@ import frc.robot.subsystems.MotorIntake;
 @SuppressWarnings("all") // May be useful to remove this when uncommenting elevaotr and pivot code
 public class BumperStart extends SequentialCommandGroup {
     public BumperStart(String color) {
-        String path = color + " Bumper Score to Ground Piece"; // TODO Set Alliance Colour
+        String path = color + " Bumper Score to LZ prep"; // TODO Set Alliance Colour
 
         var swerve = Swerve.getInstance();
         var elevatorArm = ElevatorArm.getInstance();
@@ -25,10 +25,10 @@ public class BumperStart extends SequentialCommandGroup {
         addCommands(
             elevatorArm.moveElevatorAndPivot(() -> ElevatorPivotMap.ElevPivotPoint.TOP),
             motorIntake.autoMoveIntake(false).withTimeout(1),
-            new ParallelCommandGroup(
+            // new ParallelCommandGroup(
                 elevatorArm.moveElevatorAndPivot(() -> ElevatorPivotMap.ElevPivotPoint.STOW),
-                motorIntake.autoMoveIntake(false).withTimeout(3)
-                ).withTimeout(5),
+                // motorIntake.autoMoveIntake(false).withTimeout(3)
+                // ).withTimeout(5),
             swerve.followTrajectoryCommand(path, true)
         );
 

@@ -108,7 +108,7 @@ public class RobotMap {
       public static final int DRIVE_ID = 7;
       public static final int ROTATOR_ID = 8;
       public static final int ENCODER_ID = 10;
-      public static final Rotation2d OFFSET = Rotation2d.fromDegrees(76.9);
+      public static final Rotation2d OFFSET = Rotation2d.fromDegrees(52.20);
       public static final SwerveModuleConstants CONSTANTS = new SwerveModuleConstants(DRIVE_ID, ROTATOR_ID, ENCODER_ID,
           OFFSET);
     }
@@ -153,10 +153,10 @@ public class RobotMap {
 
   public static class ChargingStationMap {
     // TODO tune once robot complete
-    public static final double kP = 0.2;
+    public static final double kP = 0.1;
     public static final double kI = 0.0;
     public static final double kD = 0.0;
-    public static final double MAX_VELOCITY = 2;
+    public static final double MAX_VELOCITY = 3;
   }
   
   public static class PPMap {

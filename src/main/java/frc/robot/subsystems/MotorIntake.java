@@ -45,10 +45,11 @@ public class MotorIntake extends SubsystemBase {
   public StartEndCommand autoMoveIntake(boolean isIntake) {
     return new StartEndCommand(
         () -> {
-          if (isIntake)
-            intakeMotor.set(-IntakeMap.MOTOR_SPEED_FAST);
-          else if (!isIntake)
-            intakeMotor.set(IntakeMap.MOTOR_SPEED_FAST);
+          // if (isIntake)
+          //   intakeMotor.set(-IntakeMap.MOTOR_SPEED_FAST);
+          // else if (!isIntake)
+          //   intakeMotor.set(IntakeMap.MOTOR_SPEED_FAST);
+          intakeMotor.set(-IntakeMap.MOTOR_SPEED_FAST);
         },
         () -> {
           intakeMotor.set(0);
