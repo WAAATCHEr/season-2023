@@ -25,10 +25,10 @@ public class BumperStart extends SequentialCommandGroup {
         addCommands(
             elevatorArm.moveElevatorAndPivot(() -> ElevatorPivotMap.ElevPivotPoint.TOP),
             motorIntake.autoMoveIntake(false).withTimeout(1),
-            // new ParallelCommandGroup(
+            new ParallelCommandGroup(
                 elevatorArm.moveElevatorAndPivot(() -> ElevatorPivotMap.ElevPivotPoint.STOW),
-                // motorIntake.autoMoveIntake(false).withTimeout(3)
-                // ).withTimeout(5),
+                motorIntake.autoMoveIntake(false).withTimeout(3)
+                ).withTimeout(5),
             swerve.followTrajectoryCommand(path, true)
         );
 
