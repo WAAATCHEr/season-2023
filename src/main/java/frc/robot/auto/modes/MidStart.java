@@ -15,7 +15,7 @@ import frc.robot.subsystems.MotorIntake;
 
 public class MidStart extends SequentialCommandGroup {
     public MidStart(String color) {
-        String path = "COLOR Mid Score to CS with Leaving"; // TODO Set Alliance Colour
+        String path = "BLUE Mid Score to CS no Leaving"; // TODO Set Alliance Colour
 
         var swerve = Swerve.getInstance();
         var elevatorArm = ElevatorArm.getInstance();
