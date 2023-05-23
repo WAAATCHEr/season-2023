@@ -2,14 +2,19 @@ package frc.robot;
 
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.util.Units;
 import frc.robot.util.COTSFalconSwerveConstants;
 import frc.robot.util.SwerveModuleConstants;
 
 public class RobotMap {
+
 
   public static final class DriveMap {
     public static final int PIGEON_ID = 9;
@@ -100,40 +105,40 @@ public class RobotMap {
     /* Module Specific Constants */
     /* Front Left Module - Module 0 */
     public static final class FrontLeft {
-      public static final int DRIVE_ID = 5;
-      public static final int ROTATOR_ID = 6;
-      public static final int ENCODER_ID = 11;
-      public static final Rotation2d OFFSET = Rotation2d.fromDegrees(194.5);
+      public static final int DRIVE_ID = 7;
+      public static final int ROTATOR_ID = 8;
+      public static final int ENCODER_ID = 10;
+      public static final Rotation2d OFFSET = Rotation2d.fromDegrees(250.75);
       public static final SwerveModuleConstants CONSTANTS = new SwerveModuleConstants(DRIVE_ID, ROTATOR_ID, ENCODER_ID,
           OFFSET);
     }
 
     /* Front Right Module - Module 1 */
     public static final class FrontRight {
-      public static final int DRIVE_ID = 3;
-      public static final int ROTATOR_ID = 4;
-      public static final int ENCODER_ID = 13;
-      public static final Rotation2d OFFSET = Rotation2d.fromDegrees(7.65);
+      public static final int DRIVE_ID = 1;
+      public static final int ROTATOR_ID = 2;
+      public static final int ENCODER_ID = 11;
+      public static final Rotation2d OFFSET = Rotation2d.fromDegrees(314.73);
       public static final SwerveModuleConstants CONSTANTS = new SwerveModuleConstants(DRIVE_ID, ROTATOR_ID, ENCODER_ID,
           OFFSET);
     }
 
     /* Back Left Module - Module 2 */
     public static final class BackLeft {
-      public static final int DRIVE_ID = 7;
-      public static final int ROTATOR_ID = 8;
-      public static final int ENCODER_ID = 12;
-      public static final Rotation2d OFFSET = Rotation2d.fromDegrees(288.37);
+      public static final int DRIVE_ID = 5;
+      public static final int ROTATOR_ID = 6;
+      public static final int ENCODER_ID = 13;
+      public static final Rotation2d OFFSET = Rotation2d.fromDegrees(95.63);
       public static final SwerveModuleConstants CONSTANTS = new SwerveModuleConstants(DRIVE_ID, ROTATOR_ID, ENCODER_ID,
           OFFSET);
     }
 
     /* Back Right Module - Module 3 */
     public static final class BackRight {
-      public static final int DRIVE_ID = 1;
-      public static final int ROTATOR_ID = 2;
-      public static final int ENCODER_ID = 10;
-      public static final Rotation2d OFFSET = Rotation2d.fromDegrees(9.67);
+      public static final int DRIVE_ID = 3;
+      public static final int ROTATOR_ID = 4;
+      public static final int ENCODER_ID = 12;
+      public static final Rotation2d OFFSET = Rotation2d.fromDegrees(335.74);
       public static final SwerveModuleConstants CONSTANTS = new SwerveModuleConstants(DRIVE_ID, ROTATOR_ID, ENCODER_ID,
           OFFSET);
     }
@@ -153,146 +158,167 @@ public class RobotMap {
     public static final double kD = 0.0;
     public static final double MAX_VELOCITY = 2;
   }
-
-  public static class MotorIntakeMap {
-    public static final int MOTOR_ID = 2;
-  }
-
-  public static class ElevatorMap {
-    public static final int ELEVATOR_MOTOR_ID = 1;
-    public static final int BOTTOM_PORT = 0;
-    public static final int TOP_PORT = 1;
-    public static final double MIDPOINT1 = 20;
-
-    public static final int PIVOT_MOTOR_ID = 3;
-    public static final double PIVOT_BOTTOM = 10;
-    public static final double PIVOT_TOP = 20;
-    public static final double MIDPOINT2 = 15;
-
-    public static final double PIVOT_KS = 0;
-    public static final double PIVOT_KG = 0;
-    public static final double PIVOT_KV = 0;
-    public static final double PIVOT_KA = 0;
-
-    public static final double ELEVATOR_KS = 0;
-    public static final double ELEVATOR_KG = 0;
-    public static final double ELEVATOR_KV = 0;
-    public static final double ELEVATOR_KA = 0;
-
-
-    public enum SetPoint {
-      GROUND(ElevatorPosition.GROUND, PivotPosition.GROUND),
-      MIDDLE(ElevatorPosition.MID, PivotPosition.MID),
-      SINGLE_SUBSTATION(ElevatorPosition.SUBSTATION, PivotPosition.SUBSTATION),
-      STOW(ElevatorPosition.STOW, PivotPosition.STOW),
-      TOP(ElevatorPosition.TOP, PivotPosition.TOP),
-      DEFAULT(ElevatorPosition.DEFAULT, PivotPosition.DEFAULT);
-
-      private final ElevatorPosition elevatorPosition;
-      private final PivotPosition pivotPosition;
-
-      SetPoint(ElevatorPosition ePos, PivotPosition pPos) {
-          this.elevatorPosition = ePos;
-          this.pivotPosition = pPos;
-      }
-
-      public ElevatorPosition getElevatorPosition() {
-          return elevatorPosition;
-      }
-
-      public PivotPosition getPivotPosition() {
-          return pivotPosition;
-      }
-
-    }
-
-    public enum ElevatorPosition {
-      TOP(95.1),
-      MID(60.0),
-      GROUND(22.6),
-      SUBSTATION(40.45),
-      STOW(40.05),
-      DEFAULT(0);
-
-      private final double encoderValue;
-
-      ElevatorPosition(double encoderValue) {
-          this.encoderValue = encoderValue;
-      }
-
-      public double getEncoderPos() {
-          return encoderValue;
-      }
-    }
-
-    public enum PivotPosition {
-      TOP(-20),
-      MID(-18.5),
-      GROUND(-49),
-      SUBSTATION(-10),
-      STOW(5.2),
-      DEFAULT(0);
-
-      private final double encoderValue;
-
-      PivotPosition(double encoderValue) {
-          this.encoderValue = encoderValue;
-      }
-
-      public double getEncoderPos() {
-          return encoderValue;
-      }
-    }
-  }
-
+  
   public static class PPMap {
-    public static final int MAX_VELOCITY = 5;
-    public static final int MAX_ACCELERATION = 4;
+    public static final int MAX_VELOCITY = 4;
+    public static final int MAX_ACCELERATION = 2;
+  } 
+
+  public static final class IntakeMap {
+    public static final double MOTOR_SPEED_FAST = 0.8;
+    public static final double MOTOR_SPEED_SLOW = 0.25;
+    public static final int MOTOR_ID = 4;
+  }
+
+  public static class ElevatorPivotMap {
+    // Motor IDs
+    public static final int ELEVATOR_MOTOR_ID = 1;
+    public static final int ELEVAOTR_MOTOR2_ID = 2;
+    public static final int PIVOT_MOTOR_ID = 3;
+
+    // L + Gear Ratio
+    public static final double ELEVATOR_RATIO = 12;
+    public static final double PIVOT_RATIO = 500;
+
+    // Profile Constants
+    public static final double ELEVATOR_MAX_VELOCITY = 150;
+    public static final double ELEVATOR_MAX_ACCELERATION = 130;
+    public static final double ELEVATOR_kDt = 0.02;
+
+    public static final double PIVOT_MAX_VELOCITY = 120;
+    public static final double PIVOT_MAX_ACCELERATION = 180;
+    public static final double PIVOT_kDt = 0.02;
+
+    // PID
+    public static final double ELEVATOR_kP = 0.25;
+    public static final double ELEVATOR_kI = 0.0000;
+    public static final double ELEVATOR_kD = 0.0000;
+    public static final double ELEVATOR_TOLERANCE = 0.3;
+
+    public static final double PIVOT_kP = 400.0;
+    public static final double PIVOT_kI = 0.0000;
+    public static final double PIVOT_kD = 30.0000;
+    public static final double PIVOT_TOLERANCE = 0.01;
+
+    // Setpoints
+    public interface SetPoint {
+      public double getSetpoint();
+    }
+
+    public enum ElevPivotPoint {
+      STOW(ElevPoint.STOW, PivotPoint.STOW),
+      GROUND(ElevPoint.GROUND, PivotPoint.GROUND),
+      MIDDLE(ElevPoint.MIDDLE, PivotPoint.MIDDLE),
+      TOP(ElevPoint.TOP, PivotPoint.TOP),
+      SINGLE(ElevPoint.SINGLE, PivotPoint.SINGLE),
+      DOUBLE(ElevPoint.DOUBLE, PivotPoint.DOUBLE);
+
+      private ElevPoint elev;
+      private PivotPoint pivot;
+
+      ElevPivotPoint(ElevPoint elev, PivotPoint pivot) {
+        this.elev = elev;
+        this.pivot = pivot;
+      }
+
+      public ElevPoint getElev() {
+        return elev;
+      }
+
+      public PivotPoint getPivot() {
+        return pivot;
+      }
+
+    }
+
+    public enum ElevPoint implements SetPoint {
+      STOW(0),
+      GROUND(13),
+      MIDDLE(28),
+      TOP(55),
+      SINGLE(18),
+      DOUBLE(54);
+
+      private double encoderValue;
+
+      ElevPoint(double encoderValue) {
+        this.encoderValue = encoderValue;
+      }
+
+      @Override
+      public double getSetpoint() {
+        return this.encoderValue;
+      }
+    }
+
+    public enum PivotPoint implements SetPoint {
+      STOW(-0.0276),
+      GROUND(-0.30),
+      MIDDLE(-0.15),
+      TOP(-0.229),
+      SINGLE(-0.17),
+      DOUBLE(-0.25),
+      SAFE(-0.0506);
+
+      private double encoderValue;
+
+      PivotPoint(double encoderValue) {
+        this.encoderValue = encoderValue;
+      }
+
+      @Override
+      public double getSetpoint() {
+        return this.encoderValue;
+      }
+    }
   }
 
   public static class MotionProfileMap {
-    //MOTOR IDs
+    // MOTOR IDs
     public static final int TEST_MOTOR_ID = 1;
 
     // Gear Ratio
-    public static final int GEAR_RATIO = 12;
-    
+    public static final int GEAR_RATIO = 1;
+
     // Feed Forward
     // public static final double kS = 0;
     // public static final double kV = 1.5;
 
     // Profile Constants
-    public static final double MAX_VELOCITY = 100;
-    public static final double MAX_ACCELERATION = 60;
+    public static final double MAX_VELOCITY = 500;
+    public static final double MAX_ACCELERATION = 100;
     public static final double kDt = 0.02;
 
     // PID
-    public static final double kP = 0.01;
-    public static final int kI = 0;
-    public static final int kD = 0;
+    public static final double kP = 0.1;
+    public static final double kI = 0.0000;
+
+    public static final double kD = 0.0000;
     // public static final int kIZone = 0;
     // public static final int kFF = 0;
     // public static final int MIN_OUTPUT = 0;
     // public static final int MAX_OUTPUT = GEAR_RATIO * 42;
-    public static final double TOLERANCE = 0.1;
-    
+    public static final double TOLERANCE = 10;
+
     // Setpoints
     public enum TestSetpoint {
       ZERO(0, GEAR_RATIO),
-      HALF(180, GEAR_RATIO),
-      FULL(360, GEAR_RATIO);
-
+      HALF(125 * 4.5 / 6, GEAR_RATIO),
+      FULL(125 * 4.5 / 3, GEAR_RATIO),
+      NEGHALF(-125 * 4.5 / 6, GEAR_RATIO),
+      NEGFULL(-125 * 4.5 / 3, GEAR_RATIO);
 
       private double encoderValue;
       private double degrees;
       private double gearRatio;
 
       // Is the resolution of a NEO 42 ticks per rev?
-      TestSetpoint(double degrees, int gearRatio) { 
+      TestSetpoint(double degrees, int gearRatio) {
         this.degrees = degrees;
         this.gearRatio = gearRatio;
-        // (Resolution * gearRatio) / full rotation in degrees === ticks per degree with given gear ratio
-        this.encoderValue = this.degrees * (this.gearRatio * 4096.0 / 360.0);
+        // (Resolution * gearRatio) / full rotation in degrees === ticks per degree with
+        // given gear ratio
+        this.encoderValue = this.degrees;
       }
 
       public double getSetpointInDegrees() {
@@ -305,6 +331,14 @@ public class RobotMap {
 
     }
   }
-  
-  
+
+  public static class LimelightMap {
+    public static final Transform3d ROBOT_SPACE_POSE = new Transform3d(
+        new Translation3d(-0.20, 0.4318, -0.60), // Left-Right, Up/Down, Front-back
+        new Rotation3d(0, 0, 0));
+
+    public static final double OFFSET_FROM_TAG = 0.8; // In meters
+
+  }
+
 }

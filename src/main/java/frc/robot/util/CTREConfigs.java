@@ -6,6 +6,7 @@ import com.ctre.phoenix.sensors.AbsoluteSensorRange;
 import com.ctre.phoenix.sensors.CANCoderConfiguration;
 import com.ctre.phoenix.sensors.SensorInitializationStrategy;
 import com.ctre.phoenix.sensors.SensorTimeBase;
+
 import frc.robot.RobotMap.DriveMap;
 
 public final class CTREConfigs {
@@ -19,12 +20,11 @@ public final class CTREConfigs {
     swerveCanCoderConfig = new CANCoderConfiguration();
 
     /* Swerve Angle Motor Configurations */
-    SupplyCurrentLimitConfiguration angleSupplyLimit =
-        new SupplyCurrentLimitConfiguration(
-            DriveMap.LIMIT_ROTATOR_CURRENT,
-            DriveMap.ROTATOR_CONTINUOS_CURRENT_LIMIT,
-            DriveMap.ROTATOR_PEAK_CURRENT_LIMIT,
-            DriveMap.ROTATOR_PEAK_CURRENT_DURATION);
+    SupplyCurrentLimitConfiguration angleSupplyLimit = new SupplyCurrentLimitConfiguration(
+        DriveMap.LIMIT_ROTATOR_CURRENT,
+        DriveMap.ROTATOR_CONTINUOS_CURRENT_LIMIT,
+        DriveMap.ROTATOR_PEAK_CURRENT_LIMIT,
+        DriveMap.ROTATOR_PEAK_CURRENT_DURATION);
 
     swerveAngleFXConfig.slot0.kP = DriveMap.ROTATOR_KP;
     swerveAngleFXConfig.slot0.kI = DriveMap.ROTATOR_KI;
@@ -33,12 +33,11 @@ public final class CTREConfigs {
     swerveAngleFXConfig.supplyCurrLimit = angleSupplyLimit;
 
     /* Swerve Drive Motor Configuration */
-    SupplyCurrentLimitConfiguration driveSupplyLimit =
-        new SupplyCurrentLimitConfiguration(
-            DriveMap.LIMIT_DRIVE_CURRENT,
-            DriveMap.DRIVE_CONTINUOS_CURRENT_LIMIT,
-            DriveMap.DRIVE_PEAK_CURRENT_LIMIT,
-            DriveMap.DRIVE_PEAK_CURRENT_DURATION);
+    SupplyCurrentLimitConfiguration driveSupplyLimit = new SupplyCurrentLimitConfiguration(
+        DriveMap.LIMIT_DRIVE_CURRENT,
+        DriveMap.DRIVE_CONTINUOS_CURRENT_LIMIT,
+        DriveMap.DRIVE_PEAK_CURRENT_LIMIT,
+        DriveMap.DRIVE_PEAK_CURRENT_DURATION);
 
     swerveDriveFXConfig.slot0.kP = DriveMap.DRIVE_KP;
     swerveDriveFXConfig.slot0.kI = DriveMap.DRIVE_KI;
@@ -51,8 +50,7 @@ public final class CTREConfigs {
     /* Swerve CANCoder Configuration */
     swerveCanCoderConfig.absoluteSensorRange = AbsoluteSensorRange.Unsigned_0_to_360;
     swerveCanCoderConfig.sensorDirection = DriveMap.CAN_CODER_INVERT;
-    swerveCanCoderConfig.initializationStrategy =
-        SensorInitializationStrategy.BootToAbsolutePosition;
+    swerveCanCoderConfig.initializationStrategy = SensorInitializationStrategy.BootToAbsolutePosition;
     swerveCanCoderConfig.sensorTimeBase = SensorTimeBase.PerSecond;
   }
 }

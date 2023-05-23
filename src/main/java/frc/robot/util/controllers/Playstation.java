@@ -39,10 +39,10 @@ public class Playstation implements ButtonMap {
 
     map.put(Axis.AXIS_LEFT_X, 0);
     map.put(Axis.AXIS_LEFT_Y, 1);
-    map.put(Axis.AXIS_RIGHT_X, 4);
+    map.put(Axis.AXIS_RIGHT_X, 2);
     map.put(Axis.AXIS_RIGHT_Y, 5);
-    map.put(Axis.AXIS_LEFT_TRIGGER, 2);
-    map.put(Axis.AXIS_RIGHT_TRIGGER, 3);
+    map.put(Axis.AXIS_LEFT_TRIGGER, 3);
+    map.put(Axis.AXIS_RIGHT_TRIGGER, 4);
     return map;
   }
 
